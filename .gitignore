@@ -1,0 +1,22 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+*.iml
+*/target/
+*/log/
+*/config/
+*/feeds/
+*/nbactions.xml
+target/*
+out/
+/log/capistrano*
+/log/**/*.log
+*dependency-reduced-pom.xml
+.DS_Store
+.DS_Store?
+/web/node_modules
+/web/config/*.json
+target/
+bin/
+*/ruby/*
+bin.tar.gz
+/feeds
