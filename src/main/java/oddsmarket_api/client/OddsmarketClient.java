@@ -1,6 +1,5 @@
 package oddsmarket_api.client;
 
-import com.allbestbets.jutils.AbbLogger;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -20,7 +19,6 @@ import static oddsmarket_api.client.cmd.RequestCMD.AUTHORIZATION;
 import static oddsmarket_api.client.cmd.RequestCMD.SUBSCRIBE;
 
 public class OddsmarketClient {
-    private static final AbbLogger logger = new AbbLogger();
 
     private final WebSocket ws;
 
@@ -213,7 +211,7 @@ public class OddsmarketClient {
 
                 default:
                     info(jsonMsg.toString());
-                    logger.debug("command {} - skip", command);
+                    System.out.println("command " + command + " - skip");
             }
         }
 
