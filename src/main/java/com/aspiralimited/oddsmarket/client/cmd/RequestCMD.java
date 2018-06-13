@@ -1,4 +1,4 @@
-package oddsmarket_api.client.cmd;
+package com.aspiralimited.oddsmarket.client.cmd;
 
 public enum RequestCMD {
     AUTHORIZATION, SUBSCRIBE, PING, ERROR, UNKNOWN;

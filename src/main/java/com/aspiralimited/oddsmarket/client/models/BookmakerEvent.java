@@ -1,4 +1,4 @@
-package oddsmarket_api.client.models;
+package com.aspiralimited.oddsmarket.client.models;
 
 import java.util.List;
 

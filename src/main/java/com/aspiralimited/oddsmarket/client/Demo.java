@@ -1,7 +1,7 @@
-package oddsmarket_api.client;
+package com.aspiralimited.oddsmarket.client;
 
-import oddsmarket_api.client.models.BookmakerEvent;
-import oddsmarket_api.client.models.Odd;
+import com.aspiralimited.oddsmarket.client.models.BookmakerEvent;
+import com.aspiralimited.oddsmarket.client.models.Odd;
 
 import java.util.Collection;
 import java.util.Map;

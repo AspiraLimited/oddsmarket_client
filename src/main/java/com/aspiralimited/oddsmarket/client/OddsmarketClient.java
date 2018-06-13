@@ -1,12 +1,12 @@
-package oddsmarket_api.client;
+package com.aspiralimited.oddsmarket.client;
 
+import com.aspiralimited.oddsmarket.client.cmd.RequestCMD;
+import com.aspiralimited.oddsmarket.client.models.BookmakerEvent;
+import com.aspiralimited.oddsmarket.client.models.Odd;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
-import oddsmarket_api.client.cmd.RequestCMD;
-import oddsmarket_api.client.models.BookmakerEvent;
-import oddsmarket_api.client.models.Odd;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,8 +15,6 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
-import static oddsmarket_api.client.cmd.RequestCMD.AUTHORIZATION;
-import static oddsmarket_api.client.cmd.RequestCMD.SUBSCRIBE;
 
 public class OddsmarketClient {
 
@@ -106,11 +104,11 @@ public class OddsmarketClient {
     }
 
     private void auth(String apiKey) {
-        send(AUTHORIZATION, apiKey);
+        send(RequestCMD.AUTHORIZATION, apiKey);
     }
 
     public void subscribe(Subscribe subscribe) {
-        send(SUBSCRIBE, subscribe.toMap());
+        send(RequestCMD.SUBSCRIBE, subscribe.toMap());
     }
 
     public static class Subscribe {
