@@ -3,9 +3,10 @@
   <groupId>com.allbestbets.oddsmarket_api</groupId>
   <artifactId>client</artifactId>
   <versioning>
+    <release>0.1</release>
     <versions>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.1</version>
     </versions>
-    <lastUpdated>20180613101008</lastUpdated>
+    <lastUpdated>20180613102830</lastUpdated>
   </versioning>
 </metadata>

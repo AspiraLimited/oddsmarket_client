@@ -6,7 +6,7 @@
 
     <groupId>com.allbestbets.oddsmarket_api</groupId>
     <artifactId>client</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
 
     <properties>
         <github.global.server>github</github.global.server>
@@ -71,7 +71,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
