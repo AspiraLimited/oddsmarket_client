@@ -174,6 +174,7 @@ public class OddsmarketClient {
                 case "fields":
                     oddFields = jsonMsg.getJSONObject("msg").getJSONArray("Odd").toList().stream().map(x -> (String) x).collect(toList());
                     bookmakerEventFields = jsonMsg.getJSONObject("msg").getJSONArray("BookmakerEvent").toList().stream().map(x -> (String) x).collect(toList());
+                    info("init fields: " + jsonMsg);
                     break;
 
                 case "bookmakerevents":
@@ -210,8 +211,7 @@ public class OddsmarketClient {
                     break;
 
                 default:
-                    info(jsonMsg.toString());
-                    System.out.println("command " + command + " - skip");
+                    info("skip command '" + command + "' with msg '" + jsonMsg.get("msg") + "'");
             }
         }
 
