@@ -17,7 +17,7 @@ public class Demo {
             System.out.println("response: " + jsonMsg.optString("cmd") + " " + jsonMsg.opt("msg"));
         });
 
-        client.handler(new OddsmarketClient.Handler() {
+        OddsmarketClient.Handler handler = new OddsmarketClient.Handler() {
 
             @Override
             public void info(String msg) {
@@ -38,7 +38,9 @@ public class Demo {
             public void removeBookmakerEvents(Collection<Long> ids) {
                 printToConsole("remove bookmaker events " + ids);
             }
-        });
+        };
+
+        client.handler(handler);
 
         OddsmarketClient.Subscribe subscribe = new OddsmarketClient.Subscribe()
                 .bookmakerIds(2)
@@ -46,7 +48,21 @@ public class Demo {
 
         client.subscribe(subscribe);
 
-        sleep(3600_000);
+        sleep(5_000);
+
+        System.out.println(client.bookmakerEvents());
+        System.out.println(client.odds().size());
+
+        subscribe = new OddsmarketClient.Subscribe()
+                .bookmakerIds(21)
+                .sportIds(2);
+
+        client.subscribe(subscribe);
+
+        sleep(5_000);
+
+        System.out.println(client.bookmakerEvents());
+        System.out.println(client.odds().size());
 
         client.disconnect();
 

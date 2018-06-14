@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
@@ -109,6 +110,17 @@ public class OddsmarketClient {
 
     public void subscribe(Subscribe subscribe) {
         send(RequestCMD.SUBSCRIBE, subscribe.toMap());
+        if (handler != null) handler.reset();
+    }
+
+    public Map<Long, BookmakerEvent> bookmakerEvents() {
+        if (handler == null) return null;
+        return handler.bookmakerEvents;
+    }
+
+    public Map<Long, Map<Long, Odd>> odds() {
+        if (handler == null) return null;
+        return handler.odds;
     }
 
     public static class Subscribe {
@@ -163,6 +175,9 @@ public class OddsmarketClient {
         private List<String> oddFields = new ArrayList<>();
         private List<String> bookmakerEventFields = new ArrayList<>();
 
+        final Map<Long, BookmakerEvent> bookmakerEvents = new HashMap<>();
+        final Map<Long, Map<Long, Odd>> odds = new HashMap<>();
+
         void handle(JSONObject jsonMsg) {
             // logger.trace("response: {}, {}", jsonMsg.optString("cmd"), jsonMsg.opt("msg"));
             String command = jsonMsg.optString("cmd");
@@ -178,7 +193,9 @@ public class OddsmarketClient {
                 case "bookmakerevents":
                     jsonMsg.getJSONArray("msg").forEach(raw -> {
                         try {
-                            bookmakerEvent(new BookmakerEvent(((JSONArray) raw).toList(), bookmakerEventFields));
+                            BookmakerEvent bkEvent = new BookmakerEvent(((JSONArray) raw).toList(), bookmakerEventFields);
+                            bookmakerEvents.put(bkEvent.id, bkEvent);
+                            bookmakerEvent(bkEvent);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -186,24 +203,35 @@ public class OddsmarketClient {
                     break;
 
                 case "odds":
-                    Map<Long, Odd> odds = new HashMap<>();
+                    Map<Long, Odd> updatedOdds = new HashMap<>();
 
                     jsonMsg.getJSONArray("msg").forEach(raw -> {
                         try {
                             Odd odd = new Odd(((JSONArray) raw).toList(), oddFields);
-                            odds.put(odd.id, odd);
+                            updatedOdds.put(odd.id, odd);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     });
 
-                    odds(odds);
+                    updatedOdds.values()
+                            .forEach(odd ->
+                                    odds.computeIfAbsent(odd.bookmakerEventId, x -> new ConcurrentHashMap<>())
+                                            .put(odd.id, odd));
+
+                    odds(updatedOdds);
 
                     break;
 
                 case "removed":
                     List<Long> ids = new ArrayList<>();
                     jsonMsg.getJSONObject("msg").getJSONArray("bookmakerEventIds").forEach(raw -> ids.add((long) raw));
+
+                    ids.forEach(id -> {
+                        bookmakerEvents.remove(id);
+                        odds.remove(id);
+                    });
+
                     removeBookmakerEvents(ids);
 
                     break;
@@ -217,8 +245,13 @@ public class OddsmarketClient {
 
         public abstract void bookmakerEvent(BookmakerEvent bkEvent);
 
-        public abstract void odds(Map<Long, Odd> odds);
+        public abstract void odds(Map<Long, Odd> updatedOdds);
 
         public abstract void removeBookmakerEvents(Collection<Long> ids);
+
+        private void reset() {
+            bookmakerEvents.clear();
+            odds.clear();
+        }
     }
 }
