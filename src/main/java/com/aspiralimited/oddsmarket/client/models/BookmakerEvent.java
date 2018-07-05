@@ -102,20 +102,20 @@ public class BookmakerEvent {
     public String toString() {
         return "BookmakerEvent{" +
                 "id=" + id +
-                //", bookmakerId=" + bookmakerId +
-                //", active=" + active +
-                //", eventId=" + eventId +
+                ", bookmakerId=" + bookmakerId +
+                ", active=" + active +
+                ", eventId=" + eventId +
                 ", name='" + name + '\'' +
-                //", nameRu='" + nameRu + '\'' +
-                //", swapTeams=" + swapTeams +
-                //", currentScore='" + currentScore + '\'' +
+                ", nameRu='" + nameRu + '\'' +
+                ", swapTeams=" + swapTeams +
+                ", currentScore='" + currentScore + '\'' +
                 ", startedAt=" + startedAt +
-                //", sportId=" + sportId +
-                //", sportName='" + sportName + '\'' +
-                //", leagueName='" + leagueName + '\'' +
-                //", rawId='" + rawId + '\'' +
-                //", directLink='" + directLink + '\'' +
-                //", updatedAt=" + updatedAt +
+                ", sportId=" + sportId +
+                ", sportName='" + sportName + '\'' +
+                ", leagueName='" + leagueName + '\'' +
+                ", rawId='" + rawId + '\'' +
+                ", directLink='" + directLink + '\'' +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
