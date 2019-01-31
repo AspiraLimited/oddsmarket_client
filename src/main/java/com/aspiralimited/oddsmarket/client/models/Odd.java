@@ -7,7 +7,9 @@ public class Odd {
     public Long id;
     public Long bookmakerEventId;
     public Integer periodId;
+    public String periodName;
     public Integer betCombinationId;
+    public String betCombination;
     public boolean active;
     public Float odd;
     public Float oddLay = null;
@@ -35,8 +37,16 @@ public class Odd {
                     this.periodId = (Integer) value;
                     break;
 
+                case "periodName":
+                    this.periodName = (String) value;
+                    break;
+
                 case "betCombinationId":
                     this.betCombinationId = (Integer) value;
+                    break;
+
+                case "betCombination":
+                    this.betCombination = (String) value;
                     break;
 
                 case "active":
@@ -71,5 +81,23 @@ public class Odd {
 
     public boolean active() {
         return active;
+    }
+
+    @Override
+    public String toString() {
+        return "Odd{" +
+                "id=" + id +
+                ", bookmakerEventId=" + bookmakerEventId +
+                ", periodId=" + periodId +
+                ", periodName='" + periodName + '\'' +
+                ", betCombinationId=" + betCombinationId +
+                ", betCombination='" + betCombination + '\'' +
+                ", active=" + active +
+                ", odd=" + odd +
+                ", oddLay=" + oddLay +
+                ", marketDepth=" + marketDepth +
+                ", directLink='" + directLink + '\'' +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }
