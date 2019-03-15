@@ -236,6 +236,10 @@ public class OddsmarketClient {
 
                     break;
 
+                case "subscribed":
+                    info("init fields: " + jsonMsg);
+                    break;
+
                 default:
                     info("skip command '" + command + "' with msg '" + jsonMsg.get("msg") + "'");
             }
