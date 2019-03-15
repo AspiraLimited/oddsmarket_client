@@ -127,6 +127,10 @@ public class BookmakerEvent {
                 ", eventId=" + eventId +
                 ", name='" + name + '\'' +
                 ", nameRu='" + nameRu + '\'' +
+                ", home='" + home + '\'' +
+                ", away='" + away + '\'' +
+                ", homeId='" + homeId + '\'' +
+                ", awayId='" + awayId + '\'' +
                 ", swapTeams=" + swapTeams +
                 ", currentScore='" + currentScore + '\'' +
                 ", startedAt=" + startedAt +
