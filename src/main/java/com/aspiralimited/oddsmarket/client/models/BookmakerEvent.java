@@ -19,6 +19,10 @@ public class BookmakerEvent {
     public String rawId;
     public String directLink;
     public Long updatedAt;
+    public Long homeId;
+    public Long awayId;
+    public String home;
+    public String away;
 
     public BookmakerEvent(List<Object> values, List<String> fields) {
         for (int i = 0; i < values.size(); i++) {
@@ -86,6 +90,22 @@ public class BookmakerEvent {
 
                 case "updatedAt":
                     this.updatedAt = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    break;
+
+                case "homeId":
+                    this.homeId = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    break;
+
+                case "awayId":
+                    this.awayId = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    break;
+
+                case "home":
+                    this.home = (String) value;
+                    break;
+
+                case "away":
+                    this.away = (String) value;
                     break;
 
                 default:
