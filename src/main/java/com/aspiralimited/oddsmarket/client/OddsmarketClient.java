@@ -113,6 +113,11 @@ public class OddsmarketClient {
         if (handler != null) handler.reset();
     }
 
+    public void unsubscribe(Subscribe subscribe) {
+        send(RequestCMD.UNSUBSCRIBE, subscribe.toMap());
+        if (handler != null) handler.reset();
+    }
+
     public Map<Long, BookmakerEvent> bookmakerEvents() {
         if (handler == null) return null;
         return handler.bookmakerEvents;
