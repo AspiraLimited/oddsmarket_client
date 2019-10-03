@@ -15,6 +15,7 @@ public class BookmakerEvent {
     public Long startedAt;
     public int sportId;
     public String sportName;
+    public Long leagueId;
     public String leagueName;
     public String rawId;
     public String directLink;
@@ -74,6 +75,10 @@ public class BookmakerEvent {
 
                 case "sportName":
                     this.sportName = (String) value;
+                    break;
+
+                case "leagueId":
+                    this.leagueId = ((value instanceof Integer) ? (long) (int) value : (long) value);
                     break;
 
                 case "leagueName":
@@ -136,6 +141,7 @@ public class BookmakerEvent {
                 ", startedAt=" + startedAt +
                 ", sportId=" + sportId +
                 ", sportName='" + sportName + '\'' +
+                ", leagueId='" + leagueId + '\'' +
                 ", leagueName='" + leagueName + '\'' +
                 ", rawId='" + rawId + '\'' +
                 ", directLink='" + directLink + '\'' +
