@@ -4,13 +4,12 @@ import java.util.List;
 
 public class Odd {
 
-    public Long id;
+    public String id;
     public Long bookmakerEventId;
     public Integer periodId;
     public String periodName;
     public Integer betCombinationId;
     public String betCombination;
-    public boolean active;
     public Float odd;
     public Float oddLay = null;
     public Float marketDepth = null;
@@ -26,7 +25,7 @@ public class Odd {
 
             switch (field) {
                 case "id":
-                    this.id = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.id = ((value instanceof String) ? (String) value : value.toString());
                     break;
 
                 case "bookmakerEventId":
@@ -47,10 +46,6 @@ public class Odd {
 
                 case "betCombination":
                     this.betCombination = (String) value;
-                    break;
-
-                case "active":
-                    this.active = (boolean) value;
                     break;
 
                 case "odd":
@@ -79,10 +74,6 @@ public class Odd {
         }
     }
 
-    public boolean active() {
-        return active;
-    }
-
     @Override
     public String toString() {
         return "Odd{" +
@@ -92,7 +83,6 @@ public class Odd {
                 ", periodName='" + periodName + '\'' +
                 ", betCombinationId=" + betCombinationId +
                 ", betCombination='" + betCombination + '\'' +
-                ", active=" + active +
                 ", odd=" + odd +
                 ", oddLay=" + oddLay +
                 ", marketDepth=" + marketDepth +

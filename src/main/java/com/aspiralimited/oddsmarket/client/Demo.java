@@ -30,7 +30,7 @@ public class Demo {
             }
 
             @Override
-            public void odds(Map<Long, Odd> updatedOdds) {
+            public void odds(Map<String, Odd> updatedOdds) {
                 printToConsole("odds " + updatedOdds.size());
             }
 
