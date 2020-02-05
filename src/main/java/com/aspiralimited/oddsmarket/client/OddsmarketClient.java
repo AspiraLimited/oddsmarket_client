@@ -123,7 +123,7 @@ public class OddsmarketClient {
         return handler.bookmakerEvents;
     }
 
-    public Map<Long, Map<Long, Odd>> odds() {
+    public Map<Long, Map<String, Odd>> odds() {
         if (handler == null) return null;
         return handler.odds;
     }
@@ -181,7 +181,7 @@ public class OddsmarketClient {
         private List<String> bookmakerEventFields = new ArrayList<>();
 
         final Map<Long, BookmakerEvent> bookmakerEvents = new HashMap<>();
-        final Map<Long, Map<Long, Odd>> odds = new HashMap<>();
+        final Map<Long, Map<String, Odd>> odds = new HashMap<>();
 
         void handle(JSONObject jsonMsg) {
             // logger.trace("response: {}, {}", jsonMsg.optString("cmd"), jsonMsg.opt("msg"));
@@ -208,7 +208,7 @@ public class OddsmarketClient {
                     break;
 
                 case "odds":
-                    Map<Long, Odd> updatedOdds = new HashMap<>();
+                    Map<String, Odd> updatedOdds = new HashMap<>();
 
                     jsonMsg.getJSONArray("msg").forEach(raw -> {
                         try {
@@ -254,7 +254,7 @@ public class OddsmarketClient {
 
         public abstract void bookmakerEvent(BookmakerEvent bkEvent);
 
-        public abstract void odds(Map<Long, Odd> updatedOdds);
+        public abstract void odds(Map<String, Odd> updatedOdds);
 
         public abstract void removeBookmakerEvents(Collection<Long> ids);
 
