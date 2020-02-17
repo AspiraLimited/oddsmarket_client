@@ -68,6 +68,10 @@ public class Odd {
                     this.updatedAt = ((value instanceof Integer) ? (long) (int) value : (long) value);
                     break;
 
+                case "active":
+                    // deprecated field
+                    break;
+
                 default:
                     System.out.println("unknown field: " + field + "[" + value + "]");
             }
