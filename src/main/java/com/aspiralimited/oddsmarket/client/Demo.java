@@ -11,7 +11,7 @@ import static java.lang.Thread.sleep;
 public class Demo {
 
     public static void main(String[] args) throws Exception {
-        OddsmarketClient client = OddsmarketClient.connect("wss://api-pr.oddsmarket.org/v2/odds_ws", "API_KEY");
+        OddsmarketClient client = OddsmarketClient.connect("wss://api-pr.oddsmarket.org/v3/odds_ws", "API_KEY");
 
         client.onJsonMessage(jsonMsg -> {
             System.out.println("response: " + jsonMsg.optString("cmd") + " " + jsonMsg.opt("msg"));
