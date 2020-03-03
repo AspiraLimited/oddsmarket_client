@@ -10,6 +10,7 @@ public class Odd {
     public String periodName;
     public Integer betCombinationId;
     public String betCombination;
+    public boolean active;
     public Float odd;
     public Float oddLay = null;
     public Float marketDepth = null;
@@ -69,13 +70,17 @@ public class Odd {
                     break;
 
                 case "active":
-                    // deprecated field
+                    this.active = (boolean) value;
                     break;
 
                 default:
                     System.out.println("unknown field: " + field + "[" + value + "]");
             }
         }
+    }
+
+    public boolean active() {
+        return active;
     }
 
     @Override
@@ -87,6 +92,7 @@ public class Odd {
                 ", periodName='" + periodName + '\'' +
                 ", betCombinationId=" + betCombinationId +
                 ", betCombination='" + betCombination + '\'' +
+                ", active=" + active +
                 ", odd=" + odd +
                 ", oddLay=" + oddLay +
                 ", marketDepth=" + marketDepth +
