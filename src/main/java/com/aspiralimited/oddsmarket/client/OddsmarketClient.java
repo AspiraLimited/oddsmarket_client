@@ -230,7 +230,13 @@ public class OddsmarketClient {
 
                 case "removed":
                     List<Long> ids = new ArrayList<>();
-                    jsonMsg.getJSONObject("msg").getJSONArray("bookmakerEventIds").forEach(raw -> ids.add((long) raw));
+                    jsonMsg.getJSONObject("msg").getJSONArray("bookmakerEventIds").forEach(raw -> {
+                        if (raw instanceof Integer) {
+                            ids.add((long) (int) raw);
+                        } else if (raw instanceof Long) {
+                            ids.add((long) raw);
+                        }
+                    });
 
                     ids.forEach(id -> {
                         bookmakerEvents.remove(id);
