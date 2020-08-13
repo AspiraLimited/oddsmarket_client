@@ -38,6 +38,11 @@ class DemoReconnect {
             @Override
             public void removeBookmakerEvents(Collection<Long> collection) {
             }
+
+            @Override
+            public void onDisconnected(boolean closedByServer) {
+
+            }
         };
         client.handler(handler);
         OddsmarketClient.Subscribe sub = new OddsmarketClient.Subscribe().bookmakerIds(4).sportIds(18);

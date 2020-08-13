@@ -38,6 +38,11 @@ public class Demo {
             public void removeBookmakerEvents(Collection<Long> ids) {
                 printToConsole("remove bookmaker events " + ids);
             }
+
+            @Override
+            public void onDisconnected(boolean closedByServer) {
+
+            }
         };
 
         client.handler(handler);

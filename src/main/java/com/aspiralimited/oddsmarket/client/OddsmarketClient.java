@@ -7,6 +7,7 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import com.neovisionaries.ws.client.WebSocketFrame;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -31,6 +32,12 @@ public class OddsmarketClient {
         this.ws = new WebSocketFactory().createSocket(host);
 
         ws.addListener(new WebSocketAdapter() {
+            @Override
+            public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+                handler.onDisconnected(closedByServer);
+                super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
+            }
+
             @Override
             public void onTextMessage(WebSocket websocket, String message) throws Exception {
                 if (onTextMessageConsumer != null) onTextMessageConsumer.accept(message);
@@ -268,5 +275,7 @@ public class OddsmarketClient {
             bookmakerEvents.clear();
             odds.clear();
         }
+
+        public abstract void onDisconnected(boolean closedByServer);
     }
 }

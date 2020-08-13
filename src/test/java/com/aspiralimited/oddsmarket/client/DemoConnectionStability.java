@@ -14,6 +14,7 @@ public class DemoConnectionStability {
     static volatile long msgsReceived = 0;
 
     public static void main(String[] args) throws Exception {
+        long start = System.currentTimeMillis();
         OddsmarketClient client = OddsmarketClient.connect("wss://api-pr.oddsmarket.org/v3/odds_ws", "API_KEY");
 
         client.onJsonMessage(jsonMsg -> {
@@ -43,6 +44,12 @@ public class DemoConnectionStability {
             @Override
             public void removeBookmakerEvents(Collection<Long> ids) {
                 // printToConsole("remove bookmaker events " + ids);
+            }
+
+            @Override
+            public void onDisconnected(boolean closedByServer) {
+                long duration = System.currentTimeMillis() - start;
+                printToConsole("disconnected! closedByServer=" + closedByServer + "; connection duration (ms)=" + duration);
             }
         };
 

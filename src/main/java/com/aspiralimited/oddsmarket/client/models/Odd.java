@@ -7,9 +7,17 @@ public class Odd {
     public String id;
     public Long bookmakerEventId;
     public Integer periodId;
+    public Integer periodIdentifier;
     public String periodName;
     public Integer betCombinationId;
     public String betCombination;
+    public Short marketAndBetTypeId;
+    public String marketAndBetTypeTitle;
+    public Float marketAndBetTypeParameterValue;
+    public Integer playerId1;
+    public String playerName1;
+    public Integer playerId2;
+    public String playerName2;
     public boolean active;
     public Float odd;
     public Float oddLay = null;
@@ -37,6 +45,10 @@ public class Odd {
                     this.periodId = (Integer) value;
                     break;
 
+                case "periodIdentifier":
+                    this.periodIdentifier = (Integer) value;
+                    break;
+
                 case "periodName":
                     this.periodName = (String) value;
                     break;
@@ -47,6 +59,34 @@ public class Odd {
 
                 case "betCombination":
                     this.betCombination = (String) value;
+                    break;
+
+                case "marketAndBetTypeId":
+                    this.marketAndBetTypeId = (short) (int) value;
+                    break;
+
+                case "marketAndBetTypeTitle":
+                    this.marketAndBetTypeTitle = (String) value;
+                    break;
+
+                case "marketAndBetTypeParameterValue":
+                    this.marketAndBetTypeParameterValue = ((Double) value).floatValue();
+                    break;
+
+                case "playerId1":
+                    this.playerId1 = (Integer) value;
+                    break;
+
+                case "playerName1":
+                    this.playerName1 = (String) value;
+                    break;
+
+                case "playerId2":
+                    this.playerId2 = (Integer) value;
+                    break;
+
+                case "playerName2":
+                    this.playerName2 = (String) value;
                     break;
 
                 case "odd":
@@ -89,9 +129,17 @@ public class Odd {
                 "id=" + id +
                 ", bookmakerEventId=" + bookmakerEventId +
                 ", periodId=" + periodId +
+                ", periodIdentifier=" + periodIdentifier +
                 ", periodName='" + periodName + '\'' +
                 ", betCombinationId=" + betCombinationId +
                 ", betCombination='" + betCombination + '\'' +
+                ", marketAndBetTypeId=" + marketAndBetTypeId +
+                ", marketAndBetTypeTitle='" + marketAndBetTypeTitle + '\'' +
+                ", marketAndBetTypeParameterValue=" + marketAndBetTypeParameterValue +
+                ", playerId1=" + playerId1 +
+                ", playerName1='" + playerName1 + '\'' +
+                ", playerId2=" + playerId2 +
+                ", playerName2='" + playerName2 + '\'' +
                 ", active=" + active +
                 ", odd=" + odd +
                 ", oddLay=" + oddLay +
