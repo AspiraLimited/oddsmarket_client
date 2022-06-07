@@ -14,7 +14,7 @@
     <repositories>
         <repository>
             <id>oddsmarket_client</id>
-            <url>https://maven.pkg.github.com/AspiraLimited/oddsmarket_client</url>
+            <url>https://public:&#103;hp_U8EDZgjmRsd2BIWznz3UQLcSDW14gV4LGDRF@maven.pkg.github.com/AspiraLimited/oddsmarket_client</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -23,6 +23,7 @@
     </repositories>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
