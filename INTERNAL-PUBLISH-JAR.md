@@ -1,8 +1,9 @@
-# oddsmarket_client
+# Releasing oddsmarket Java client library
 
 This manual describes process of releasing oddsmarket Java client library JAR on Github Packages service.
 
-## 
+## Configuring maven
+
 Add repository configuration to Maven settings file located at `~/.m2/settings.xml`
 
 ```xml
@@ -28,3 +29,30 @@ Add repository configuration to Maven settings file located at `~/.m2/settings.x
 ```
 
 In the "password" property insert personal token which can be generated on following page: https://github.com/settings/tokens
+
+## Publishing
+
+
+1. Make required modifications to client
+2. Assign new `client` module version (multiple `pom.xml` edits). Version assignment rules are explained below. 
+3. Run `./deploy.sh`
+
+## Client version assignment rules
+
+Client versions layout:
+
+`API version`.`Major version`.`Minor version`
+
+Where:
+
+### `API version` 
+
+Version that is used in `/v(\d+)/` part of API endpoints.
+
+### `Major version` 
+
+Set to 0 after API version change. Must be incremented on breaking client changes. 
+
+### `Minor version`
+
+Set to 0 after major version change. Must be incremented on non-breaking client changes and bugfixes.

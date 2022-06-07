@@ -1,0 +1,180 @@
+{
+  "response": [
+    {
+      "name": "Baseball",
+      "id": 1
+    },
+    {
+      "name": "Basketball",
+      "id": 2
+    },
+    {
+      "name": "Futsal",
+      "id": 4
+    },
+    {
+      "name": "Handball",
+      "id": 5
+    },
+    {
+      "name": "Hockey",
+      "id": 6
+    },
+    {
+      "name": "Soccer",
+      "id": 7
+    },
+    {
+      "name": "Tennis",
+      "id": 8
+    },
+    {
+      "name": "Volleyball",
+      "id": 9
+    },
+    {
+      "name": "American Football",
+      "id": 10
+    },
+    {
+      "name": "Snooker",
+      "id": 11
+    },
+    {
+      "name": "Darts",
+      "id": 12
+    },
+    {
+      "name": "Table Tennis",
+      "id": 13
+    },
+    {
+      "name": "Badminton",
+      "id": 14
+    },
+    {
+      "name": "Rugby League",
+      "id": 15
+    },
+    {
+      "name": "Water Polo",
+      "id": 16
+    },
+    {
+      "name": "Bandy",
+      "id": 17
+    },
+    {
+      "name": "Martial arts",
+      "id": 18
+    },
+    {
+      "name": "Field Hockey",
+      "id": 19
+    },
+    {
+      "name": "AFL",
+      "id": 20
+    },
+    {
+      "name": "Other E-Sports",
+      "id": 21
+    },
+    {
+      "name": "Chess",
+      "id": 22
+    },
+    {
+      "name": "Gaelic Sport",
+      "id": 23
+    },
+    {
+      "name": "Cricket",
+      "id": 24
+    },
+    {
+      "name": "Formula 1",
+      "id": 25
+    },
+    {
+      "name": "Beach Volleyball",
+      "id": 29
+    },
+    {
+      "name": "Horse Racing",
+      "id": 30
+    },
+    {
+      "name": "Biathlon",
+      "id": 31
+    },
+    {
+      "name": "Curling",
+      "id": 32
+    },
+    {
+      "name": "Squash",
+      "id": 33
+    },
+    {
+      "name": "Netball",
+      "id": 34
+    },
+    {
+      "name": "Beach Soccer",
+      "id": 35
+    },
+    {
+      "name": "Floorball",
+      "id": 36
+    },
+    {
+      "name": "Hurling",
+      "id": 37
+    },
+    {
+      "name": "Kung Volleyball",
+      "id": 38
+    },
+    {
+      "name": "E-Soccer",
+      "id": 39
+    },
+    {
+      "name": "E-Hockey",
+      "id": 40
+    },
+    {
+      "name": "E-Basketball",
+      "id": 41
+    },
+    {
+      "name": "E-Tennis",
+      "id": 42
+    },
+    {
+      "name": "Rugby Union",
+      "id": 43
+    },
+    {
+      "name": "Boxing",
+      "id": 44
+    },
+    {
+      "name": "MMA",
+      "id": 45
+    },
+    {
+      "name": "Dota 2",
+      "id": 46
+    },
+    {
+      "name": "CS:GO",
+      "id": 47
+    },
+    {
+      "name": "League of Legends",
+      "id": 48
+    }
+  ]
+}

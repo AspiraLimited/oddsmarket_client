@@ -1,0 +1,404 @@
+{
+  "response": [
+    {
+      "name": "Pinnacle",
+      "id": 1
+    },
+    {
+      "name": "Betcity",
+      "id": 2
+    },
+    {
+      "name": "Sbobet",
+      "id": 3
+    },
+    {
+      "name": "Marathon",
+      "id": 4
+    },
+    {
+      "name": "188bet",
+      "id": 5
+    },
+    {
+      "name": "Fonbet",
+      "id": 6
+    },
+    {
+      "name": "LSBet",
+      "id": 7
+    },
+    {
+      "name": "Bwin",
+      "id": 9
+    },
+    {
+      "name": "Bet365",
+      "id": 10
+    },
+    {
+      "name": "Betfair",
+      "id": 11
+    },
+    {
+      "name": "DafabetOW",
+      "id": 12
+    },
+    {
+      "name": "WilliamHill",
+      "id": 13
+    },
+    {
+      "name": "Betclic",
+      "id": 14
+    },
+    {
+      "name": "Zenitbet",
+      "id": 15
+    },
+    {
+      "name": "Tennisi",
+      "id": 16
+    },
+    {
+      "name": "PariMatch",
+      "id": 17
+    },
+    {
+      "name": "LigaStavok",
+      "id": 18
+    },
+    {
+      "name": "Unibet",
+      "id": 19
+    },
+    {
+      "name": "DafaSports",
+      "id": 20
+    },
+    {
+      "name": "1xbet",
+      "id": 21
+    },
+    {
+      "name": "Favbet",
+      "id": 22
+    },
+    {
+      "name": "BetAtHome",
+      "id": 23
+    },
+    {
+      "name": "10bet",
+      "id": 24
+    },
+    {
+      "name": "Totogaming",
+      "id": 26
+    },
+    {
+      "name": "Olimp",
+      "id": 27
+    },
+    {
+      "name": "Retabet",
+      "id": 28
+    },
+    {
+      "name": "Tipico",
+      "id": 29
+    },
+    {
+      "name": "Leon",
+      "id": 30
+    },
+    {
+      "name": "Matchbook",
+      "id": 31
+    },
+    {
+      "name": "Ladbrokes",
+      "id": 32
+    },
+    {
+      "name": "Jetbull",
+      "id": 33
+    },
+    {
+      "name": "Vbet",
+      "id": 34
+    },
+    {
+      "name": "Titanbet",
+      "id": 36
+    },
+    {
+      "name": "GGBet",
+      "id": 37
+    },
+    {
+      "name": "Betdaq",
+      "id": 38
+    },
+    {
+      "name": "Tipsport",
+      "id": 39
+    },
+    {
+      "name": "Rivalo",
+      "id": 41
+    },
+    {
+      "name": "SportpesaIT",
+      "id": 42
+    },
+    {
+      "name": "Betflag",
+      "id": 43
+    },
+    {
+      "name": "Betfred",
+      "id": 45
+    },
+    {
+      "name": "Tipbet",
+      "id": 47
+    },
+    {
+      "name": "Betsson",
+      "id": 48
+    },
+    {
+      "name": "Smarkets",
+      "id": 50
+    },
+    {
+      "name": "Boylesports",
+      "id": 52
+    },
+    {
+      "name": "PaddyPower",
+      "id": 53
+    },
+    {
+      "name": "PlanetWin365",
+      "id": 54
+    },
+    {
+      "name": "BetOnline",
+      "id": 56
+    },
+    {
+      "name": "Cashpoint",
+      "id": 57
+    },
+    {
+      "name": "Interwetten",
+      "id": 60
+    },
+    {
+      "name": "Goldenpalace",
+      "id": 61
+    },
+    {
+      "name": "Goalbet",
+      "id": 63
+    },
+    {
+      "name": "OddSet",
+      "id": 64
+    },
+    {
+      "name": "Betvictor",
+      "id": 65
+    },
+    {
+      "name": "Superbet",
+      "id": 70
+    },
+    {
+      "name": "Winlinebet",
+      "id": 71
+    },
+    {
+      "name": "Bodog",
+      "id": 73
+    },
+    {
+      "name": "TonyBet",
+      "id": 74
+    },
+    {
+      "name": "Stoiximan",
+      "id": 76
+    },
+    {
+      "name": "Betway",
+      "id": 78
+    },
+    {
+      "name": "BFSportsbook",
+      "id": 79
+    },
+    {
+      "name": "Fortuna",
+      "id": 80
+    },
+    {
+      "name": "Kladise",
+      "id": 81
+    },
+    {
+      "name": "Novibet",
+      "id": 83
+    },
+    {
+      "name": "Wplay",
+      "id": 85
+    },
+    {
+      "name": "Skybet",
+      "id": 86
+    },
+    {
+      "name": "STS",
+      "id": 87
+    },
+    {
+      "name": "Cloudbet",
+      "id": 92
+    },
+    {
+      "name": "Pamestoixima",
+      "id": 94
+    },
+    {
+      "name": "888Sport",
+      "id": 95
+    },
+    {
+      "name": "Kirolbet",
+      "id": 97
+    },
+    {
+      "name": "Pokerstars",
+      "id": 99
+    },
+    {
+      "name": "Codere",
+      "id": 100
+    },
+    {
+      "name": "Snai",
+      "id": 102
+    },
+    {
+      "name": "Sisal",
+      "id": 103
+    },
+    {
+      "name": "Sportmarket",
+      "id": 105
+    },
+    {
+      "name": "Eurobet",
+      "id": 106
+    },
+    {
+      "name": "Lottomatica",
+      "id": 107
+    },
+    {
+      "name": "Goldbetshop",
+      "id": 109
+    },
+    {
+      "name": "JoyCasino",
+      "id": 110
+    },
+    {
+      "name": "BetinAsia",
+      "id": 119
+    },
+    {
+      "name": "ImSports",
+      "id": 126
+    },
+    {
+      "name": "FortuneJack",
+      "id": 127
+    },
+    {
+      "name": "Meridianbet",
+      "id": 128
+    },
+    {
+      "name": "Betaland",
+      "id": 129
+    },
+    {
+      "name": "Tempobet",
+      "id": 130
+    },
+    {
+      "name": "Sportsbet",
+      "id": 131
+    },
+    {
+      "name": "Casinomania",
+      "id": 134
+    },
+    {
+      "name": "Betzest",
+      "id": 137
+    },
+    {
+      "name": "Bet3000",
+      "id": 140
+    },
+    {
+      "name": "NetbetGr",
+      "id": 143
+    },
+    {
+      "name": "Betpoint",
+      "id": 144
+    },
+    {
+      "name": "Mozzartbet",
+      "id": 145
+    },
+    {
+      "name": "FanDuel",
+      "id": 148
+    },
+    {
+      "name": "FoxBet",
+      "id": 149
+    },
+    {
+      "name": "DraftKings",
+      "id": 150
+    },
+    {
+      "name": "TwinSpires",
+      "id": 151
+    },
+    {
+      "name": "Raybet",
+      "id": 152
+    },
+    {
+      "name": "BetMGM",
+      "id": 153
+    },
+    {
+      "name": "LootBet",
+      "id": 154
+    },
+    {
+      "name": "Karamba",
+      "id": 161
+    }
+  ]
+}
