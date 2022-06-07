@@ -9,7 +9,7 @@ and outcomes state in the in-memory data structure.
 
 ## Building and running
 
-1. Download and install JDK 11. Recommended JDK 11 binaries are distributed from [adoptium.net](https://adoptium.net/) website.
+1. Download and install JDK 11. Recommended JDK 11 binaries are distributed from [adoptium.net](https://adoptium.net/temurin/releases/?version=11) website.
 2. Clone this repository on your local filesystem. Follow [GitHub documentation](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) if you need help with this step.
 3. Build and run FeedReader program (see commands syntax and examples below). Building phase is performed only at first run. Next runs build phase is skipped.
 
