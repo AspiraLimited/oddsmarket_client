@@ -1,0 +1,376 @@
+{
+  "response": [
+    {
+      "changeSign": false,
+      "name": "ML1",
+      "reverseId": 2,
+      "description": "Home team wins (with overtime)",
+      "id": 1
+    },
+    {
+      "changeSign": false,
+      "name": "ML2",
+      "reverseId": 1,
+      "description": "Away team wins (with overtime)",
+      "id": 2
+    },
+    {
+      "changeSign": false,
+      "name": "DNB1",
+      "reverseId": 4,
+      "description": "Home team wins (draw no bet)",
+      "id": 3
+    },
+    {
+      "changeSign": false,
+      "name": "DNB2",
+      "reverseId": 3,
+      "description": "Away team wins (draw no bet)",
+      "id": 4
+    },
+    {
+      "changeSign": true,
+      "name": "F1",
+      "reverseId": 6,
+      "description": "Home team wins with asian handicap",
+      "id": 5
+    },
+    {
+      "changeSign": true,
+      "name": "F2",
+      "reverseId": 5,
+      "description": "Away team wins with asian handicap",
+      "id": 6
+    },
+    {
+      "changeSign": false,
+      "name": "TO",
+      "reverseId": 8,
+      "description": "Total over",
+      "id": 7
+    },
+    {
+      "changeSign": false,
+      "name": "TU",
+      "reverseId": 7,
+      "description": "Total under",
+      "id": 8
+    },
+    {
+      "changeSign": false,
+      "name": "ODD",
+      "reverseId": 24,
+      "description": "Total odd",
+      "id": 23
+    },
+    {
+      "changeSign": false,
+      "name": "EVEN",
+      "reverseId": 23,
+      "description": "Total even",
+      "id": 24
+    },
+    {
+      "changeSign": false,
+      "name": "1X",
+      "reverseId": 34,
+      "description": "Home team or draw",
+      "id": 29
+    },
+    {
+      "changeSign": false,
+      "name": "X2",
+      "reverseId": 32,
+      "description": "Draw or away team",
+      "id": 30
+    },
+    {
+      "changeSign": false,
+      "name": "12",
+      "reverseId": 33,
+      "description": "Home or away team, no draw",
+      "id": 31
+    },
+    {
+      "changeSign": false,
+      "name": "1",
+      "reverseId": 30,
+      "description": "Home wins",
+      "id": 32
+    },
+    {
+      "changeSign": false,
+      "name": "X",
+      "reverseId": 31,
+      "description": "Draw",
+      "id": 33
+    },
+    {
+      "changeSign": false,
+      "name": "2",
+      "reverseId": 29,
+      "description": "Away team wins",
+      "id": 34
+    },
+    {
+      "changeSign": false,
+      "name": "EH1",
+      "description": "Home team wins with spread (euro handicap)",
+      "id": 35
+    },
+    {
+      "changeSign": false,
+      "name": "EHX",
+      "description": "Draw with spread (euro handicap)",
+      "id": 36
+    },
+    {
+      "changeSign": false,
+      "name": "EH2",
+      "description": "Away team wins with spread (euro handicap)",
+      "id": 37
+    },
+    {
+      "changeSign": false,
+      "name": "OTS_Y",
+      "description": "Only one to score",
+      "id": 42
+    },
+    {
+      "changeSign": false,
+      "name": "Y",
+      "reverseId": 49,
+      "description": "Yes",
+      "id": 48
+    },
+    {
+      "changeSign": false,
+      "name": "N",
+      "reverseId": 48,
+      "description": "No",
+      "id": 49
+    },
+    {
+      "changeSign": false,
+      "name": "CS",
+      "reverseId": 51,
+      "description": "Correct Score",
+      "id": 50
+    },
+    {
+      "changeSign": false,
+      "name": "CS_N",
+      "reverseId": 50,
+      "description": "Correct Score - not",
+      "id": 51
+    },
+    {
+      "changeSign": false,
+      "name": "SET_CS",
+      "reverseId": 53,
+      "description": "Set Correct Score",
+      "id": 52
+    },
+    {
+      "changeSign": false,
+      "name": "SET_CS_N",
+      "reverseId": 52,
+      "description": "Set Correct Score - not",
+      "id": 53
+    },
+    {
+      "changeSign": true,
+      "name": "SET_F1",
+      "reverseId": 55,
+      "description": "Sets home team wins with spread",
+      "id": 54
+    },
+    {
+      "changeSign": true,
+      "name": "SET_F2",
+      "reverseId": 54,
+      "description": "Sets away team wins with spread",
+      "id": 55
+    },
+    {
+      "changeSign": false,
+      "name": "SET_TO",
+      "reverseId": 57,
+      "description": "Sets Over",
+      "id": 56
+    },
+    {
+      "changeSign": false,
+      "name": "SET_TU",
+      "reverseId": 56,
+      "description": "Sets Under",
+      "id": 57
+    },
+    {
+      "changeSign": false,
+      "name": "1_1",
+      "reverseId": 59,
+      "description": "1/1",
+      "id": 58
+    },
+    {
+      "changeSign": false,
+      "name": "1_1_N",
+      "reverseId": 58,
+      "description": "1/1 - no",
+      "id": 59
+    },
+    {
+      "changeSign": false,
+      "name": "1_X",
+      "reverseId": 61,
+      "description": "1/X",
+      "id": 60
+    },
+    {
+      "changeSign": false,
+      "name": "1_X_N",
+      "reverseId": 60,
+      "description": "1/X - no",
+      "id": 61
+    },
+    {
+      "changeSign": false,
+      "name": "1_2",
+      "reverseId": 63,
+      "description": "1/2",
+      "id": 62
+    },
+    {
+      "changeSign": false,
+      "name": "1_2_N",
+      "reverseId": 62,
+      "description": "1/2 - no",
+      "id": 63
+    },
+    {
+      "changeSign": false,
+      "name": "X_1",
+      "reverseId": 65,
+      "description": "X/1",
+      "id": 64
+    },
+    {
+      "changeSign": false,
+      "name": "X_1_N",
+      "reverseId": 64,
+      "description": "X/1 - no",
+      "id": 65
+    },
+    {
+      "changeSign": false,
+      "name": "X_X",
+      "reverseId": 67,
+      "description": "X/X",
+      "id": 66
+    },
+    {
+      "changeSign": false,
+      "name": "X_X_N",
+      "reverseId": 66,
+      "description": "X/X - no",
+      "id": 67
+    },
+    {
+      "changeSign": false,
+      "name": "X_2",
+      "reverseId": 69,
+      "description": "X/2",
+      "id": 68
+    },
+    {
+      "changeSign": false,
+      "name": "X_2_N",
+      "reverseId": 68,
+      "description": "X/2 - no",
+      "id": 69
+    },
+    {
+      "changeSign": false,
+      "name": "2_1",
+      "reverseId": 71,
+      "description": "2/1",
+      "id": 70
+    },
+    {
+      "changeSign": false,
+      "name": "2_1_N",
+      "reverseId": 70,
+      "description": "2/1 - no",
+      "id": 71
+    },
+    {
+      "changeSign": false,
+      "name": "2_X",
+      "reverseId": 73,
+      "description": "2/X",
+      "id": 72
+    },
+    {
+      "changeSign": false,
+      "name": "2_X_N",
+      "reverseId": 72,
+      "description": "2/X - no",
+      "id": 73
+    },
+    {
+      "changeSign": false,
+      "name": "2_2",
+      "reverseId": 75,
+      "description": "2/2",
+      "id": 74
+    },
+    {
+      "changeSign": false,
+      "name": "2_2_N",
+      "reverseId": 74,
+      "description": "2/2 - no",
+      "id": 75
+    },
+    {
+      "changeSign": false,
+      "name": "EG",
+      "reverseId": 77,
+      "description": "Exact Goals",
+      "id": 76
+    },
+    {
+      "changeSign": false,
+      "name": "EG_N",
+      "reverseId": 76,
+      "description": "Exact Goals - no",
+      "id": 77
+    },
+    {
+      "changeSign": false,
+      "name": "MLX",
+      "reverseId": 79,
+      "description": "Draw",
+      "id": 78
+    },
+    {
+      "changeSign": false,
+      "name": "MLX_N",
+      "reverseId": 78,
+      "description": "No Draw",
+      "id": 79
+    },
+    {
+      "changeSign": false,
+      "name": "3",
+      "description": "3 quarter",
+      "id": 80
+    },
+    {
+      "changeSign": false,
+      "name": "4",
+      "description": "4 quarter",
+      "id": 81
+    }
+  ]
+}

@@ -1,0 +1,4118 @@
+[
+  {
+    "id": 1,
+    "title": "ML-ML1",
+    "marketId": 5,
+    "betTypeId": 1,
+    "swapId": 2
+  },
+  {
+    "id": 2,
+    "title": "ML-ML2",
+    "marketId": 5,
+    "betTypeId": 2,
+    "swapId": 1
+  },
+  {
+    "id": 3,
+    "title": "DNB-DNB1",
+    "marketId": 4,
+    "betTypeId": 3,
+    "swapId": 4
+  },
+  {
+    "id": 4,
+    "title": "DNB-DNB2",
+    "marketId": 4,
+    "betTypeId": 4,
+    "swapId": 3
+  },
+  {
+    "id": 5,
+    "title": "EH-EH1",
+    "marketId": 6,
+    "betTypeId": 35,
+    "swapId": 7
+  },
+  {
+    "id": 6,
+    "title": "EH-EHX",
+    "marketId": 6,
+    "betTypeId": 36,
+    "swapId": 0
+  },
+  {
+    "id": 7,
+    "title": "EH-EH2",
+    "marketId": 6,
+    "betTypeId": 37,
+    "swapId": 5
+  },
+  {
+    "id": 8,
+    "title": "BTS-Y",
+    "marketId": 11,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 9,
+    "title": "BTS-N",
+    "marketId": 11,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 10,
+    "title": "BTS-OTS_Y",
+    "marketId": 11,
+    "betTypeId": 42,
+    "swapId": 0
+  },
+  {
+    "id": 11,
+    "title": "1X2-1",
+    "marketId": 1,
+    "betTypeId": 32,
+    "swapId": 13
+  },
+  {
+    "id": 12,
+    "title": "1X2-X",
+    "marketId": 1,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 13,
+    "title": "1X2-2",
+    "marketId": 1,
+    "betTypeId": 34,
+    "swapId": 11
+  },
+  {
+    "id": 14,
+    "title": "DC-1X",
+    "marketId": 2,
+    "betTypeId": 29,
+    "swapId": 15
+  },
+  {
+    "id": 15,
+    "title": "DC-X2",
+    "marketId": 2,
+    "betTypeId": 30,
+    "swapId": 14
+  },
+  {
+    "id": 16,
+    "title": "DC-12",
+    "marketId": 2,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 17,
+    "title": "F-F1",
+    "marketId": 3,
+    "betTypeId": 5,
+    "swapId": 18
+  },
+  {
+    "id": 18,
+    "title": "F-F2",
+    "marketId": 3,
+    "betTypeId": 6,
+    "swapId": 17
+  },
+  {
+    "id": 19,
+    "title": "OU-TO",
+    "marketId": 7,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 20,
+    "title": "OU-TU",
+    "marketId": 7,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 21,
+    "title": "OU1-TO",
+    "marketId": 8,
+    "betTypeId": 7,
+    "swapId": 23
+  },
+  {
+    "id": 22,
+    "title": "OU1-TU",
+    "marketId": 8,
+    "betTypeId": 8,
+    "swapId": 24
+  },
+  {
+    "id": 23,
+    "title": "OU2-TO",
+    "marketId": 9,
+    "betTypeId": 7,
+    "swapId": 21
+  },
+  {
+    "id": 24,
+    "title": "OU2-TU",
+    "marketId": 9,
+    "betTypeId": 8,
+    "swapId": 22
+  },
+  {
+    "id": 25,
+    "title": "OE-ODD",
+    "marketId": 10,
+    "betTypeId": 23,
+    "swapId": 0
+  },
+  {
+    "id": 26,
+    "title": "OE-EVEN",
+    "marketId": 10,
+    "betTypeId": 24,
+    "swapId": 0
+  },
+  {
+    "id": 27,
+    "title": "YC_1X2-1",
+    "marketId": 15,
+    "betTypeId": 32,
+    "swapId": 29
+  },
+  {
+    "id": 28,
+    "title": "YC_1X2-X",
+    "marketId": 15,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 29,
+    "title": "YC_1X2-2",
+    "marketId": 15,
+    "betTypeId": 34,
+    "swapId": 27
+  },
+  {
+    "id": 30,
+    "title": "YC_DC-1X",
+    "marketId": 17,
+    "betTypeId": 29,
+    "swapId": 32
+  },
+  {
+    "id": 31,
+    "title": "YC_DC-12",
+    "marketId": 17,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 32,
+    "title": "YC_DC-X2",
+    "marketId": 17,
+    "betTypeId": 30,
+    "swapId": 30
+  },
+  {
+    "id": 33,
+    "title": "YC_F-F1",
+    "marketId": 16,
+    "betTypeId": 5,
+    "swapId": 34
+  },
+  {
+    "id": 34,
+    "title": "YC_F-F2",
+    "marketId": 16,
+    "betTypeId": 6,
+    "swapId": 33
+  },
+  {
+    "id": 35,
+    "title": "YC_OU-TO",
+    "marketId": 14,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 36,
+    "title": "YC_OU-TU",
+    "marketId": 14,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 37,
+    "title": "YC_OU1-TU",
+    "marketId": 18,
+    "betTypeId": 8,
+    "swapId": 39
+  },
+  {
+    "id": 38,
+    "title": "YC_OU1-TO",
+    "marketId": 18,
+    "betTypeId": 7,
+    "swapId": 40
+  },
+  {
+    "id": 39,
+    "title": "YC_OU2-TU",
+    "marketId": 19,
+    "betTypeId": 8,
+    "swapId": 37
+  },
+  {
+    "id": 40,
+    "title": "YC_OU2-TO",
+    "marketId": 19,
+    "betTypeId": 7,
+    "swapId": 38
+  },
+  {
+    "id": 41,
+    "title": "YC_OE-EVEN",
+    "marketId": 20,
+    "betTypeId": 24,
+    "swapId": 0
+  },
+  {
+    "id": 42,
+    "title": "YC_OE-ODD",
+    "marketId": 20,
+    "betTypeId": 23,
+    "swapId": 0
+  },
+  {
+    "id": 43,
+    "title": "CNR_1X2-1",
+    "marketId": 21,
+    "betTypeId": 32,
+    "swapId": 45
+  },
+  {
+    "id": 44,
+    "title": "CNR_1X2-X",
+    "marketId": 21,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 45,
+    "title": "CNR_1X2-2",
+    "marketId": 21,
+    "betTypeId": 34,
+    "swapId": 43
+  },
+  {
+    "id": 46,
+    "title": "CNR_DC-1X",
+    "marketId": 23,
+    "betTypeId": 29,
+    "swapId": 48
+  },
+  {
+    "id": 47,
+    "title": "CNR_DC-12",
+    "marketId": 23,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 48,
+    "title": "CNR_DC-X2",
+    "marketId": 23,
+    "betTypeId": 30,
+    "swapId": 46
+  },
+  {
+    "id": 49,
+    "title": "CNR_F-F1",
+    "marketId": 22,
+    "betTypeId": 5,
+    "swapId": 50
+  },
+  {
+    "id": 50,
+    "title": "CNR_F-F2",
+    "marketId": 22,
+    "betTypeId": 6,
+    "swapId": 49
+  },
+  {
+    "id": 51,
+    "title": "CNR_OU-TO",
+    "marketId": 24,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 52,
+    "title": "CNR_OU-TU",
+    "marketId": 24,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 53,
+    "title": "CNR_OU1-TU",
+    "marketId": 25,
+    "betTypeId": 8,
+    "swapId": 55
+  },
+  {
+    "id": 54,
+    "title": "CNR_OU1-TO",
+    "marketId": 25,
+    "betTypeId": 7,
+    "swapId": 56
+  },
+  {
+    "id": 55,
+    "title": "CNR_OU2-TU",
+    "marketId": 26,
+    "betTypeId": 8,
+    "swapId": 53
+  },
+  {
+    "id": 56,
+    "title": "CNR_OU2-TO",
+    "marketId": 26,
+    "betTypeId": 7,
+    "swapId": 54
+  },
+  {
+    "id": 57,
+    "title": "CNR_OE-ODD",
+    "marketId": 27,
+    "betTypeId": 23,
+    "swapId": 0
+  },
+  {
+    "id": 58,
+    "title": "CNR_OE-EVEN",
+    "marketId": 27,
+    "betTypeId": 24,
+    "swapId": 0
+  },
+  {
+    "id": 63,
+    "title": "RC-Y",
+    "marketId": 12,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 64,
+    "title": "RC-N",
+    "marketId": 12,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 65,
+    "title": "PEN-Y",
+    "marketId": 13,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 66,
+    "title": "PEN-N",
+    "marketId": 13,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 67,
+    "title": "CS-CS",
+    "marketId": 30,
+    "betTypeId": 50,
+    "swapId": 0
+  },
+  {
+    "id": 68,
+    "title": "TB-TO",
+    "marketId": 31,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 69,
+    "title": "TB-TU",
+    "marketId": 31,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 70,
+    "title": "CS-CS_N",
+    "marketId": 30,
+    "betTypeId": 51,
+    "swapId": 0
+  },
+  {
+    "id": 71,
+    "title": "SWS-Y",
+    "marketId": 32,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 72,
+    "title": "SWS-N",
+    "marketId": 32,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 73,
+    "title": "W1G1-Y",
+    "marketId": 33,
+    "betTypeId": 48,
+    "swapId": 75
+  },
+  {
+    "id": 74,
+    "title": "W1G1-N",
+    "marketId": 33,
+    "betTypeId": 49,
+    "swapId": 76
+  },
+  {
+    "id": 75,
+    "title": "W1G2-Y",
+    "marketId": 34,
+    "betTypeId": 48,
+    "swapId": 73
+  },
+  {
+    "id": 76,
+    "title": "W1G2-N",
+    "marketId": 34,
+    "betTypeId": 49,
+    "swapId": 74
+  },
+  {
+    "id": 77,
+    "title": "W2G1-Y",
+    "marketId": 35,
+    "betTypeId": 48,
+    "swapId": 81
+  },
+  {
+    "id": 78,
+    "title": "W2G1-N",
+    "marketId": 35,
+    "betTypeId": 49,
+    "swapId": 82
+  },
+  {
+    "id": 79,
+    "title": "W3G1-Y",
+    "marketId": 36,
+    "betTypeId": 48,
+    "swapId": 83
+  },
+  {
+    "id": 80,
+    "title": "W3G1-N",
+    "marketId": 36,
+    "betTypeId": 49,
+    "swapId": 84
+  },
+  {
+    "id": 81,
+    "title": "W2G2-Y",
+    "marketId": 37,
+    "betTypeId": 48,
+    "swapId": 77
+  },
+  {
+    "id": 82,
+    "title": "W2G2-N",
+    "marketId": 37,
+    "betTypeId": 49,
+    "swapId": 78
+  },
+  {
+    "id": 83,
+    "title": "W3G2-Y",
+    "marketId": 38,
+    "betTypeId": 48,
+    "swapId": 79
+  },
+  {
+    "id": 84,
+    "title": "W3G2-N",
+    "marketId": 38,
+    "betTypeId": 49,
+    "swapId": 80
+  },
+  {
+    "id": 85,
+    "title": "WTN1-Y",
+    "marketId": 39,
+    "betTypeId": 48,
+    "swapId": 87
+  },
+  {
+    "id": 86,
+    "title": "WTN1-N",
+    "marketId": 39,
+    "betTypeId": 49,
+    "swapId": 88
+  },
+  {
+    "id": 87,
+    "title": "WTN2-Y",
+    "marketId": 40,
+    "betTypeId": 48,
+    "swapId": 85
+  },
+  {
+    "id": 88,
+    "title": "WTN2-N",
+    "marketId": 40,
+    "betTypeId": 49,
+    "swapId": 86
+  },
+  {
+    "id": 89,
+    "title": "WEH1-Y",
+    "marketId": 41,
+    "betTypeId": 48,
+    "swapId": 91
+  },
+  {
+    "id": 90,
+    "title": "WEH1-N",
+    "marketId": 41,
+    "betTypeId": 49,
+    "swapId": 92
+  },
+  {
+    "id": 91,
+    "title": "WEH2-Y",
+    "marketId": 42,
+    "betTypeId": 48,
+    "swapId": 89
+  },
+  {
+    "id": 92,
+    "title": "WEH2-N",
+    "marketId": 42,
+    "betTypeId": 49,
+    "swapId": 90
+  },
+  {
+    "id": 93,
+    "title": "DEH-Y",
+    "marketId": 43,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 94,
+    "title": "DEH-N",
+    "marketId": 43,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 95,
+    "title": "WBH1-Y",
+    "marketId": 44,
+    "betTypeId": 48,
+    "swapId": 97
+  },
+  {
+    "id": 96,
+    "title": "WBH1-N",
+    "marketId": 44,
+    "betTypeId": 49,
+    "swapId": 98
+  },
+  {
+    "id": 97,
+    "title": "WBH2-Y",
+    "marketId": 45,
+    "betTypeId": 48,
+    "swapId": 95
+  },
+  {
+    "id": 98,
+    "title": "WBH2-N",
+    "marketId": 45,
+    "betTypeId": 49,
+    "swapId": 96
+  },
+  {
+    "id": 99,
+    "title": "WTO1-Y",
+    "marketId": 46,
+    "betTypeId": 48,
+    "swapId": 103
+  },
+  {
+    "id": 100,
+    "title": "WTO1-N",
+    "marketId": 46,
+    "betTypeId": 49,
+    "swapId": 104
+  },
+  {
+    "id": 101,
+    "title": "WTU1-Y",
+    "marketId": 47,
+    "betTypeId": 48,
+    "swapId": 105
+  },
+  {
+    "id": 102,
+    "title": "WTU1-N",
+    "marketId": 47,
+    "betTypeId": 49,
+    "swapId": 106
+  },
+  {
+    "id": 103,
+    "title": "WTO2-Y",
+    "marketId": 48,
+    "betTypeId": 48,
+    "swapId": 99
+  },
+  {
+    "id": 104,
+    "title": "WTO2-N",
+    "marketId": 48,
+    "betTypeId": 49,
+    "swapId": 100
+  },
+  {
+    "id": 105,
+    "title": "WTU2-Y",
+    "marketId": 49,
+    "betTypeId": 48,
+    "swapId": 101
+  },
+  {
+    "id": 106,
+    "title": "WTU2-N",
+    "marketId": 49,
+    "betTypeId": 49,
+    "swapId": 102
+  },
+  {
+    "id": 107,
+    "title": "DBH-Y",
+    "marketId": 50,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 108,
+    "title": "DBH-N",
+    "marketId": 50,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 109,
+    "title": "DTO-Y",
+    "marketId": 51,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 110,
+    "title": "DTO-N",
+    "marketId": 51,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 111,
+    "title": "DTU-Y",
+    "marketId": 52,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 112,
+    "title": "DTU-N",
+    "marketId": 52,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 113,
+    "title": "GBH-Y",
+    "marketId": 53,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 114,
+    "title": "GBH-N",
+    "marketId": 53,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 115,
+    "title": "GBH1-Y",
+    "marketId": 54,
+    "betTypeId": 48,
+    "swapId": 117
+  },
+  {
+    "id": 116,
+    "title": "GBH1-N",
+    "marketId": 54,
+    "betTypeId": 49,
+    "swapId": 118
+  },
+  {
+    "id": 117,
+    "title": "GBH2-Y",
+    "marketId": 55,
+    "betTypeId": 48,
+    "swapId": 115
+  },
+  {
+    "id": 118,
+    "title": "GBH2-N",
+    "marketId": 55,
+    "betTypeId": 49,
+    "swapId": 116
+  },
+  {
+    "id": 119,
+    "title": "DBL-Y",
+    "marketId": 56,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 120,
+    "title": "DBL-N",
+    "marketId": 56,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 121,
+    "title": "HTR-Y",
+    "marketId": 57,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 122,
+    "title": "HTR-N",
+    "marketId": 57,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 123,
+    "title": "OG-Y",
+    "marketId": 58,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 124,
+    "title": "OG-N",
+    "marketId": 58,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 125,
+    "title": "BHO-Y",
+    "marketId": 59,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 126,
+    "title": "BHO-N",
+    "marketId": 59,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 127,
+    "title": "BHU-Y",
+    "marketId": 60,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 128,
+    "title": "BHU-N",
+    "marketId": 60,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 129,
+    "title": "SET_CS-SET_CS",
+    "marketId": 61,
+    "betTypeId": 52,
+    "swapId": 0
+  },
+  {
+    "id": 130,
+    "title": "SET_CS-SET_CS_N",
+    "marketId": 61,
+    "betTypeId": 53,
+    "swapId": 0
+  },
+  {
+    "id": 131,
+    "title": "SET_F-SET_F1",
+    "marketId": 62,
+    "betTypeId": 54,
+    "swapId": 132
+  },
+  {
+    "id": 132,
+    "title": "SET_F-SET_F2",
+    "marketId": 62,
+    "betTypeId": 55,
+    "swapId": 131
+  },
+  {
+    "id": 133,
+    "title": "SET_OU-SET_TO",
+    "marketId": 63,
+    "betTypeId": 56,
+    "swapId": 0
+  },
+  {
+    "id": 134,
+    "title": "SET_OU-SET_TU",
+    "marketId": 63,
+    "betTypeId": 57,
+    "swapId": 0
+  },
+  {
+    "id": 135,
+    "title": "HTFT-1_1",
+    "marketId": 64,
+    "betTypeId": 58,
+    "swapId": 0
+  },
+  {
+    "id": 136,
+    "title": "HTFT-1_1_N",
+    "marketId": 64,
+    "betTypeId": 59,
+    "swapId": 0
+  },
+  {
+    "id": 137,
+    "title": "HTFT-1_X",
+    "marketId": 64,
+    "betTypeId": 60,
+    "swapId": 0
+  },
+  {
+    "id": 138,
+    "title": "HTFT-1_X_N",
+    "marketId": 64,
+    "betTypeId": 61,
+    "swapId": 0
+  },
+  {
+    "id": 139,
+    "title": "HTFT-1_2",
+    "marketId": 64,
+    "betTypeId": 62,
+    "swapId": 0
+  },
+  {
+    "id": 140,
+    "title": "HTFT-1_2_N",
+    "marketId": 64,
+    "betTypeId": 63,
+    "swapId": 0
+  },
+  {
+    "id": 141,
+    "title": "HTFT-X_1",
+    "marketId": 64,
+    "betTypeId": 64,
+    "swapId": 0
+  },
+  {
+    "id": 142,
+    "title": "HTFT-X_1_N",
+    "marketId": 64,
+    "betTypeId": 65,
+    "swapId": 0
+  },
+  {
+    "id": 143,
+    "title": "HTFT-X_X",
+    "marketId": 64,
+    "betTypeId": 66,
+    "swapId": 0
+  },
+  {
+    "id": 144,
+    "title": "HTFT-X_X_N",
+    "marketId": 64,
+    "betTypeId": 67,
+    "swapId": 0
+  },
+  {
+    "id": 145,
+    "title": "HTFT-X_2",
+    "marketId": 64,
+    "betTypeId": 68,
+    "swapId": 0
+  },
+  {
+    "id": 146,
+    "title": "HTFT-X_2_N",
+    "marketId": 64,
+    "betTypeId": 69,
+    "swapId": 0
+  },
+  {
+    "id": 147,
+    "title": "HTFT-2_1",
+    "marketId": 64,
+    "betTypeId": 70,
+    "swapId": 0
+  },
+  {
+    "id": 148,
+    "title": "HTFT-2_1_N",
+    "marketId": 64,
+    "betTypeId": 71,
+    "swapId": 0
+  },
+  {
+    "id": 149,
+    "title": "HTFT-2_X",
+    "marketId": 64,
+    "betTypeId": 72,
+    "swapId": 0
+  },
+  {
+    "id": 150,
+    "title": "HTFT-2_X_N",
+    "marketId": 64,
+    "betTypeId": 73,
+    "swapId": 0
+  },
+  {
+    "id": 151,
+    "title": "HTFT-2_2",
+    "marketId": 64,
+    "betTypeId": 74,
+    "swapId": 0
+  },
+  {
+    "id": 152,
+    "title": "HTFT-2_2_N",
+    "marketId": 64,
+    "betTypeId": 75,
+    "swapId": 0
+  },
+  {
+    "id": 153,
+    "title": "EG-EG",
+    "marketId": 65,
+    "betTypeId": 76,
+    "swapId": 0
+  },
+  {
+    "id": 154,
+    "title": "EG-EG_N",
+    "marketId": 65,
+    "betTypeId": 77,
+    "swapId": 0
+  },
+  {
+    "id": 155,
+    "title": "EG1-EG",
+    "marketId": 66,
+    "betTypeId": 76,
+    "swapId": 157
+  },
+  {
+    "id": 156,
+    "title": "EG1-EG_N",
+    "marketId": 66,
+    "betTypeId": 77,
+    "swapId": 158
+  },
+  {
+    "id": 157,
+    "title": "EG2-EG",
+    "marketId": 67,
+    "betTypeId": 76,
+    "swapId": 155
+  },
+  {
+    "id": 158,
+    "title": "EG2-EG_N",
+    "marketId": 67,
+    "betTypeId": 77,
+    "swapId": 156
+  },
+  {
+    "id": 159,
+    "title": "HMG-1",
+    "marketId": 68,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 160,
+    "title": "HMG-X",
+    "marketId": 68,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 161,
+    "title": "HMG-2",
+    "marketId": 68,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 162,
+    "title": "HMG-ML1",
+    "marketId": 68,
+    "betTypeId": 1,
+    "swapId": 163
+  },
+  {
+    "id": 163,
+    "title": "HMG-ML2",
+    "marketId": 68,
+    "betTypeId": 2,
+    "swapId": 162
+  },
+  {
+    "id": 164,
+    "title": "FG-1",
+    "marketId": 69,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 165,
+    "title": "FG-X",
+    "marketId": 69,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 166,
+    "title": "FG-2",
+    "marketId": 69,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 167,
+    "title": "FG-ML1",
+    "marketId": 69,
+    "betTypeId": 1,
+    "swapId": 168
+  },
+  {
+    "id": 168,
+    "title": "FG-ML2",
+    "marketId": 69,
+    "betTypeId": 2,
+    "swapId": 167
+  },
+  {
+    "id": 169,
+    "title": "LG-1",
+    "marketId": 70,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 170,
+    "title": "LG-X",
+    "marketId": 70,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 171,
+    "title": "LG-2",
+    "marketId": 70,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 172,
+    "title": "LG-ML1",
+    "marketId": 70,
+    "betTypeId": 1,
+    "swapId": 173
+  },
+  {
+    "id": 173,
+    "title": "LG-ML2",
+    "marketId": 70,
+    "betTypeId": 2,
+    "swapId": 172
+  },
+  {
+    "id": 174,
+    "title": "ACE_OU-TO",
+    "marketId": 71,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 175,
+    "title": "ACE_OU-TU",
+    "marketId": 71,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 176,
+    "title": "ACE_OU1-TO",
+    "marketId": 72,
+    "betTypeId": 7,
+    "swapId": 178
+  },
+  {
+    "id": 177,
+    "title": "ACE_OU1-TU",
+    "marketId": 72,
+    "betTypeId": 8,
+    "swapId": 179
+  },
+  {
+    "id": 178,
+    "title": "ACE_OU2-TO",
+    "marketId": 73,
+    "betTypeId": 7,
+    "swapId": 176
+  },
+  {
+    "id": 179,
+    "title": "ACE_OU2-TU",
+    "marketId": 73,
+    "betTypeId": 8,
+    "swapId": 177
+  },
+  {
+    "id": 180,
+    "title": "DBF_OU-TO",
+    "marketId": 74,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 181,
+    "title": "DBF_OU-TU",
+    "marketId": 74,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 182,
+    "title": "DBF_OU1-TO",
+    "marketId": 75,
+    "betTypeId": 7,
+    "swapId": 184
+  },
+  {
+    "id": 183,
+    "title": "DBF_OU1-TU",
+    "marketId": 75,
+    "betTypeId": 8,
+    "swapId": 185
+  },
+  {
+    "id": 184,
+    "title": "DBF_OU2-TO",
+    "marketId": 76,
+    "betTypeId": 7,
+    "swapId": 182
+  },
+  {
+    "id": 185,
+    "title": "DBF_OU2-TU",
+    "marketId": 76,
+    "betTypeId": 8,
+    "swapId": 183
+  },
+  {
+    "id": 186,
+    "title": "1SER_OU1-TO",
+    "marketId": 77,
+    "betTypeId": 7,
+    "swapId": 188
+  },
+  {
+    "id": 187,
+    "title": "1SER_OU1-TU",
+    "marketId": 77,
+    "betTypeId": 8,
+    "swapId": 189
+  },
+  {
+    "id": 188,
+    "title": "1SER_OU2-TO",
+    "marketId": 78,
+    "betTypeId": 7,
+    "swapId": 186
+  },
+  {
+    "id": 189,
+    "title": "1SER_OU2-TU",
+    "marketId": 78,
+    "betTypeId": 8,
+    "swapId": 187
+  },
+  {
+    "id": 190,
+    "title": "ACE_F-F1",
+    "marketId": 79,
+    "betTypeId": 5,
+    "swapId": 191
+  },
+  {
+    "id": 191,
+    "title": "ACE_F-F2",
+    "marketId": 79,
+    "betTypeId": 6,
+    "swapId": 190
+  },
+  {
+    "id": 192,
+    "title": "DBF_F-F1",
+    "marketId": 80,
+    "betTypeId": 5,
+    "swapId": 193
+  },
+  {
+    "id": 193,
+    "title": "DBF_F-F2",
+    "marketId": 80,
+    "betTypeId": 6,
+    "swapId": 192
+  },
+  {
+    "id": 194,
+    "title": "1SER_F-F1",
+    "marketId": 81,
+    "betTypeId": 5,
+    "swapId": 195
+  },
+  {
+    "id": 195,
+    "title": "1SER_F-F2",
+    "marketId": 81,
+    "betTypeId": 6,
+    "swapId": 194
+  },
+  {
+    "id": 196,
+    "title": "1ACE-ML1",
+    "marketId": 82,
+    "betTypeId": 1,
+    "swapId": 197
+  },
+  {
+    "id": 197,
+    "title": "1ACE-ML2",
+    "marketId": 82,
+    "betTypeId": 2,
+    "swapId": 196
+  },
+  {
+    "id": 198,
+    "title": "1DBF-ML1",
+    "marketId": 83,
+    "betTypeId": 1,
+    "swapId": 199
+  },
+  {
+    "id": 199,
+    "title": "1DBF-ML2",
+    "marketId": 83,
+    "betTypeId": 2,
+    "swapId": 198
+  },
+  {
+    "id": 200,
+    "title": "1BR-ML1",
+    "marketId": 84,
+    "betTypeId": 1,
+    "swapId": 201
+  },
+  {
+    "id": 201,
+    "title": "1BR-ML2",
+    "marketId": 84,
+    "betTypeId": 2,
+    "swapId": 200
+  },
+  {
+    "id": 202,
+    "title": "1BR-1",
+    "marketId": 84,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 203,
+    "title": "1BR-X",
+    "marketId": 84,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 204,
+    "title": "1BR-2",
+    "marketId": 84,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 205,
+    "title": "60SET-Y",
+    "marketId": 85,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 206,
+    "title": "60SET-N",
+    "marketId": 85,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 207,
+    "title": "WFB-Y",
+    "marketId": 86,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 208,
+    "title": "WFB-N",
+    "marketId": 86,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 209,
+    "title": "SET_EG-EG",
+    "marketId": 87,
+    "betTypeId": 76,
+    "swapId": 0
+  },
+  {
+    "id": 210,
+    "title": "SET_EG-EG_N",
+    "marketId": 87,
+    "betTypeId": 77,
+    "swapId": 0
+  },
+  {
+    "id": 211,
+    "title": "1CNR-1",
+    "marketId": 88,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 212,
+    "title": "1CNR-X",
+    "marketId": 88,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 213,
+    "title": "1CNR-2",
+    "marketId": 88,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 214,
+    "title": "LCNR-1",
+    "marketId": 89,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 215,
+    "title": "LCNR-X",
+    "marketId": 89,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 216,
+    "title": "LCNR-2",
+    "marketId": 89,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 217,
+    "title": "1YC-1",
+    "marketId": 90,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 218,
+    "title": "1YC-X",
+    "marketId": 90,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 219,
+    "title": "1YC-2",
+    "marketId": 90,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 220,
+    "title": "LYC-1",
+    "marketId": 91,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 221,
+    "title": "LYC-X",
+    "marketId": 91,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 222,
+    "title": "LYC-2",
+    "marketId": 91,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 223,
+    "title": "1OFS-1",
+    "marketId": 92,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 224,
+    "title": "1OFS-X",
+    "marketId": 92,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 225,
+    "title": "1OFS-2",
+    "marketId": 92,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 226,
+    "title": "LOFS-1",
+    "marketId": 93,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 227,
+    "title": "LOFS-X",
+    "marketId": 93,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 228,
+    "title": "LOFS-2",
+    "marketId": 93,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 229,
+    "title": "TIME_SUBS-1",
+    "marketId": 94,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 230,
+    "title": "TIME_SUBS-X",
+    "marketId": 94,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 231,
+    "title": "TIME_SUBS-2",
+    "marketId": 94,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 232,
+    "title": "TIME_FG-1",
+    "marketId": 95,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 233,
+    "title": "TIME_FG-X",
+    "marketId": 95,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 234,
+    "title": "TIME_FG-2",
+    "marketId": 95,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 235,
+    "title": "1SUBS-ML1",
+    "marketId": 96,
+    "betTypeId": 1,
+    "swapId": 236
+  },
+  {
+    "id": 236,
+    "title": "1SUBS-ML2",
+    "marketId": 96,
+    "betTypeId": 2,
+    "swapId": 235
+  },
+  {
+    "id": 237,
+    "title": "LSUBS-ML1",
+    "marketId": 97,
+    "betTypeId": 1,
+    "swapId": 238
+  },
+  {
+    "id": 238,
+    "title": "LSUBS-ML2",
+    "marketId": 97,
+    "betTypeId": 2,
+    "swapId": 237
+  },
+  {
+    "id": 239,
+    "title": "SHOT_1X2-1",
+    "marketId": 98,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 240,
+    "title": "SHOT_1X2-X",
+    "marketId": 98,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 241,
+    "title": "SHOT_1X2-2",
+    "marketId": 98,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 242,
+    "title": "SHOT_DC-1X",
+    "marketId": 99,
+    "betTypeId": 29,
+    "swapId": 0
+  },
+  {
+    "id": 243,
+    "title": "SHOT_DC-12",
+    "marketId": 99,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 244,
+    "title": "SHOT_DC-X2",
+    "marketId": 99,
+    "betTypeId": 30,
+    "swapId": 0
+  },
+  {
+    "id": 245,
+    "title": "SHOT_F-F1",
+    "marketId": 100,
+    "betTypeId": 5,
+    "swapId": 246
+  },
+  {
+    "id": 246,
+    "title": "SHOT_F-F2",
+    "marketId": 100,
+    "betTypeId": 6,
+    "swapId": 245
+  },
+  {
+    "id": 247,
+    "title": "SHOT_OU-TO",
+    "marketId": 101,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 248,
+    "title": "SHOT_OU-TU",
+    "marketId": 101,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 249,
+    "title": "SHOT_OU1-TO",
+    "marketId": 102,
+    "betTypeId": 7,
+    "swapId": 251
+  },
+  {
+    "id": 250,
+    "title": "SHOT_OU1-TU",
+    "marketId": 102,
+    "betTypeId": 8,
+    "swapId": 252
+  },
+  {
+    "id": 251,
+    "title": "SHOT_OU2-TO",
+    "marketId": 103,
+    "betTypeId": 7,
+    "swapId": 249
+  },
+  {
+    "id": 252,
+    "title": "SHOT_OU2-TU",
+    "marketId": 103,
+    "betTypeId": 8,
+    "swapId": 250
+  },
+  {
+    "id": 253,
+    "title": "SHOT_OE-ODD",
+    "marketId": 104,
+    "betTypeId": 23,
+    "swapId": 0
+  },
+  {
+    "id": 254,
+    "title": "SHOT_OE-EVEN",
+    "marketId": 104,
+    "betTypeId": 24,
+    "swapId": 0
+  },
+  {
+    "id": 255,
+    "title": "FOUL_1X2-1",
+    "marketId": 105,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 256,
+    "title": "FOUL_1X2-X",
+    "marketId": 105,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 257,
+    "title": "FOUL_1X2-2",
+    "marketId": 105,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 258,
+    "title": "FOUL_DC-1X",
+    "marketId": 106,
+    "betTypeId": 29,
+    "swapId": 0
+  },
+  {
+    "id": 259,
+    "title": "FOUL_DC-12",
+    "marketId": 106,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 260,
+    "title": "FOUL_DC-X2",
+    "marketId": 106,
+    "betTypeId": 30,
+    "swapId": 0
+  },
+  {
+    "id": 261,
+    "title": "FOUL_F-F1",
+    "marketId": 107,
+    "betTypeId": 5,
+    "swapId": 262
+  },
+  {
+    "id": 262,
+    "title": "FOUL_F-F2",
+    "marketId": 107,
+    "betTypeId": 6,
+    "swapId": 261
+  },
+  {
+    "id": 263,
+    "title": "FOUL_OU-TO",
+    "marketId": 108,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 264,
+    "title": "FOUL_OU-TU",
+    "marketId": 108,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 265,
+    "title": "FOUL_OU1-TO",
+    "marketId": 109,
+    "betTypeId": 7,
+    "swapId": 267
+  },
+  {
+    "id": 266,
+    "title": "FOUL_OU1-TU",
+    "marketId": 109,
+    "betTypeId": 8,
+    "swapId": 268
+  },
+  {
+    "id": 267,
+    "title": "FOUL_OU2-TO",
+    "marketId": 110,
+    "betTypeId": 7,
+    "swapId": 265
+  },
+  {
+    "id": 268,
+    "title": "FOUL_OU2-TU",
+    "marketId": 110,
+    "betTypeId": 8,
+    "swapId": 266
+  },
+  {
+    "id": 269,
+    "title": "FOUL_OE-ODD",
+    "marketId": 111,
+    "betTypeId": 23,
+    "swapId": 0
+  },
+  {
+    "id": 270,
+    "title": "FOUL_OE-EVEN",
+    "marketId": 111,
+    "betTypeId": 24,
+    "swapId": 0
+  },
+  {
+    "id": 271,
+    "title": "OFS_1X2-1",
+    "marketId": 112,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 272,
+    "title": "OFS_1X2-X",
+    "marketId": 112,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 273,
+    "title": "OFS_1X2-2",
+    "marketId": 112,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 274,
+    "title": "OFS_DC-1X",
+    "marketId": 113,
+    "betTypeId": 29,
+    "swapId": 0
+  },
+  {
+    "id": 275,
+    "title": "OFS_DC-12",
+    "marketId": 113,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 276,
+    "title": "OFS_DC-X2",
+    "marketId": 113,
+    "betTypeId": 30,
+    "swapId": 0
+  },
+  {
+    "id": 277,
+    "title": "OFS_F-F1",
+    "marketId": 114,
+    "betTypeId": 5,
+    "swapId": 278
+  },
+  {
+    "id": 278,
+    "title": "OFS_F-F2",
+    "marketId": 114,
+    "betTypeId": 6,
+    "swapId": 277
+  },
+  {
+    "id": 279,
+    "title": "OFS_OU-TO",
+    "marketId": 115,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 280,
+    "title": "OFS_OU-TU",
+    "marketId": 115,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 281,
+    "title": "OFS_OU1-TO",
+    "marketId": 116,
+    "betTypeId": 7,
+    "swapId": 283
+  },
+  {
+    "id": 282,
+    "title": "OFS_OU1-TU",
+    "marketId": 116,
+    "betTypeId": 8,
+    "swapId": 284
+  },
+  {
+    "id": 283,
+    "title": "OFS_OU2-TO",
+    "marketId": 117,
+    "betTypeId": 7,
+    "swapId": 281
+  },
+  {
+    "id": 284,
+    "title": "OFS_OU2-TU",
+    "marketId": 117,
+    "betTypeId": 8,
+    "swapId": 282
+  },
+  {
+    "id": 285,
+    "title": "OFS_OE-ODD",
+    "marketId": 118,
+    "betTypeId": 23,
+    "swapId": 0
+  },
+  {
+    "id": 286,
+    "title": "OFS_OE-EVEN",
+    "marketId": 118,
+    "betTypeId": 24,
+    "swapId": 0
+  },
+  {
+    "id": 287,
+    "title": "WFB1-Y",
+    "marketId": 119,
+    "betTypeId": 48,
+    "swapId": 289
+  },
+  {
+    "id": 288,
+    "title": "WFB1-N",
+    "marketId": 119,
+    "betTypeId": 49,
+    "swapId": 290
+  },
+  {
+    "id": 289,
+    "title": "WFB2-Y",
+    "marketId": 120,
+    "betTypeId": 48,
+    "swapId": 287
+  },
+  {
+    "id": 290,
+    "title": "WFB2-N",
+    "marketId": 120,
+    "betTypeId": 49,
+    "swapId": 288
+  },
+  {
+    "id": 291,
+    "title": "BTSW1-Y",
+    "marketId": 121,
+    "betTypeId": 48,
+    "swapId": 293
+  },
+  {
+    "id": 292,
+    "title": "BTSW1-N",
+    "marketId": 121,
+    "betTypeId": 49,
+    "swapId": 294
+  },
+  {
+    "id": 293,
+    "title": "BTSW2-Y",
+    "marketId": 122,
+    "betTypeId": 48,
+    "swapId": 291
+  },
+  {
+    "id": 294,
+    "title": "BTSW2-N",
+    "marketId": 122,
+    "betTypeId": 49,
+    "swapId": 292
+  },
+  {
+    "id": 295,
+    "title": "BTSD-Y",
+    "marketId": 123,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 296,
+    "title": "BTSD-N",
+    "marketId": 123,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 297,
+    "title": "ADDED_EG-EG",
+    "marketId": 124,
+    "betTypeId": 76,
+    "swapId": 0
+  },
+  {
+    "id": 298,
+    "title": "ADDED_EG-EG_N",
+    "marketId": 124,
+    "betTypeId": 77,
+    "swapId": 0
+  },
+  {
+    "id": 299,
+    "title": "ADDED_OU-TO",
+    "marketId": 125,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 300,
+    "title": "ADDED_OU-TU",
+    "marketId": 125,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 301,
+    "title": "NB1-ML2",
+    "marketId": 126,
+    "betTypeId": 2,
+    "swapId": 338
+  },
+  {
+    "id": 302,
+    "title": "NB1-MLX",
+    "marketId": 126,
+    "betTypeId": 78,
+    "swapId": 305
+  },
+  {
+    "id": 303,
+    "title": "NB1-MLX_N",
+    "marketId": 126,
+    "betTypeId": 79,
+    "swapId": 306
+  },
+  {
+    "id": 304,
+    "title": "NB2-ML1",
+    "marketId": 127,
+    "betTypeId": 1,
+    "swapId": 337
+  },
+  {
+    "id": 305,
+    "title": "NB2-MLX",
+    "marketId": 127,
+    "betTypeId": 78,
+    "swapId": 302
+  },
+  {
+    "id": 306,
+    "title": "NB2-MLX_N",
+    "marketId": 127,
+    "betTypeId": 79,
+    "swapId": 303
+  },
+  {
+    "id": 307,
+    "title": "SUBS_OU-TO",
+    "marketId": 128,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 308,
+    "title": "SUBS_OU-TU",
+    "marketId": 128,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 309,
+    "title": "SUBS_OU1-TO",
+    "marketId": 129,
+    "betTypeId": 7,
+    "swapId": 311
+  },
+  {
+    "id": 310,
+    "title": "SUBS_OU1-TU",
+    "marketId": 129,
+    "betTypeId": 8,
+    "swapId": 312
+  },
+  {
+    "id": 311,
+    "title": "SUBS_OU2-TO",
+    "marketId": 130,
+    "betTypeId": 7,
+    "swapId": 309
+  },
+  {
+    "id": 312,
+    "title": "SUBS_OU2-TU",
+    "marketId": 130,
+    "betTypeId": 8,
+    "swapId": 310
+  },
+  {
+    "id": 313,
+    "title": "POS_1X2-1",
+    "marketId": 131,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 314,
+    "title": "POS_1X2-X",
+    "marketId": 131,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 315,
+    "title": "POS_1X2-2",
+    "marketId": 131,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 316,
+    "title": "POS_DC-1X",
+    "marketId": 132,
+    "betTypeId": 29,
+    "swapId": 0
+  },
+  {
+    "id": 317,
+    "title": "POS_DC-12",
+    "marketId": 132,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 318,
+    "title": "POS_DC-X2",
+    "marketId": 132,
+    "betTypeId": 30,
+    "swapId": 0
+  },
+  {
+    "id": 319,
+    "title": "POS_F-F1",
+    "marketId": 133,
+    "betTypeId": 5,
+    "swapId": 320
+  },
+  {
+    "id": 320,
+    "title": "POS_F-F2",
+    "marketId": 133,
+    "betTypeId": 6,
+    "swapId": 319
+  },
+  {
+    "id": 321,
+    "title": "POS_OU1-TO",
+    "marketId": 134,
+    "betTypeId": 7,
+    "swapId": 323
+  },
+  {
+    "id": 322,
+    "title": "POS_OU1-TU",
+    "marketId": 134,
+    "betTypeId": 8,
+    "swapId": 324
+  },
+  {
+    "id": 323,
+    "title": "POS_OU2-TO",
+    "marketId": 135,
+    "betTypeId": 7,
+    "swapId": 321
+  },
+  {
+    "id": 324,
+    "title": "POS_OU2-TU",
+    "marketId": 135,
+    "betTypeId": 8,
+    "swapId": 322
+  },
+  {
+    "id": 325,
+    "title": "1CNR-ML1",
+    "marketId": 88,
+    "betTypeId": 1,
+    "swapId": 326
+  },
+  {
+    "id": 326,
+    "title": "1CNR-ML2",
+    "marketId": 88,
+    "betTypeId": 2,
+    "swapId": 325
+  },
+  {
+    "id": 327,
+    "title": "LCNR-ML1",
+    "marketId": 89,
+    "betTypeId": 1,
+    "swapId": 328
+  },
+  {
+    "id": 328,
+    "title": "LCNR-ML2",
+    "marketId": 89,
+    "betTypeId": 2,
+    "swapId": 327
+  },
+  {
+    "id": 329,
+    "title": "1YC-ML1",
+    "marketId": 90,
+    "betTypeId": 1,
+    "swapId": 330
+  },
+  {
+    "id": 330,
+    "title": "1YC-ML2",
+    "marketId": 90,
+    "betTypeId": 2,
+    "swapId": 329
+  },
+  {
+    "id": 331,
+    "title": "LYC-ML1",
+    "marketId": 91,
+    "betTypeId": 1,
+    "swapId": 332
+  },
+  {
+    "id": 332,
+    "title": "LYC-ML2",
+    "marketId": 91,
+    "betTypeId": 2,
+    "swapId": 331
+  },
+  {
+    "id": 333,
+    "title": "1OFS-ML1",
+    "marketId": 92,
+    "betTypeId": 1,
+    "swapId": 334
+  },
+  {
+    "id": 334,
+    "title": "1OFS-ML2",
+    "marketId": 92,
+    "betTypeId": 2,
+    "swapId": 333
+  },
+  {
+    "id": 335,
+    "title": "LOFS-ML1",
+    "marketId": 93,
+    "betTypeId": 1,
+    "swapId": 336
+  },
+  {
+    "id": 336,
+    "title": "LOFS-ML2",
+    "marketId": 93,
+    "betTypeId": 2,
+    "swapId": 335
+  },
+  {
+    "id": 337,
+    "title": "NB1-ML1",
+    "marketId": 126,
+    "betTypeId": 1,
+    "swapId": 304
+  },
+  {
+    "id": 338,
+    "title": "NB2-ML2",
+    "marketId": 127,
+    "betTypeId": 2,
+    "swapId": 301
+  },
+  {
+    "id": 339,
+    "title": "TOX1-Y",
+    "marketId": 136,
+    "betTypeId": 48,
+    "swapId": 343
+  },
+  {
+    "id": 340,
+    "title": "TOX1-N",
+    "marketId": 136,
+    "betTypeId": 49,
+    "swapId": 344
+  },
+  {
+    "id": 341,
+    "title": "TUX1-Y",
+    "marketId": 137,
+    "betTypeId": 48,
+    "swapId": 345
+  },
+  {
+    "id": 342,
+    "title": "TUX1-N",
+    "marketId": 137,
+    "betTypeId": 49,
+    "swapId": 346
+  },
+  {
+    "id": 343,
+    "title": "TOX2-Y",
+    "marketId": 138,
+    "betTypeId": 48,
+    "swapId": 339
+  },
+  {
+    "id": 344,
+    "title": "TOX2-N",
+    "marketId": 138,
+    "betTypeId": 49,
+    "swapId": 340
+  },
+  {
+    "id": 345,
+    "title": "TUX2-Y",
+    "marketId": 139,
+    "betTypeId": 48,
+    "swapId": 341
+  },
+  {
+    "id": 346,
+    "title": "TUX2-N",
+    "marketId": 139,
+    "betTypeId": 49,
+    "swapId": 342
+  },
+  {
+    "id": 348,
+    "title": "OT-Y",
+    "marketId": 141,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 351,
+    "title": "OT-N",
+    "marketId": 141,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 354,
+    "title": "SD-Y",
+    "marketId": 144,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 357,
+    "title": "SD-N",
+    "marketId": 144,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 360,
+    "title": "RACE2-ML1",
+    "marketId": 147,
+    "betTypeId": 1,
+    "swapId": 363
+  },
+  {
+    "id": 363,
+    "title": "RACE2-ML2",
+    "marketId": 147,
+    "betTypeId": 2,
+    "swapId": 360
+  },
+  {
+    "id": 366,
+    "title": "RACE2-1",
+    "marketId": 147,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 369,
+    "title": "RACE2-X",
+    "marketId": 147,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 372,
+    "title": "RACE2-2",
+    "marketId": 147,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 375,
+    "title": "RACE3-ML1",
+    "marketId": 150,
+    "betTypeId": 1,
+    "swapId": 378
+  },
+  {
+    "id": 378,
+    "title": "RACE3-ML2",
+    "marketId": 150,
+    "betTypeId": 2,
+    "swapId": 375
+  },
+  {
+    "id": 381,
+    "title": "RACE3-1",
+    "marketId": 150,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 384,
+    "title": "RACE3-X",
+    "marketId": 150,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 387,
+    "title": "RACE3-2",
+    "marketId": 150,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 390,
+    "title": "RACE4-ML1",
+    "marketId": 153,
+    "betTypeId": 1,
+    "swapId": 393
+  },
+  {
+    "id": 393,
+    "title": "RACE4-ML2",
+    "marketId": 153,
+    "betTypeId": 2,
+    "swapId": 390
+  },
+  {
+    "id": 396,
+    "title": "RACE4-1",
+    "marketId": 153,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 399,
+    "title": "RACE4-X",
+    "marketId": 153,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 402,
+    "title": "RACE4-2",
+    "marketId": 153,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 405,
+    "title": "RACE5-ML1",
+    "marketId": 156,
+    "betTypeId": 1,
+    "swapId": 408
+  },
+  {
+    "id": 408,
+    "title": "RACE5-ML2",
+    "marketId": 156,
+    "betTypeId": 2,
+    "swapId": 405
+  },
+  {
+    "id": 411,
+    "title": "RACE5-1",
+    "marketId": 156,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 414,
+    "title": "RACE5-X",
+    "marketId": 156,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 417,
+    "title": "RACE5-2",
+    "marketId": 156,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 420,
+    "title": "RACE10-ML1",
+    "marketId": 159,
+    "betTypeId": 1,
+    "swapId": 423
+  },
+  {
+    "id": 423,
+    "title": "RACE10-ML2",
+    "marketId": 159,
+    "betTypeId": 2,
+    "swapId": 420
+  },
+  {
+    "id": 426,
+    "title": "RACE10-1",
+    "marketId": 159,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 429,
+    "title": "RACE10-X",
+    "marketId": 159,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 432,
+    "title": "RACE10-2",
+    "marketId": 159,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 435,
+    "title": "RACE15-ML1",
+    "marketId": 162,
+    "betTypeId": 1,
+    "swapId": 438
+  },
+  {
+    "id": 438,
+    "title": "RACE15-ML2",
+    "marketId": 162,
+    "betTypeId": 2,
+    "swapId": 435
+  },
+  {
+    "id": 441,
+    "title": "RACE15-1",
+    "marketId": 162,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 444,
+    "title": "RACE15-X",
+    "marketId": 162,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 447,
+    "title": "RACE15-2",
+    "marketId": 162,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 450,
+    "title": "RACE20-ML1",
+    "marketId": 165,
+    "betTypeId": 1,
+    "swapId": 453
+  },
+  {
+    "id": 453,
+    "title": "RACE20-ML2",
+    "marketId": 165,
+    "betTypeId": 2,
+    "swapId": 450
+  },
+  {
+    "id": 456,
+    "title": "RACE20-1",
+    "marketId": 165,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 459,
+    "title": "RACE20-X",
+    "marketId": 165,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 462,
+    "title": "RACE20-2",
+    "marketId": 165,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 467,
+    "title": "NG-ML1",
+    "marketId": 170,
+    "betTypeId": 1,
+    "swapId": 470
+  },
+  {
+    "id": 470,
+    "title": "NG-ML2",
+    "marketId": 170,
+    "betTypeId": 2,
+    "swapId": 467
+  },
+  {
+    "id": 473,
+    "title": "NG-1",
+    "marketId": 170,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 476,
+    "title": "NG-X",
+    "marketId": 170,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 479,
+    "title": "NG-2",
+    "marketId": 170,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 481,
+    "title": "PL1-Y",
+    "marketId": 172,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 484,
+    "title": "PL1-N",
+    "marketId": 172,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 487,
+    "title": "PL1_3-Y",
+    "marketId": 175,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 490,
+    "title": "PL1_3-N",
+    "marketId": 175,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 493,
+    "title": "HH-ML1",
+    "marketId": 178,
+    "betTypeId": 1,
+    "swapId": 496
+  },
+  {
+    "id": 496,
+    "title": "HH-ML2",
+    "marketId": 178,
+    "betTypeId": 2,
+    "swapId": 493
+  },
+  {
+    "id": 499,
+    "title": "HIT_OU-TO",
+    "marketId": 181,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 502,
+    "title": "HIT_OU-TU",
+    "marketId": 181,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 505,
+    "title": "HIT_OU1-TO",
+    "marketId": 184,
+    "betTypeId": 7,
+    "swapId": 511
+  },
+  {
+    "id": 508,
+    "title": "HIT_OU1-TU",
+    "marketId": 184,
+    "betTypeId": 8,
+    "swapId": 514
+  },
+  {
+    "id": 511,
+    "title": "HIT_OU2-TO",
+    "marketId": 187,
+    "betTypeId": 7,
+    "swapId": 505
+  },
+  {
+    "id": 514,
+    "title": "HIT_OU2-TU",
+    "marketId": 187,
+    "betTypeId": 8,
+    "swapId": 508
+  },
+  {
+    "id": 517,
+    "title": "ERR_OU-TO",
+    "marketId": 190,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 520,
+    "title": "ERR_OU-TU",
+    "marketId": 190,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 523,
+    "title": "RHE_OU-TO",
+    "marketId": 193,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 526,
+    "title": "RHE_OU-TU",
+    "marketId": 193,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 529,
+    "title": "HIT_F-F1",
+    "marketId": 196,
+    "betTypeId": 5,
+    "swapId": 532
+  },
+  {
+    "id": 532,
+    "title": "HIT_F-F2",
+    "marketId": 196,
+    "betTypeId": 6,
+    "swapId": 529
+  },
+  {
+    "id": 535,
+    "title": "HIT_1X2-1",
+    "marketId": 199,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 538,
+    "title": "HIT_1X2-X",
+    "marketId": 199,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 541,
+    "title": "HIT_1X2-2",
+    "marketId": 199,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 546,
+    "title": "KILL_ML-ML1",
+    "marketId": 204,
+    "betTypeId": 1,
+    "swapId": 549
+  },
+  {
+    "id": 549,
+    "title": "KILL_ML-ML2",
+    "marketId": 204,
+    "betTypeId": 2,
+    "swapId": 546
+  },
+  {
+    "id": 552,
+    "title": "KILL_F-F1",
+    "marketId": 207,
+    "betTypeId": 5,
+    "swapId": 555
+  },
+  {
+    "id": 555,
+    "title": "KILL_F-F2",
+    "marketId": 207,
+    "betTypeId": 6,
+    "swapId": 552
+  },
+  {
+    "id": 558,
+    "title": "KILL_OU-TO",
+    "marketId": 210,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 561,
+    "title": "KILL_OU-TU",
+    "marketId": 210,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 564,
+    "title": "KILL_OU1-TO",
+    "marketId": 213,
+    "betTypeId": 7,
+    "swapId": 570
+  },
+  {
+    "id": 567,
+    "title": "KILL_OU1-TU",
+    "marketId": 213,
+    "betTypeId": 8,
+    "swapId": 573
+  },
+  {
+    "id": 570,
+    "title": "KILL_OU2-TO",
+    "marketId": 216,
+    "betTypeId": 7,
+    "swapId": 564
+  },
+  {
+    "id": 573,
+    "title": "KILL_OU2-TU",
+    "marketId": 216,
+    "betTypeId": 8,
+    "swapId": 567
+  },
+  {
+    "id": 574,
+    "title": "1BLOOD-ML1",
+    "marketId": 217,
+    "betTypeId": 1,
+    "swapId": 575
+  },
+  {
+    "id": 575,
+    "title": "1BLOOD-ML2",
+    "marketId": 217,
+    "betTypeId": 2,
+    "swapId": 574
+  },
+  {
+    "id": 576,
+    "title": "1TOWER-ML1",
+    "marketId": 218,
+    "betTypeId": 1,
+    "swapId": 577
+  },
+  {
+    "id": 577,
+    "title": "1TOWER-ML2",
+    "marketId": 218,
+    "betTypeId": 2,
+    "swapId": 576
+  },
+  {
+    "id": 578,
+    "title": "1DRG-ML1",
+    "marketId": 219,
+    "betTypeId": 1,
+    "swapId": 579
+  },
+  {
+    "id": 579,
+    "title": "1DRG-ML2",
+    "marketId": 219,
+    "betTypeId": 2,
+    "swapId": 578
+  },
+  {
+    "id": 580,
+    "title": "1BRN-ML1",
+    "marketId": 220,
+    "betTypeId": 1,
+    "swapId": 581
+  },
+  {
+    "id": 581,
+    "title": "1BRN-ML2",
+    "marketId": 220,
+    "betTypeId": 2,
+    "swapId": 580
+  },
+  {
+    "id": 582,
+    "title": "1INH-ML1",
+    "marketId": 221,
+    "betTypeId": 1,
+    "swapId": 583
+  },
+  {
+    "id": 583,
+    "title": "1INH-ML2",
+    "marketId": 221,
+    "betTypeId": 2,
+    "swapId": 582
+  },
+  {
+    "id": 584,
+    "title": "1ROSH-ML1",
+    "marketId": 222,
+    "betTypeId": 1,
+    "swapId": 585
+  },
+  {
+    "id": 585,
+    "title": "1ROSH-ML2",
+    "marketId": 222,
+    "betTypeId": 2,
+    "swapId": 584
+  },
+  {
+    "id": 586,
+    "title": "PISTOL-Y",
+    "marketId": 223,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 587,
+    "title": "PISTOL-N",
+    "marketId": 223,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 588,
+    "title": "DUR_OU-TO",
+    "marketId": 224,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 589,
+    "title": "DUR_OU-TU",
+    "marketId": 224,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 590,
+    "title": "BRN_OU-TO",
+    "marketId": 225,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 591,
+    "title": "BRN_OU-TU",
+    "marketId": 225,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 592,
+    "title": "INH_OU-TO",
+    "marketId": 226,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 593,
+    "title": "INH_OU-TU",
+    "marketId": 226,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 594,
+    "title": "TOWER_OU-TO",
+    "marketId": 227,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 595,
+    "title": "TOWER_OU-TU",
+    "marketId": 227,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 596,
+    "title": "DRG_OU-TO",
+    "marketId": 228,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 597,
+    "title": "DRG_OU-TU",
+    "marketId": 228,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 598,
+    "title": "ROSH_OU-TO",
+    "marketId": 229,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 599,
+    "title": "ROSH_OU-TU",
+    "marketId": 229,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 600,
+    "title": "SET_OU1-SET_TO",
+    "marketId": 230,
+    "betTypeId": 56,
+    "swapId": 602
+  },
+  {
+    "id": 601,
+    "title": "SET_OU1-SET_TU",
+    "marketId": 230,
+    "betTypeId": 57,
+    "swapId": 603
+  },
+  {
+    "id": 602,
+    "title": "SET_OU2-SET_TO",
+    "marketId": 231,
+    "betTypeId": 56,
+    "swapId": 600
+  },
+  {
+    "id": 603,
+    "title": "SET_OU2-SET_TU",
+    "marketId": 231,
+    "betTypeId": 57,
+    "swapId": 601
+  },
+  {
+    "id": 604,
+    "title": "LTD_ML-ML1",
+    "marketId": 232,
+    "betTypeId": 1,
+    "swapId": 605
+  },
+  {
+    "id": 605,
+    "title": "LTD_ML-ML2",
+    "marketId": 232,
+    "betTypeId": 2,
+    "swapId": 604
+  },
+  {
+    "id": 606,
+    "title": "LFG_ML-ML1",
+    "marketId": 233,
+    "betTypeId": 1,
+    "swapId": 607
+  },
+  {
+    "id": 607,
+    "title": "LFG_ML-ML2",
+    "marketId": 233,
+    "betTypeId": 2,
+    "swapId": 606
+  },
+  {
+    "id": 608,
+    "title": "TD-Y",
+    "marketId": 234,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 609,
+    "title": "TD-N",
+    "marketId": 234,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 610,
+    "title": "SFT-Y",
+    "marketId": 235,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 611,
+    "title": "SFT-N",
+    "marketId": 235,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 612,
+    "title": "FSTD-Y",
+    "marketId": 236,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 613,
+    "title": "FSTD-N",
+    "marketId": 236,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 614,
+    "title": "BTS10-Y",
+    "marketId": 237,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 615,
+    "title": "BTS10-N",
+    "marketId": 237,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 616,
+    "title": "BTS15-Y",
+    "marketId": 238,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 617,
+    "title": "BTS15-N",
+    "marketId": 238,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 618,
+    "title": "BTS20-Y",
+    "marketId": 239,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 619,
+    "title": "BTS20-N",
+    "marketId": 239,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 620,
+    "title": "BTS25-Y",
+    "marketId": 240,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 621,
+    "title": "BTS25-N",
+    "marketId": 240,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 622,
+    "title": "BTS30-Y",
+    "marketId": 241,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 623,
+    "title": "BTS30-N",
+    "marketId": 241,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 624,
+    "title": "BTS35-Y",
+    "marketId": 242,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 625,
+    "title": "BTS35-N",
+    "marketId": 242,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 626,
+    "title": "BTS40-Y",
+    "marketId": 243,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 627,
+    "title": "BTS40-N",
+    "marketId": 243,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 628,
+    "title": "BTS45-Y",
+    "marketId": 244,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 629,
+    "title": "BTS45-N",
+    "marketId": 244,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 630,
+    "title": "BTS50-Y",
+    "marketId": 245,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 631,
+    "title": "BTS50-N",
+    "marketId": 245,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 632,
+    "title": "HSQ-1",
+    "marketId": 246,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 633,
+    "title": "HSQ-2",
+    "marketId": 246,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 634,
+    "title": "HSQ-3",
+    "marketId": 246,
+    "betTypeId": 80,
+    "swapId": 0
+  },
+  {
+    "id": 635,
+    "title": "HSQ-4",
+    "marketId": 246,
+    "betTypeId": 81,
+    "swapId": 0
+  },
+  {
+    "id": 636,
+    "title": "HSQ-X",
+    "marketId": 246,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 637,
+    "title": "FG_OU-TO",
+    "marketId": 247,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 638,
+    "title": "FG_OU-TU",
+    "marketId": 247,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 639,
+    "title": "TD_OU-TO",
+    "marketId": 248,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 640,
+    "title": "TD_OU-TU",
+    "marketId": 248,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 641,
+    "title": "LTD_OU-TO",
+    "marketId": 249,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 642,
+    "title": "LTD_OU-TU",
+    "marketId": 249,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 643,
+    "title": "LFG_OU-TO",
+    "marketId": 250,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 644,
+    "title": "LFG_OU-TU",
+    "marketId": 250,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 645,
+    "title": "FG_OU1-TO",
+    "marketId": 251,
+    "betTypeId": 7,
+    "swapId": 647
+  },
+  {
+    "id": 646,
+    "title": "FG_OU1-TU",
+    "marketId": 251,
+    "betTypeId": 8,
+    "swapId": 648
+  },
+  {
+    "id": 647,
+    "title": "FG_OU2-TO",
+    "marketId": 252,
+    "betTypeId": 7,
+    "swapId": 645
+  },
+  {
+    "id": 648,
+    "title": "FG_OU2-TU",
+    "marketId": 252,
+    "betTypeId": 8,
+    "swapId": 646
+  },
+  {
+    "id": 649,
+    "title": "TD_OU1-TO",
+    "marketId": 253,
+    "betTypeId": 7,
+    "swapId": 651
+  },
+  {
+    "id": 650,
+    "title": "TD_OU1-TU",
+    "marketId": 253,
+    "betTypeId": 8,
+    "swapId": 652
+  },
+  {
+    "id": 651,
+    "title": "TD_OU2-TO",
+    "marketId": 254,
+    "betTypeId": 7,
+    "swapId": 649
+  },
+  {
+    "id": 652,
+    "title": "TD_OU2-TU",
+    "marketId": 254,
+    "betTypeId": 8,
+    "swapId": 650
+  },
+  {
+    "id": 653,
+    "title": "MAP_F-F1",
+    "marketId": 255,
+    "betTypeId": 5,
+    "swapId": 654
+  },
+  {
+    "id": 654,
+    "title": "MAP_F-F2",
+    "marketId": 255,
+    "betTypeId": 6,
+    "swapId": 653
+  },
+  {
+    "id": 655,
+    "title": "MAP_OU-TO",
+    "marketId": 256,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 656,
+    "title": "MAP_OU-TU",
+    "marketId": 256,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 657,
+    "title": "MAP_OU1-TO",
+    "marketId": 257,
+    "betTypeId": 7,
+    "swapId": 659
+  },
+  {
+    "id": 658,
+    "title": "MAP_OU1-TU",
+    "marketId": 257,
+    "betTypeId": 8,
+    "swapId": 660
+  },
+  {
+    "id": 659,
+    "title": "MAP_OU2-TO",
+    "marketId": 258,
+    "betTypeId": 7,
+    "swapId": 657
+  },
+  {
+    "id": 660,
+    "title": "MAP_OU2-TU",
+    "marketId": 258,
+    "betTypeId": 8,
+    "swapId": 658
+  },
+  {
+    "id": 661,
+    "title": "MAP_CS-CS",
+    "marketId": 259,
+    "betTypeId": 50,
+    "swapId": 0
+  },
+  {
+    "id": 662,
+    "title": "MAP_CS-CS_N",
+    "marketId": 259,
+    "betTypeId": 51,
+    "swapId": 0
+  },
+  {
+    "id": 663,
+    "title": "MAP_EG-EG",
+    "marketId": 260,
+    "betTypeId": 76,
+    "swapId": 0
+  },
+  {
+    "id": 664,
+    "title": "MAP_EG-EG_N",
+    "marketId": 260,
+    "betTypeId": 77,
+    "swapId": 0
+  },
+  {
+    "id": 665,
+    "title": "WBP-Y",
+    "marketId": 261,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 666,
+    "title": "WBP-N",
+    "marketId": 261,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 667,
+    "title": "WBP1-Y",
+    "marketId": 262,
+    "betTypeId": 48,
+    "swapId": 669
+  },
+  {
+    "id": 668,
+    "title": "WBP1-N",
+    "marketId": 262,
+    "betTypeId": 49,
+    "swapId": 670
+  },
+  {
+    "id": 669,
+    "title": "WBP2-Y",
+    "marketId": 263,
+    "betTypeId": 48,
+    "swapId": 667
+  },
+  {
+    "id": 670,
+    "title": "WBP2-N",
+    "marketId": 263,
+    "betTypeId": 49,
+    "swapId": 668
+  },
+  {
+    "id": 671,
+    "title": "WES1-Y",
+    "marketId": 264,
+    "betTypeId": 48,
+    "swapId": 673
+  },
+  {
+    "id": 672,
+    "title": "WES1-N",
+    "marketId": 264,
+    "betTypeId": 49,
+    "swapId": 674
+  },
+  {
+    "id": 673,
+    "title": "WES2-Y",
+    "marketId": 265,
+    "betTypeId": 48,
+    "swapId": 671
+  },
+  {
+    "id": 674,
+    "title": "WES2-N",
+    "marketId": 265,
+    "betTypeId": 49,
+    "swapId": 672
+  },
+  {
+    "id": 675,
+    "title": "WEM1-Y",
+    "marketId": 266,
+    "betTypeId": 48,
+    "swapId": 677
+  },
+  {
+    "id": 676,
+    "title": "WEM1-N",
+    "marketId": 266,
+    "betTypeId": 49,
+    "swapId": 678
+  },
+  {
+    "id": 677,
+    "title": "WEM2-Y",
+    "marketId": 267,
+    "betTypeId": 48,
+    "swapId": 675
+  },
+  {
+    "id": 678,
+    "title": "WEM2-N",
+    "marketId": 267,
+    "betTypeId": 49,
+    "swapId": 676
+  },
+  {
+    "id": 679,
+    "title": "DRGBT-Y",
+    "marketId": 268,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 680,
+    "title": "DRGBT-N",
+    "marketId": 268,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 681,
+    "title": "BRNBT-Y",
+    "marketId": 269,
+    "betTypeId": 48,
+    "swapId": 0
+  },
+  {
+    "id": 682,
+    "title": "BRNBT-N",
+    "marketId": 269,
+    "betTypeId": 49,
+    "swapId": 0
+  },
+  {
+    "id": 683,
+    "title": "1BAR-ML1",
+    "marketId": 270,
+    "betTypeId": 1,
+    "swapId": 684
+  },
+  {
+    "id": 684,
+    "title": "1BAR-ML2",
+    "marketId": 270,
+    "betTypeId": 2,
+    "swapId": 683
+  },
+  {
+    "id": 685,
+    "title": "1DKILL-ML1",
+    "marketId": 271,
+    "betTypeId": 1,
+    "swapId": 686
+  },
+  {
+    "id": 686,
+    "title": "1DKILL-ML2",
+    "marketId": 271,
+    "betTypeId": 2,
+    "swapId": 685
+  },
+  {
+    "id": 687,
+    "title": "BAR_OU-TO",
+    "marketId": 272,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 688,
+    "title": "BAR_OU-TU",
+    "marketId": 272,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 689,
+    "title": "DKILL_OU-TO",
+    "marketId": 273,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 690,
+    "title": "DKILL_OU-TU",
+    "marketId": 273,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 691,
+    "title": "BRN_F-F1",
+    "marketId": 274,
+    "betTypeId": 5,
+    "swapId": 692
+  },
+  {
+    "id": 692,
+    "title": "BRN_F-F2",
+    "marketId": 274,
+    "betTypeId": 6,
+    "swapId": 691
+  },
+  {
+    "id": 693,
+    "title": "DRG_F-F1",
+    "marketId": 275,
+    "betTypeId": 5,
+    "swapId": 694
+  },
+  {
+    "id": 694,
+    "title": "DRG_F-F2",
+    "marketId": 275,
+    "betTypeId": 6,
+    "swapId": 693
+  },
+  {
+    "id": 695,
+    "title": "TOWER_F-F1",
+    "marketId": 276,
+    "betTypeId": 5,
+    "swapId": 696
+  },
+  {
+    "id": 696,
+    "title": "TOWER_F-F2",
+    "marketId": 276,
+    "betTypeId": 6,
+    "swapId": 695
+  },
+  {
+    "id": 697,
+    "title": "PNT_1X2-1",
+    "marketId": 277,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 698,
+    "title": "PNT_1X2-X",
+    "marketId": 277,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 699,
+    "title": "PNT_1X2-2",
+    "marketId": 277,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 700,
+    "title": "RB_1X2-1",
+    "marketId": 283,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 701,
+    "title": "RB_1X2-X",
+    "marketId": 283,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 702,
+    "title": "RB_1X2-2",
+    "marketId": 283,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 703,
+    "title": "AS_1X2-1",
+    "marketId": 289,
+    "betTypeId": 32,
+    "swapId": 0
+  },
+  {
+    "id": 704,
+    "title": "AS_1X2-X",
+    "marketId": 289,
+    "betTypeId": 33,
+    "swapId": 0
+  },
+  {
+    "id": 705,
+    "title": "AS_1X2-2",
+    "marketId": 289,
+    "betTypeId": 34,
+    "swapId": 0
+  },
+  {
+    "id": 706,
+    "title": "PNT_DC-1X",
+    "marketId": 278,
+    "betTypeId": 29,
+    "swapId": 0
+  },
+  {
+    "id": 707,
+    "title": "PNT_DC-X2",
+    "marketId": 278,
+    "betTypeId": 30,
+    "swapId": 0
+  },
+  {
+    "id": 708,
+    "title": "PNT_DC-12",
+    "marketId": 278,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 709,
+    "title": "RB_DC-1X",
+    "marketId": 284,
+    "betTypeId": 29,
+    "swapId": 0
+  },
+  {
+    "id": 710,
+    "title": "RB_DC-X2",
+    "marketId": 284,
+    "betTypeId": 30,
+    "swapId": 0
+  },
+  {
+    "id": 711,
+    "title": "RB_DC-12",
+    "marketId": 284,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 712,
+    "title": "AS_DC-1X",
+    "marketId": 290,
+    "betTypeId": 29,
+    "swapId": 0
+  },
+  {
+    "id": 713,
+    "title": "AS_DC-X2",
+    "marketId": 290,
+    "betTypeId": 30,
+    "swapId": 0
+  },
+  {
+    "id": 714,
+    "title": "AS_DC-12",
+    "marketId": 290,
+    "betTypeId": 31,
+    "swapId": 0
+  },
+  {
+    "id": 715,
+    "title": "PNT_F-F1",
+    "marketId": 279,
+    "betTypeId": 5,
+    "swapId": 0
+  },
+  {
+    "id": 716,
+    "title": "PNT_F-F2",
+    "marketId": 279,
+    "betTypeId": 6,
+    "swapId": 0
+  },
+  {
+    "id": 717,
+    "title": "RB_F-F1",
+    "marketId": 285,
+    "betTypeId": 5,
+    "swapId": 0
+  },
+  {
+    "id": 718,
+    "title": "RB_F-F2",
+    "marketId": 285,
+    "betTypeId": 6,
+    "swapId": 0
+  },
+  {
+    "id": 719,
+    "title": "AS_F-F1",
+    "marketId": 291,
+    "betTypeId": 5,
+    "swapId": 0
+  },
+  {
+    "id": 720,
+    "title": "AS_F-F2",
+    "marketId": 291,
+    "betTypeId": 6,
+    "swapId": 0
+  },
+  {
+    "id": 721,
+    "title": "PNT_OU-TO",
+    "marketId": 280,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 722,
+    "title": "PNT_OU-TU",
+    "marketId": 280,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 723,
+    "title": "RB_OU-TO",
+    "marketId": 286,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 724,
+    "title": "RB_OU-TU",
+    "marketId": 286,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 725,
+    "title": "AS_OU-TO",
+    "marketId": 292,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 726,
+    "title": "AS_OU-TU",
+    "marketId": 292,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 727,
+    "title": "PNT_OU1-TO",
+    "marketId": 281,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 728,
+    "title": "PNT_OU1-TU",
+    "marketId": 281,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 729,
+    "title": "RB_OU1-TO",
+    "marketId": 287,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 730,
+    "title": "RB_OU1-TU",
+    "marketId": 287,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 731,
+    "title": "AS_OU1-TO",
+    "marketId": 293,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 732,
+    "title": "AS_OU1-TU",
+    "marketId": 293,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 733,
+    "title": "PNT_OU2-TO",
+    "marketId": 282,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 734,
+    "title": "PNT_OU2-TU",
+    "marketId": 282,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 735,
+    "title": "RB_OU2-TO",
+    "marketId": 288,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 736,
+    "title": "RB_OU2-TU",
+    "marketId": 288,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 737,
+    "title": "AS_OU2-TO",
+    "marketId": 294,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 738,
+    "title": "AS_OU2-TU",
+    "marketId": 294,
+    "betTypeId": 8,
+    "swapId": 0
+  },
+  {
+    "id": 739,
+    "title": "180S_ML-ML1",
+    "marketId": 295,
+    "betTypeId": 1,
+    "swapId": 0
+  },
+  {
+    "id": 740,
+    "title": "180S_ML-ML2",
+    "marketId": 295,
+    "betTypeId": 2,
+    "swapId": 0
+  },
+  {
+    "id": 741,
+    "title": "180S_F-F1",
+    "marketId": 296,
+    "betTypeId": 5,
+    "swapId": 0
+  },
+  {
+    "id": 742,
+    "title": "180S_F-F2",
+    "marketId": 296,
+    "betTypeId": 6,
+    "swapId": 0
+  },
+  {
+    "id": 743,
+    "title": "180S_OU-TO",
+    "marketId": 297,
+    "betTypeId": 7,
+    "swapId": 0
+  },
+  {
+    "id": 744,
+    "title": "180S_OU-TU",
+    "marketId": 297,
+    "betTypeId": 8,
+    "swapId": 0
+  }
+]

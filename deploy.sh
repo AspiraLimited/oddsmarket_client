@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-mvn clean install deploy
+mvn clean install deploy -pl client
