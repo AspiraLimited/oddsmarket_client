@@ -3,7 +3,8 @@
 Demo application which consumes data from Oddsmarket websocket feed and 
 prints received updates into STDOUT in human-readable format.
 This application is intended to be used by oddsmarket customers as 
-reference implementation of websocket feed consumption and .  
+reference implementation of websocket feed consumption and updating bookmaker events
+and outcomes state in the in-memory data structure.  
 
 
 ## Building and running
@@ -25,8 +26,8 @@ feedreader.cmd {websocket feed URL} {your API key} {bookmaker ID} [{sport ID 1},
 Command line parameters explanation:
 * `{websocket feed URL}` - use `wss://api-pr.oddsmarket.org/v3/odds_ws` for prematch events and `wss://api-lv.oddsmarket.org/v3/odds_ws` for live events
 * `{your API key}` - your oddsmarket API key 
-* `{bookmaker ID}` - bookmaker ID you want to subscribe to. See [bookmakers dictionary](wiki/Get-bookmakers) for list of all IDs. 
-* `[{sport ID 1},{sport ID 2},..]` - optional list of comma-separated sport IDs. See [sports dictionary](wiki/Get-Sports) for list of all IDs.
+* `{bookmaker ID}` - bookmaker ID you want to subscribe to. See [bookmakers dictionary](https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Bookmakers) for list of all IDs. 
+* `[{sport ID 1},{sport ID 2},..]` - optional list of comma-separated sport IDs. See [sports dictionary](https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Sports) for list of all IDs.
 
 
 Command line examples:
