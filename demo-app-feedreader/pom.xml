@@ -11,6 +11,17 @@
 
     <artifactId>demo-app-feedreader</artifactId>
 
+    <repositories>
+        <repository>
+            <id>oddsmarket_client</id>
+            <url>https://maven.pkg.github.com/AspiraLimited/oddsmarket_client</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
