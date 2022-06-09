@@ -44,12 +44,12 @@ public class OutcomeNameTranslator {
     }
 
     /**
-     * Преобразовать исход в читабельный (и локализованный) вид
+     * Translates outcome (marketAndBetTypeId, marketAndBetTypeParamValue) into human-readable format
      *
      * @param marketAndBetTypeId         - marketAndBetType id
-     * @param marketAndBetTypeParamValue - float параметр исхода
-     * @param isLay                      - исход был получен из lay исхода
-     * @param swapTeams                  - исход был преобразован сменой сторон
+     * @param marketAndBetTypeParamValue - float outcome parameter
+     * @param isLay                      - outcome was created from lay price on betting exchange
+     * @param swapTeams                  - outcome was transformed by swapTeams flag
      * @return
      */
     public OutcomeName translate(short marketAndBetTypeId, float marketAndBetTypeParamValue, boolean isLay, boolean swapTeams) {

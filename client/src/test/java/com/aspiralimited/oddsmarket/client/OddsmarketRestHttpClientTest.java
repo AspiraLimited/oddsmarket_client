@@ -2,8 +2,11 @@ package com.aspiralimited.oddsmarket.client;
 
 import com.aspiralimited.oddsmarket.client.rest.OddsmarketRestHttpClient;
 import com.aspiralimited.oddsmarket.client.rest.dto.BookmakerDto;
+import com.aspiralimited.oddsmarket.client.rest.dto.InternalEventDto;
+import com.aspiralimited.oddsmarket.client.rest.dto.LeagueDto;
 import com.aspiralimited.oddsmarket.client.rest.dto.MarketAndBetTypeDto;
 import com.aspiralimited.oddsmarket.client.rest.dto.MarketDto;
+import com.aspiralimited.oddsmarket.client.rest.dto.PlayerDto;
 import com.aspiralimited.oddsmarket.client.rest.dto.SportDto;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -20,7 +23,7 @@ class OddsmarketRestHttpClientTest {
     static final String WIREMOCK_BASE_URL = "http://localhost:" + WIREMOCK_PORT;
     private static WireMockServer wireMockServer;
 
-    final OddsmarketRestHttpClient oddsmarketRestHttpClient = new OddsmarketRestHttpClient(WIREMOCK_BASE_URL, WIREMOCK_BASE_URL, WIREMOCK_BASE_URL, 500);
+    final OddsmarketRestHttpClient oddsmarketRestHttpClient = new OddsmarketRestHttpClient(WIREMOCK_BASE_URL, WIREMOCK_BASE_URL, 500);
 
     @BeforeAll
     static void setup() {
@@ -68,6 +71,42 @@ class OddsmarketRestHttpClientTest {
 
         List<SportDto> actual = oddsmarketRestHttpClient.getSports().get();
         Assertions.assertFalse(actual.isEmpty());
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldParsePeriodNameResponse() {
+        makeWiremockStub("/v1/periodName?identifier=0&sportId=6", "/rest-response-samples/periodName.txt");
+
+        String actual = oddsmarketRestHttpClient.getPeriodName((short) 0, (short) 6).get();
+        Assertions.assertEquals("regular time", actual);
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldParseInternalEventsResponse() {
+        makeWiremockStub("/v1/internal_events/374092363,374518899", "/rest-response-samples/internal_events.json");
+
+        List<InternalEventDto> actual = oddsmarketRestHttpClient.getInternalEvents(List.of(374092363L, 374518899L)).get();
+        Assertions.assertEquals(2, actual.size());
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldParseLeaguesResponse() {
+        makeWiremockStub("/v1/leagues/5944,8719", "/rest-response-samples/leagues.json");
+
+        List<LeagueDto> actual = oddsmarketRestHttpClient.getLeagues(List.of(5944L, 8719L)).get();
+        Assertions.assertEquals(2, actual.size());
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldParsePlayersResponse() {
+        makeWiremockStub("/v1/players/3654837", "/rest-response-samples/players.json");
+
+        List<PlayerDto> actual = oddsmarketRestHttpClient.getPlayers(List.of(3654837L)).get();
+        Assertions.assertEquals(1, actual.size());
     }
 
     @SneakyThrows

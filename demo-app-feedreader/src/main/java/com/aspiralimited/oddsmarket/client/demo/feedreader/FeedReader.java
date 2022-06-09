@@ -16,12 +16,13 @@ public class FeedReader {
             if (args.length < 3) {
                 printToConsole("Required command-line arguments are missing!");
                 printToConsole("Usage example:");
-                printToConsole("feedreader.sh wss://api-pr.oddsmarket.org/v3/odds_ws YOUR-API-KEY BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...]");
+                printToConsole("feedreader.sh api-pr.oddsmarket.org YOUR-API-KEY BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...]");
                 System.exit(1);
             }
-            String feedUrl = args[0];
-            if (feedUrl.isEmpty()) {
-                throw new IllegalArgumentException("Feed URL key must be specified as first argument in command-line parameters");
+
+            String feedDomain = args[0];
+            if (feedDomain.isEmpty()) {
+                throw new IllegalArgumentException("Feed domain key must be specified as first argument in command-line parameters");
             }
             String apiKey = args[1];
             if (apiKey.isEmpty()) {
@@ -33,12 +34,11 @@ public class FeedReader {
                 String sportIdsStr = args[3];
                 sportIds = Arrays.stream(sportIdsStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet());
             }
-            OddsmarketClient client = OddsmarketClient.connect(feedUrl, apiKey);
+            String feedWebsocketUrl = (feedDomain.startsWith("localhost") ? "ws://" : "wss://") + feedDomain + "/v3/odds_ws";
+            OddsmarketClient client = OddsmarketClient.connect(feedWebsocketUrl, apiKey);
             OddsmarketRestHttpClient oddsmarketRestHttpClient = new OddsmarketRestHttpClient(
                     "https://api-mst.oddsmarket.org",
-                    //"http://localhost:3000",
-                    "https://api-lv.oddsmarket.org",
-                    "https://api-pr.oddsmarket.org",
+                    (feedDomain.startsWith("localhost") ? "http://" : "https://") + feedDomain,
                     5000L
             );
             DictionariesService dictionariesService = new DictionariesService(oddsmarketRestHttpClient);

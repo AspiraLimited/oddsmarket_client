@@ -19,16 +19,16 @@ reference implementation of:
 
 Command-line syntax (Linux, MacOS):
 ```
-bash feedreader.sh {websocket feed URL} {your API key} {bookmaker ID} [{sport ID 1},{sport ID 2},..] 
+bash feedreader.sh {websocket feed domain} {your API key} {bookmaker ID} [{sport ID 1},{sport ID 2},..] 
 ```
 
 Command-line syntax (Windows):
 ```
-feedreader.cmd {websocket feed URL} {your API key} {bookmaker ID} [{sport ID 1},{sport ID 2},..] 
+feedreader.cmd {websocket feed domain} {your API key} {bookmaker ID} [{sport ID 1},{sport ID 2},..] 
 ```
 
 Command line parameters explanation:
-* `{websocket feed URL}` - use `wss://api-pr.oddsmarket.org/v3/odds_ws` for prematch events and `wss://api-lv.oddsmarket.org/v3/odds_ws` for live events
+* `{websocket feed domain}` - use `api-pr.oddsmarket.org` for prematch events and `api-lv.oddsmarket.org` for live events
 * `{your API key}` - your oddsmarket API key 
 * `{bookmaker ID}` - bookmaker ID you want to subscribe to. See [bookmakers dictionary](https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Bookmakers) for list of all IDs. 
 * `[{sport ID 1},{sport ID 2},..]` - optional list of comma-separated sport IDs. See [sports dictionary](https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Sports) for list of all IDs.
@@ -36,7 +36,7 @@ Command line parameters explanation:
 
 Command line examples:
 ```
-bash feedreader.sh wss://api-lv.oddsmarket.org/v3/odds_ws 00000000000000000000000000000000 1
+bash feedreader.sh api-lv.oddsmarket.org 00000000000000000000000000000000 1
 ```
 
 ```
@@ -48,9 +48,9 @@ Output status prefixes explanation:
 * `[DEL]` - bookmaker event removed
 * `[UPD]` - bookmaker event updated
 * `[ODDS]` - odds in next lines are referring to this bookmaker event 
-* `&nbsp;&nbsp;&nbsp;&nbsp;[NEW]` - new outcome 
-* `&nbsp;&nbsp;&nbsp;&nbsp;[UPD]` - updated outcome 
-* `&nbsp;&nbsp;&nbsp;&nbsp;[DEL]` - removed outcome 
+* `  [NEW]` - new outcome 
+* `  [UPD]` - updated outcome 
+* `  [DEL]` - removed outcome 
 
 
 Output example:

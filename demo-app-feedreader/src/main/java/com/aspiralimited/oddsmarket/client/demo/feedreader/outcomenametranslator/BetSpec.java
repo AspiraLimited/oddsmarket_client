@@ -1,11 +1,11 @@
 package com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator;
 
 /**
- * "Спецификация" вида ставки - все параметры кроме eventId и bookmakerId, которые идентифицируют ставку.
+ * "Specification" (key) of an outcome - all parameters to identify odds within one bookmaker
  */
 public class BetSpec {
-    public final short marketAndBetType; // бывшая таблица market_variations.
-    public final float marketAndBetTypeParam; // бывшая таблица values
+    public final short marketAndBetType;
+    public final float marketAndBetTypeParam;
     public final short period;
     public final boolean isLay;
     public final int playerId1;

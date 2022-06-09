@@ -4,7 +4,6 @@ import com.aspiralimited.config.statical.BetType;
 import com.aspiralimited.config.statical.Market;
 import com.aspiralimited.oddsmarket.client.rest.dto.BetTypeDto;
 import com.aspiralimited.oddsmarket.client.rest.dto.MarketAndBetTypeDto;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.HashMap;
