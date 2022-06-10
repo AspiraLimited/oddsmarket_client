@@ -1,6 +1,6 @@
 package com.aspiralimited.oddsmarket.client;
 
-import com.aspiralimited.oddsmarket.client.cmd.RequestCMD;
+import com.aspiralimited.oddsmarket.api.websocket.cmd.RequestCMD;
 import com.aspiralimited.oddsmarket.client.models.BookmakerEvent;
 import com.aspiralimited.oddsmarket.client.models.Odd;
 import com.neovisionaries.ws.client.WebSocket;
