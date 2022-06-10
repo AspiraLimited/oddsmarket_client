@@ -1,6 +1,10 @@
 # Releasing oddsmarket Java client library
 
-This manual describes process of releasing oddsmarket Java client library JAR on Github Packages service.
+
+**This is internal documentation for oddsmarket developers.**
+
+The manual describes process of releasing oddsmarket Java client library JAR 
+on Github Packages service and creating release on GitHub.
 
 ## Configuring maven
 
