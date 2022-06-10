@@ -33,9 +33,11 @@ In the "password" property insert personal token which can be generated on follo
 ## Publishing
 
 
-1. Make required modifications to client
+1. Make required modifications to client, commit all of them to master
 2. Assign new `client` module version (multiple `pom.xml` edits). Version assignment rules are explained below. 
 3. Run `./deploy.sh`
+4. Go to [GitHub releases](https://github.com/AspiraLimited/oddsmarket_client/releases), create release with 
+tag that equals to client version (fill release notes). [Help on release publishing](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
 
 ## Client version assignment rules
 
