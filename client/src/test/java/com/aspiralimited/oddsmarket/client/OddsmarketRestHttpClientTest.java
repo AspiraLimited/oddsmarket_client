@@ -1,13 +1,13 @@
 package com.aspiralimited.oddsmarket.client;
 
 import com.aspiralimited.oddsmarket.client.rest.OddsmarketRestHttpClient;
-import com.aspiralimited.oddsmarket.client.rest.dto.BookmakerDto;
-import com.aspiralimited.oddsmarket.client.rest.dto.InternalEventDto;
-import com.aspiralimited.oddsmarket.client.rest.dto.LeagueDto;
-import com.aspiralimited.oddsmarket.client.rest.dto.MarketAndBetTypeDto;
-import com.aspiralimited.oddsmarket.client.rest.dto.MarketDto;
-import com.aspiralimited.oddsmarket.client.rest.dto.PlayerDto;
-import com.aspiralimited.oddsmarket.client.rest.dto.SportDto;
+import com.aspiralimited.oddsmarket.api.rest.dto.BookmakerDto;
+import com.aspiralimited.oddsmarket.api.rest.dto.InternalEventDto;
+import com.aspiralimited.oddsmarket.api.rest.dto.LeagueDto;
+import com.aspiralimited.oddsmarket.api.rest.dto.MarketAndBetTypeDto;
+import com.aspiralimited.oddsmarket.api.rest.dto.MarketDto;
+import com.aspiralimited.oddsmarket.api.rest.dto.PlayerDto;
+import com.aspiralimited.oddsmarket.api.rest.dto.SportDto;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import lombok.SneakyThrows;

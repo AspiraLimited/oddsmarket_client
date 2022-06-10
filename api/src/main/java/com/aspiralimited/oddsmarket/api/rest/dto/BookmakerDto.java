@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.client.rest.dto;
+package com.aspiralimited.oddsmarket.api.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

@@ -176,7 +176,7 @@ public class OddsmarketClient {
     }
 
     public abstract static class Handler {
-        private List<String> oddFields = new ArrayList<>();
+        private List<String> outcomeFields = new ArrayList<>();
         private List<String> bookmakerEventFields = new ArrayList<>();
 
         void handle(JSONObject jsonMsg) {
@@ -184,23 +184,23 @@ public class OddsmarketClient {
 
             switch (command) {
                 case "fields":
-                    oddFields = jsonMsg.getJSONObject("msg").getJSONArray("Odd").toList().stream().map(x -> (String) x).collect(toList());
+                    outcomeFields = jsonMsg.getJSONObject("msg").getJSONArray("Odd").toList().stream().map(x -> (String) x).collect(toList());
                     bookmakerEventFields = jsonMsg.getJSONObject("msg").getJSONArray("BookmakerEvent").toList().stream().map(x -> (String) x).collect(toList());
                     info("init fields: " + jsonMsg);
                     break;
 
-                case "bookmakerevents":
+                case "bookmaker_events":
                     for (Object raw : jsonMsg.getJSONArray("msg")) {
                         BookmakerEvent bkEvent = new BookmakerEvent(((JSONArray) raw).toList(), bookmakerEventFields);
                         bookmakerEvent(bkEvent);
                     }
                     break;
 
-                case "odds":
+                case "outcomes":
                     Map<String, Odd> updatedOdds = new HashMap<>();
 
                     for (Object raw : jsonMsg.getJSONArray("msg")) {
-                        Odd odd = new Odd(((JSONArray) raw).toList(), oddFields);
+                        Odd odd = new Odd(((JSONArray) raw).toList(), outcomeFields);
                         updatedOdds.put(odd.id, odd);
                     }
 
@@ -208,7 +208,7 @@ public class OddsmarketClient {
 
                     break;
 
-                case "removed":
+                case "bookmaker_events_removed":
                     List<Long> ids = new ArrayList<>();
                     jsonMsg.getJSONObject("msg").getJSONArray("bookmakerEventIds").forEach(raw -> {
                         if (raw instanceof Integer) {
