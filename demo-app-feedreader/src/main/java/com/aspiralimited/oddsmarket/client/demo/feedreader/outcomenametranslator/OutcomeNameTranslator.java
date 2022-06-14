@@ -1,7 +1,7 @@
 package com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator;
 
 import com.aspiralimited.config.statical.BetType;
-import com.aspiralimited.oddsmarket.api.rest.dto.MarketAndBetTypeDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketAndBetTypeDto;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;

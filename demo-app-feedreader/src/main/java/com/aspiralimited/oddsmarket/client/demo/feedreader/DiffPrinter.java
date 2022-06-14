@@ -1,17 +1,21 @@
 package com.aspiralimited.oddsmarket.client.demo.feedreader;
 
 import com.aspiralimited.config.statical.Period;
-import com.aspiralimited.oddsmarket.client.OddsmarketClient;
+import com.aspiralimited.oddsmarket.client.demo.feedreader.state.OutcomeDataDiffDetector;
+import com.aspiralimited.oddsmarket.client.websocket.handlers.Handler;
+import com.aspiralimited.oddsmarket.client.websocket.OddsmarketClient;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.diff.DiffList;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.BetSpecCache;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.OutcomeNameTranslator;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.ReverseBetSpecCalculator;
-import com.aspiralimited.oddsmarket.client.demo.feedreader.state.BookmakerEventState;
+import com.aspiralimited.oddsmarket.client.demo.feedreader.state.BookmakerEventStateDiffDetector;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.state.InMemoryStateStorage;
-import com.aspiralimited.oddsmarket.client.demo.feedreader.state.OutcomeData;
-import com.aspiralimited.oddsmarket.client.demo.feedreader.state.OutcomeKey;
-import com.aspiralimited.oddsmarket.client.models.BookmakerEvent;
-import com.aspiralimited.oddsmarket.client.models.Odd;
+import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.StateKeepingHandler;
+import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.BookmakerEventState;
+import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.OutcomeData;
+import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.OutcomeKey;
+import com.aspiralimited.oddsmarket.api.v4.websocket.dto.BookmakerEventDto;
+import com.aspiralimited.oddsmarket.api.v4.websocket.dto.OutcomeDto;
 import lombok.SneakyThrows;
 
 import java.text.DateFormat;
@@ -55,11 +59,7 @@ public class DiffPrinter {
     @SneakyThrows
     public void listenFeedAndPrintDiffs(int bookmakerId, Set<Integer> sportIds) {
 
-//        client.onJsonMessage(jsonMsg -> {
-//            System.out.println("Response message: " + jsonMsg.optString("cmd") + " " + jsonMsg.opt("msg"));
-//        });
-
-        OddsmarketClient.Handler handler = new OddsmarketClient.Handler() {
+        Handler handler = new StateKeepingHandler() {
 
             @Override
             public void info(String msg) {
@@ -67,62 +67,65 @@ public class DiffPrinter {
             }
 
             @Override
-            public void bookmakerEvent(BookmakerEvent bkEvent) {
+            public void bookmakerEvent(BookmakerEventDto bkEvent) {
                 long bookmakerEventId = bkEvent.id;
                 String bookmakerEventIdName = getBookmakerEventIdName(bkEvent);
                 if (inMemoryStateStorage.hasBookmakerEvent(bookmakerEventId)) {
                     BookmakerEventState bookmakerEventState = inMemoryStateStorage.getBookmakerEvent(bookmakerEventId);
-                    DiffList diffList = bookmakerEventState.updatePropertiesAndReturnDiff(bkEvent);
+
+                    DiffList diffList = BookmakerEventStateDiffDetector.getStateVsDtoDiff(bookmakerEventState, bkEvent);
+                    bookmakerEventState.updateProperties(bkEvent);
                     if (!diffList.isEmpty()) {
                         printToConsole("[UPD] " + bookmakerEventIdName + ": " + diffList.toString());
                     }
                 } else {
-                    BookmakerEventState bookmakerEventState = inMemoryStateStorage.putBookmakerEvent(bkEvent);
+                    inMemoryStateStorage.putBookmakerEvent(bkEvent);
                     printToConsole("[NEW] " + getBookmakerEventIdName(bkEvent) + " " + bkEvent);
                 }
             }
 
             @Override
-            public void odds(Map<String, Odd> updatedOdds) {
-                Map<Long, List<Odd>> oddsByBkEventId = new HashMap<>();
-                for (Odd odd : updatedOdds.values()) {
+            public void outcomes(List<OutcomeDto> updatedOutcomes) {
+                Map<Long, List<OutcomeDto>> oddsByBkEventId = new HashMap<>();
+                for (OutcomeDto outcomeDto : updatedOutcomes) {
                     oddsByBkEventId
-                            .computeIfAbsent(odd.bookmakerEventId, id -> new ArrayList<>())
-                            .add(odd);
+                            .computeIfAbsent(outcomeDto.bookmakerEventId, id -> new ArrayList<>())
+                            .add(outcomeDto);
                 }
-                for (Map.Entry<Long, List<Odd>> bkEventIdAndOdds : oddsByBkEventId.entrySet()) {
+                for (Map.Entry<Long, List<OutcomeDto>> bkEventIdAndOdds : oddsByBkEventId.entrySet()) {
                     long bookmakerEventId = bkEventIdAndOdds.getKey();
                     if (inMemoryStateStorage.hasBookmakerEvent(bookmakerEventId)) {
                         BookmakerEventState bookmakerEventState = inMemoryStateStorage.getBookmakerEvent(bookmakerEventId);
                         String bookmakerEventIdName = getBookmakerEventIdName(bookmakerEventState);
                         printToConsole("[ODDS] " + bookmakerEventIdName);
-                        for (Odd odd : bkEventIdAndOdds.getValue()) {
-                            OutcomeKey outcomeKey = new OutcomeKey(odd.marketAndBetTypeId,
-                                    odd.marketAndBetTypeParameterValue,
-                                    (short) (int) odd.periodIdentifier,
-                                    odd.oddLay != null && odd.oddLay != 0,
-                                    odd.playerId1,
-                                    odd.playerId2
+                        for (OutcomeDto outcomeDto : bkEventIdAndOdds.getValue()) {
+                            OutcomeKey outcomeKey = new OutcomeKey(outcomeDto.marketAndBetTypeId,
+                                    outcomeDto.marketAndBetTypeParameterValue,
+                                    (short) (int) outcomeDto.periodIdentifier,
+                                    outcomeDto.oddsLay != null && outcomeDto.oddsLay != 0,
+                                    outcomeDto.playerId1,
+                                    outcomeDto.playerId2
                             );
                             String outcomeName = generateOutcomeName(outcomeKey, bookmakerEventState.isSwapTeams(), (short) bookmakerEventState.getSportId());
                             if (bookmakerEventState.hasOutcome(outcomeKey)) {
-                                if (odd.active()) {
-                                    DiffList diffList = bookmakerEventState.getOutcome(outcomeKey).updatePropertiesAndReturnDiff(odd);
+                                if (outcomeDto.active()) {
+                                    DiffList diffList = OutcomeDataDiffDetector.updatePropertiesAndReturnDiff(bookmakerEventState.getOutcome(outcomeKey), outcomeDto);
+                                    bookmakerEventState.putOutcome(outcomeKey, outcomeDto);
                                     if (!diffList.isEmpty()) {
                                         printToConsole("    [UPD] " + outcomeName + ": " + diffList);
                                     }
-                                    bookmakerEventState.putOutcome(outcomeKey, odd);
+                                    bookmakerEventState.putOutcome(outcomeKey, outcomeDto);
                                 } else {
                                     // Deactivated outcomes must be removed
                                     bookmakerEventState.removeOutcome(outcomeKey);
                                     printToConsole("    [DEL] " + outcomeName);
                                 }
                             } else {
-                                if (odd.active()) {
-                                    OutcomeData newOutcomeData = bookmakerEventState.putOutcome(outcomeKey, odd);
-                                    printToConsole("    [NEW] " + outcomeName + ": " + newOutcomeData.toShortString());
+                                if (outcomeDto.active()) {
+                                    OutcomeData newOutcomeData = bookmakerEventState.putOutcome(outcomeKey, outcomeDto);
+                                    printToConsole("    [NEW] " + outcomeName + ": " + OutcomeDataDiffDetector.outcomeDataToShortString(newOutcomeData));
                                 } else {
-                                    throw new IllegalStateException("Missing odd is being deactivated. ID=" + odd.id);
+                                    throw new IllegalStateException("Missing outcome is being deactivated. ID=" + outcomeDto.id);
                                 }
                             }
                         }
@@ -164,7 +167,7 @@ public class DiffPrinter {
         sleep(1_000_000_000);
     }
 
-    private String getBookmakerEventIdName(BookmakerEvent bkEvent) {
+    private String getBookmakerEventIdName(BookmakerEventDto bkEvent) {
         return getBookmakerEventIdName(bkEvent.name, bkEvent.startedAt);
     }
 

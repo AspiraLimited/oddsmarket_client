@@ -1,6 +1,5 @@
-package com.aspiralimited.oddsmarket.client.demo.feedreader.state;
+package com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model;
 
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.BookmakerEventState;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.BookmakerEventDto;
 
 import java.util.Map;

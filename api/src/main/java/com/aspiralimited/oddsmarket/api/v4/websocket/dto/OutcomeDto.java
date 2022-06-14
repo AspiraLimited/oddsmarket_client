@@ -1,31 +1,29 @@
-package com.aspiralimited.oddsmarket.client.models;
+package com.aspiralimited.oddsmarket.api.v4.websocket.dto;
 
 import java.util.List;
 
-public class Odd {
+public class OutcomeDto {
 
     public String id;
     public Long bookmakerEventId;
     public Integer periodId;
     public Integer periodIdentifier;
     public String periodName;
-    public Integer betCombinationId;
-    public String betCombination;
     public Short marketAndBetTypeId;
-    public String marketAndBetTypeTitle;
     public Float marketAndBetTypeParameterValue;
     public Integer playerId1;
     public String playerName1;
     public Integer playerId2;
     public String playerName2;
     public boolean active;
-    public Float odd;
-    public Float oddLay = null;
+    public Float odds;
+    public Float oddsLay = null;
+    public boolean isLay;
     public Float marketDepth = null;
     public String directLink = null;
     public Long updatedAt;
 
-    public Odd(List<Object> values, List<String> fields) {
+    public OutcomeDto(List<Object> values, List<String> fields) {
         for (int i = 0; i < values.size(); i++) {
             String field = fields.get(i);
             Object value = values.get(i);
@@ -53,20 +51,8 @@ public class Odd {
                     this.periodName = (String) value;
                     break;
 
-                case "betCombinationId":
-                    this.betCombinationId = (Integer) value;
-                    break;
-
-                case "betCombination":
-                    this.betCombination = (String) value;
-                    break;
-
                 case "marketAndBetTypeId":
                     this.marketAndBetTypeId = (short) (int) value;
-                    break;
-
-                case "marketAndBetTypeTitle":
-                    this.marketAndBetTypeTitle = (String) value;
                     break;
 
                 case "marketAndBetTypeParameterValue":
@@ -89,12 +75,20 @@ public class Odd {
                     this.playerName2 = (String) value;
                     break;
 
-                case "odd":
-                    this.odd = ((Double) value).floatValue();
+                case "active":
+                    this.active = (boolean) value;
                     break;
 
-                case "oddLay":
-                    this.oddLay = ((Double) value).floatValue();
+                case "odds":
+                    this.odds = ((Double) value).floatValue();
+                    break;
+
+                case "oddsLay":
+                    this.oddsLay = ((Double) value).floatValue();
+                    break;
+
+                case "isLay":
+                    this.isLay = (boolean) value;
                     break;
 
                 case "marketDepth":
@@ -109,10 +103,6 @@ public class Odd {
                     this.updatedAt = ((value instanceof Integer) ? (long) (int) value : (long) value);
                     break;
 
-                case "active":
-                    this.active = (boolean) value;
-                    break;
-
                 default:
                     System.out.println("unknown field: " + field + "[" + value + "]");
             }
@@ -125,24 +115,22 @@ public class Odd {
 
     @Override
     public String toString() {
-        return "Odd{" +
+        return "Outcome{" +
                 "id=" + id +
                 ", bookmakerEventId=" + bookmakerEventId +
                 ", periodId=" + periodId +
                 ", periodIdentifier=" + periodIdentifier +
                 ", periodName='" + periodName + '\'' +
-                ", betCombinationId=" + betCombinationId +
-                ", betCombination='" + betCombination + '\'' +
                 ", marketAndBetTypeId=" + marketAndBetTypeId +
-                ", marketAndBetTypeTitle='" + marketAndBetTypeTitle + '\'' +
                 ", marketAndBetTypeParameterValue=" + marketAndBetTypeParameterValue +
                 ", playerId1=" + playerId1 +
                 ", playerName1='" + playerName1 + '\'' +
                 ", playerId2=" + playerId2 +
                 ", playerName2='" + playerName2 + '\'' +
                 ", active=" + active +
-                ", odd=" + odd +
-                ", oddLay=" + oddLay +
+                ", odds=" + odds +
+                ", oddsLay=" + oddsLay +
+                ", isLay=" + isLay +
                 ", marketDepth=" + marketDepth +
                 ", directLink='" + directLink + '\'' +
                 ", updatedAt=" + updatedAt +

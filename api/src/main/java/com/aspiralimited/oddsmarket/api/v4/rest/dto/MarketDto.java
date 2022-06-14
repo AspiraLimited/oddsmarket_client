@@ -1,14 +1,14 @@
-package com.aspiralimited.oddsmarket.api.rest.dto;
+package com.aspiralimited.oddsmarket.api.v4.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class ResponseContainer<T> {
-    private T response;
+public class MarketDto {
+    public short id;
+    public String title;
+    public String shortTitle;
 }

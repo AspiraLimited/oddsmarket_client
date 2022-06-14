@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.api.websocket.cmd;
+package com.aspiralimited.oddsmarket.api.v4.websocket.cmd;
 
 import com.aspiralimited.oddsmarket.api.ApiVersion;
 

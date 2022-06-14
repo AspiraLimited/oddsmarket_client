@@ -1,28 +1,21 @@
-package com.aspiralimited.oddsmarket.client;
+package com.aspiralimited.oddsmarket.client.websocket;
 
-import com.aspiralimited.oddsmarket.api.websocket.cmd.RequestCMD;
-import com.aspiralimited.oddsmarket.client.models.BookmakerEvent;
-import com.aspiralimited.oddsmarket.client.models.Odd;
+import com.aspiralimited.oddsmarket.api.v4.websocket.cmd.RequestCMD;
+import com.aspiralimited.oddsmarket.client.websocket.handlers.Handler;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-
-import static java.util.stream.Collectors.toList;
 
 public class OddsmarketClient {
 
@@ -175,73 +168,4 @@ public class OddsmarketClient {
         }
     }
 
-    public abstract static class Handler {
-        private List<String> outcomeFields = new ArrayList<>();
-        private List<String> bookmakerEventFields = new ArrayList<>();
-
-        void handle(JSONObject jsonMsg) {
-            String command = jsonMsg.optString("cmd");
-
-            switch (command) {
-                case "fields":
-                    outcomeFields = jsonMsg.getJSONObject("msg").getJSONArray("Odd").toList().stream().map(x -> (String) x).collect(toList());
-                    bookmakerEventFields = jsonMsg.getJSONObject("msg").getJSONArray("BookmakerEvent").toList().stream().map(x -> (String) x).collect(toList());
-                    info("init fields: " + jsonMsg);
-                    break;
-
-                case "bookmaker_events":
-                    for (Object raw : jsonMsg.getJSONArray("msg")) {
-                        BookmakerEvent bkEvent = new BookmakerEvent(((JSONArray) raw).toList(), bookmakerEventFields);
-                        bookmakerEvent(bkEvent);
-                    }
-                    break;
-
-                case "outcomes":
-                    Map<String, Odd> updatedOdds = new HashMap<>();
-
-                    for (Object raw : jsonMsg.getJSONArray("msg")) {
-                        Odd odd = new Odd(((JSONArray) raw).toList(), outcomeFields);
-                        updatedOdds.put(odd.id, odd);
-                    }
-
-                    odds(updatedOdds);
-
-                    break;
-
-                case "bookmaker_events_removed":
-                    List<Long> ids = new ArrayList<>();
-                    jsonMsg.getJSONObject("msg").getJSONArray("bookmakerEventIds").forEach(raw -> {
-                        if (raw instanceof Integer) {
-                            ids.add((long) (int) raw);
-                        } else if (raw instanceof Long) {
-                            ids.add((long) raw);
-                        }
-                    });
-
-                    removeBookmakerEvents(ids);
-                    break;
-
-                case "subscribed":
-                    info("Subscribed successfully: " + jsonMsg);
-                    break;
-
-                case "error":
-                    info("Error message: " + jsonMsg.get("msg"));
-                    break;
-
-                default:
-                    info("skip command '" + command + "' with msg '" + jsonMsg.get("msg") + "'");
-            }
-        }
-
-        public abstract void info(String msg);
-
-        public abstract void bookmakerEvent(BookmakerEvent bkEvent);
-
-        public abstract void odds(Map<String, Odd> updatedOdds);
-
-        public abstract void removeBookmakerEvents(Collection<Long> ids);
-
-        public abstract void onDisconnected(boolean closedByServer);
-    }
 }

@@ -1,14 +1,14 @@
 package com.aspiralimited.oddsmarket.client.rest;
 
-import com.aspiralimited.oddsmarket.api.rest.dto.BetTypeDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.BookmakerDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.InternalEventDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.LeagueDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.MarketAndBetTypeDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.MarketDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.PlayerDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.ResponseContainer;
-import com.aspiralimited.oddsmarket.api.rest.dto.SportDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.BetTypeDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.LeagueDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketAndBetTypeDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.PlayerDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.ResponseContainer;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -44,15 +44,13 @@ public class OddsmarketRestHttpClient {
     public CompletableFuture<List<BetTypeDto>> getBetTypes() {
         return getGenericJsonEndpoint(baseUrlMst + "/v1/bet_types", new TypeReference<ResponseContainer<List<BetTypeDto>>>() {
         })
-                .thenApply(ResponseContainer::getResponse
-                );
+                .thenApply(x -> x.response);
     }
 
     public CompletableFuture<List<BookmakerDto>> getBookmakers() {
         return getGenericJsonEndpoint(baseUrlMst + "/v1/bookmakers", new TypeReference<ResponseContainer<List<BookmakerDto>>>() {
         })
-                .thenApply(ResponseContainer::getResponse
-                );
+                .thenApply(x -> x.response);
     }
 
     public CompletableFuture<List<MarketAndBetTypeDto>> getMarketAndBetTypes() {
@@ -63,15 +61,13 @@ public class OddsmarketRestHttpClient {
     public CompletableFuture<List<MarketDto>> getMarkets() {
         return getGenericJsonEndpoint(baseUrlMst + "/v1/markets", new TypeReference<ResponseContainer<List<MarketDto>>>() {
         })
-                .thenApply(ResponseContainer::getResponse
-                );
+                .thenApply(x -> x.response);
     }
 
     public CompletableFuture<List<SportDto>> getSports() {
         return getGenericJsonEndpoint(baseUrlMst + "/v1/sports", new TypeReference<ResponseContainer<List<SportDto>>>() {
         })
-                .thenApply(ResponseContainer::getResponse
-                );
+                .thenApply(x -> x.response);
     }
 
     public CompletableFuture<String> getPeriodName(short identifier, short sportId) {
@@ -93,7 +89,7 @@ public class OddsmarketRestHttpClient {
                 new TypeReference<ResponseContainer<List<PlayerDto>>>() {
                 }
         )
-                .thenApply(ResponseContainer::getResponse);
+                .thenApply(x -> x.response);
     }
 
     private String collectionToCommaSeparatedString(Collection<Long> longs) {

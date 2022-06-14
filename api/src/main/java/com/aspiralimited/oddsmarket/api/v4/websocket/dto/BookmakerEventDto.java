@@ -1,8 +1,8 @@
-package com.aspiralimited.oddsmarket.client.models;
+package com.aspiralimited.oddsmarket.api.v4.websocket.dto;
 
 import java.util.List;
 
-public class BookmakerEvent {
+public class BookmakerEventDto {
 
     public long id;
     public short bookmakerId;
@@ -25,7 +25,7 @@ public class BookmakerEvent {
     public String home;
     public String away;
 
-    public BookmakerEvent(List<Object> values, List<String> fields) {
+    public BookmakerEventDto(List<Object> values, List<String> fields) {
         for (int i = 0; i < values.size(); i++) {
             String field = fields.get(i);
             Object value = values.get(i);
@@ -119,13 +119,9 @@ public class BookmakerEvent {
         }
     }
 
-    public boolean active() {
-        return active;
-    }
-
     @Override
     public String toString() {
-        return "BookmakerEvent{" +
+        return "BookmakerEventDto{" +
                 "id=" + id +
                 ", bookmakerId=" + bookmakerId +
                 ", active=" + active +

@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.client.demo.feedreader.state;
+package com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

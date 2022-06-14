@@ -1,9 +1,9 @@
 package com.aspiralimited.oddsmarket.client.demo.feedreader;
 
 import com.aspiralimited.oddsmarket.client.rest.OddsmarketRestHttpClient;
-import com.aspiralimited.oddsmarket.api.rest.dto.BetTypeDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.MarketAndBetTypeDto;
-import com.aspiralimited.oddsmarket.api.rest.dto.SportDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.BetTypeDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketAndBetTypeDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportDto;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
