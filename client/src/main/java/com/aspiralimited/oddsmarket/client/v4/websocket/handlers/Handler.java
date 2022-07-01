@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.client.websocket.handlers;
+package com.aspiralimited.oddsmarket.client.v4.websocket.handlers;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.BookmakerEventDto;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.OutcomeDto;
@@ -75,6 +75,9 @@ public abstract class Handler {
     protected void internalInfo(String msg) {
         info(msg);
     }
+    protected void internalError(String msg, Throwable t) {
+        internalError(msg, t);
+    }
 
     protected void internalBookmakerEvent(BookmakerEventDto bkEvent) {
         bookmakerEvent(bkEvent);
@@ -90,6 +93,8 @@ public abstract class Handler {
 
 
     public abstract void info(String msg);
+
+    public abstract void error(String msg, Exception e);
 
     public abstract void bookmakerEvent(BookmakerEventDto bkEvent);
 

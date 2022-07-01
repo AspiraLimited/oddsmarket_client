@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.client.rest;
+package com.aspiralimited.oddsmarket.client.v4.rest;
 
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;

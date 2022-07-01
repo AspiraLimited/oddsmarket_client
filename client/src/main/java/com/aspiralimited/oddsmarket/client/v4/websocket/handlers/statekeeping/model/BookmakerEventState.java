@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model;
+package com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.BookmakerEventDto;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.OutcomeDto;

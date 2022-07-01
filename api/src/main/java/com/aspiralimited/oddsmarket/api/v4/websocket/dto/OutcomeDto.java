@@ -1,13 +1,17 @@
 package com.aspiralimited.oddsmarket.api.v4.websocket.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class OutcomeDto {
 
     public String id;
     public Long bookmakerEventId;
-    public Integer periodId;
-    public Integer periodIdentifier;
+    public Short periodIdentifier;
     public String periodName;
     public Short marketAndBetTypeId;
     public Float marketAndBetTypeParameterValue;
@@ -39,12 +43,8 @@ public class OutcomeDto {
                     this.bookmakerEventId = ((value instanceof Integer) ? (long) (int) value : (long) value);
                     break;
 
-                case "periodId":
-                    this.periodId = (Integer) value;
-                    break;
-
                 case "periodIdentifier":
-                    this.periodIdentifier = (Integer) value;
+                    this.periodIdentifier = value instanceof Short ? (short) value : (short) (int) value;
                     break;
 
                 case "periodName":
@@ -52,11 +52,11 @@ public class OutcomeDto {
                     break;
 
                 case "marketAndBetTypeId":
-                    this.marketAndBetTypeId = (short) (int) value;
+                    this.marketAndBetTypeId = value instanceof Short ? (short) value : (short) (int) value;
                     break;
 
                 case "marketAndBetTypeParameterValue":
-                    this.marketAndBetTypeParameterValue = ((Double) value).floatValue();
+                    this.marketAndBetTypeParameterValue = value instanceof Double ? ((Double) value).floatValue() : (Float) value;
                     break;
 
                 case "playerId1":
@@ -118,7 +118,6 @@ public class OutcomeDto {
         return "Outcome{" +
                 "id=" + id +
                 ", bookmakerEventId=" + bookmakerEventId +
-                ", periodId=" + periodId +
                 ", periodIdentifier=" + periodIdentifier +
                 ", periodName='" + periodName + '\'' +
                 ", marketAndBetTypeId=" + marketAndBetTypeId +

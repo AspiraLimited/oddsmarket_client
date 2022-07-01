@@ -1,7 +1,12 @@
 package com.aspiralimited.oddsmarket.api.v4.websocket.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookmakerEventDto {
 
     public long id;

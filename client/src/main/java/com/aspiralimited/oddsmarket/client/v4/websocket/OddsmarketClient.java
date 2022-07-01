@@ -1,7 +1,7 @@
-package com.aspiralimited.oddsmarket.client.websocket;
+package com.aspiralimited.oddsmarket.client.v4.websocket;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.cmd.RequestCMD;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.Handler;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.Handler;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -39,12 +39,24 @@ public class OddsmarketClient {
 
             @Override
             public void onTextMessage(WebSocket websocket, String message) throws Exception {
-                if (onTextMessageConsumer != null) onTextMessageConsumer.accept(message);
+                try {
+                    if (onTextMessageConsumer != null) {
+                        onTextMessageConsumer.accept(message);
+                    }
 
-                JSONObject json = new JSONObject(message);
-                if (onJsonMessageConsumer != null) onJsonMessageConsumer.accept(json);
+                    JSONObject json = new JSONObject(message);
+                    if (onJsonMessageConsumer != null) {
+                        onJsonMessageConsumer.accept(json);
+                    }
 
-                if (handler != null) handler.handle(json);
+                    if (handler != null) {
+                        handler.handle(json);
+                    }
+                } catch (Exception e) {
+                    if (handler != null) {
+                        handler.error("Websocket message handler exception. Incoming message: " + message, e);
+                    }
+                }
             }
         });
     }

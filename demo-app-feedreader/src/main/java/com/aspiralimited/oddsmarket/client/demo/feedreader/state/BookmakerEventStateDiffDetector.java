@@ -3,7 +3,7 @@ package com.aspiralimited.oddsmarket.client.demo.feedreader.state;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.DiffPrinter;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.diff.Diff;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.diff.DiffList;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.BookmakerEventState;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.BookmakerEventState;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.BookmakerEventDto;
 import lombok.Getter;
 

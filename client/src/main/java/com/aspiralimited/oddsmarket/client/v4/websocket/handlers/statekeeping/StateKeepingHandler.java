@@ -1,17 +1,19 @@
-package com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping;
+package com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping;
 
-import com.aspiralimited.oddsmarket.client.websocket.handlers.Handler;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.BookmakerEventState;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.InMemoryStateStorage;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.OutcomeKey;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.Handler;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.BookmakerEventState;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.InMemoryStateStorage;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.OutcomeKey;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.BookmakerEventDto;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.OutcomeDto;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.List;
 
 public abstract class StateKeepingHandler extends Handler {
 
+    @Getter
     protected final InMemoryStateStorage inMemoryStateStorage = new InMemoryStateStorage();
 
     @Override
@@ -41,7 +43,7 @@ public abstract class StateKeepingHandler extends Handler {
                 OutcomeKey outcomeKey = new OutcomeKey(outcomeDto.marketAndBetTypeId,
                         outcomeDto.marketAndBetTypeParameterValue,
                         (short) (int) outcomeDto.periodIdentifier,
-                        outcomeDto.oddsLay != null && outcomeDto.oddsLay != 0,
+                        outcomeDto.isLay,
                         outcomeDto.playerId1,
                         outcomeDto.playerId2
                 );

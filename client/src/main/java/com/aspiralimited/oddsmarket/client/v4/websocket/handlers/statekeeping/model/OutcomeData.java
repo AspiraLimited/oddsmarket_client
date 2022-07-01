@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model;
+package com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.OutcomeDto;
 import lombok.Getter;
@@ -21,6 +21,7 @@ public class OutcomeData {
     private volatile Float oddsLay = null;
     private volatile Float marketDepth = null;
     private volatile String directLink = null;
+    private volatile long updatedAt;
 
     public void updateProperties(OutcomeDto outcomeDto) {
         playerName1 = outcomeDto.playerName1;
@@ -29,6 +30,7 @@ public class OutcomeData {
         oddsLay = outcomeDto.oddsLay;
         marketDepth = outcomeDto.marketDepth;
         directLink = outcomeDto.directLink;
+        updatedAt = outcomeDto.updatedAt;
     }
 
 }

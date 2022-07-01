@@ -1,6 +1,6 @@
 package com.aspiralimited.oddsmarket.client.demo.feedreader;
 
-import com.aspiralimited.oddsmarket.client.rest.OddsmarketRestHttpClient;
+import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketAndBetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportDto;

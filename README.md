@@ -1,5 +1,6 @@
 # Oddsmarket client
 
+For API documentation and integration manual please read the [Wiki](wiki/) section. 
 
 This repository contains following modules:
 

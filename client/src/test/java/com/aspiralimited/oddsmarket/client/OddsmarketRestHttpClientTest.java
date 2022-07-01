@@ -1,6 +1,6 @@
 package com.aspiralimited.oddsmarket.client;
 
-import com.aspiralimited.oddsmarket.client.rest.OddsmarketRestHttpClient;
+import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.LeagueDto;

@@ -1,7 +1,7 @@
 package com.aspiralimited.oddsmarket.client.demo.feedreader;
 
-import com.aspiralimited.oddsmarket.client.websocket.OddsmarketClient;
-import com.aspiralimited.oddsmarket.client.rest.OddsmarketRestHttpClient;
+import com.aspiralimited.oddsmarket.client.v4.websocket.OddsmarketClient;
+import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 
 import java.util.Arrays;
 import java.util.Collections;

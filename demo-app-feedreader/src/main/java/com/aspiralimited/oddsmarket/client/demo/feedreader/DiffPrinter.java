@@ -2,18 +2,18 @@ package com.aspiralimited.oddsmarket.client.demo.feedreader;
 
 import com.aspiralimited.config.statical.Period;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.state.OutcomeDataDiffDetector;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.Handler;
-import com.aspiralimited.oddsmarket.client.websocket.OddsmarketClient;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.Handler;
+import com.aspiralimited.oddsmarket.client.v4.websocket.OddsmarketClient;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.diff.DiffList;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.BetSpecCache;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.OutcomeNameTranslator;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.ReverseBetSpecCalculator;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.state.BookmakerEventStateDiffDetector;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.state.InMemoryStateStorage;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.StateKeepingHandler;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.BookmakerEventState;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.OutcomeData;
-import com.aspiralimited.oddsmarket.client.websocket.handlers.statekeeping.model.OutcomeKey;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.StateKeepingHandler;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.BookmakerEventState;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.OutcomeData;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.OutcomeKey;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.BookmakerEventDto;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.OutcomeDto;
 import lombok.SneakyThrows;
@@ -64,6 +64,12 @@ public class DiffPrinter {
             @Override
             public void info(String msg) {
                 printToConsole("Info: " + msg);
+            }
+
+            @Override
+            public void error(String msg, Exception e) {
+                System.err.println(msg);
+                e.printStackTrace();
             }
 
             @Override
@@ -187,7 +193,7 @@ public class DiffPrinter {
         String periodName = Period.periodName(outcomeKey.getPeriodIdentifier(), sportId, true);
         return outcomeNameTranslator.translate(
                 outcomeKey.getMarketAndBetTypeId(),
-                outcomeKey.getMarketAndBetTypeParam(),
+                outcomeKey.getMarketAndBetTypeParamValue(),
                 outcomeKey.isLay(),
                 swapTeams
         ).getEffectiveName() + " [" + periodName + "]" + (outcomeKey.isLay() ? " [LAY]" : "");
