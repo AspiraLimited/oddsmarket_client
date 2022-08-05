@@ -37,22 +37,22 @@
         <dependency>
             <groupId>com.aspiralimited.static-config</groupId>
             <artifactId>bookmakers</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.aspiralimited.static-config</groupId>
             <artifactId>outcomes</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.aspiralimited.static-config</groupId>
             <artifactId>periods</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.aspiralimited.static-config</groupId>
             <artifactId>sports</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -1,5 +1,6 @@
 package com.aspiralimited.oddsmarket.client.demo.feedreader;
 
+import com.aspiralimited.oddsmarket.api.ApiVersion;
 import com.aspiralimited.oddsmarket.client.v4.websocket.OddsmarketClient;
 import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 
@@ -33,7 +34,7 @@ public class FeedReader {
                 String sportIdsStr = args[3];
                 sportIds = Arrays.stream(sportIdsStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet());
             }
-            String feedWebsocketUrl = (feedDomain.startsWith("localhost") ? "ws://" : "wss://") + feedDomain + "/v3/odds_ws";
+            String feedWebsocketUrl = (feedDomain.startsWith("localhost") ? "ws://" : "wss://") + feedDomain + ApiVersion.LATEST_VERSION_URL_PREFIX + "/odds_ws";
             OddsmarketClient client = OddsmarketClient.connect(feedWebsocketUrl, apiKey);
             OddsmarketRestHttpClient oddsmarketRestHttpClient = new OddsmarketRestHttpClient(
                     "https://api-mst.oddsmarket.org",

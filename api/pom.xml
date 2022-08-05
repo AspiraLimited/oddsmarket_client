@@ -13,6 +13,14 @@
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Aspira Public Artifactory</name>
+            <url>https://maven.pkg.github.com/AspiraLimited/oddsmarket_client</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>

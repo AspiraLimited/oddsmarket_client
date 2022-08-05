@@ -71,15 +71,15 @@ public abstract class StateKeepingHandler extends Handler {
     }
 
     @Override
-    protected void internalRemoveBookmakerEvents(Collection<Long> ids) {
-        for (Long bookmakerEventId : ids) {
+    protected void internalRemoveBookmakerEvents(Collection<Long> bookmakerEventIds) {
+        for (Long bookmakerEventId : bookmakerEventIds) {
             BookmakerEventState bkEvent = inMemoryStateStorage.removeBookmakerEvent(bookmakerEventId);
             if (bkEvent == null) {
                 throw new IllegalStateException("Missing bookmaker event information when trying to remove bookmaker event id=" + bookmakerEventId);
             }
         }
 
-        super.internalRemoveBookmakerEvents(ids);
+        super.internalRemoveBookmakerEvents(bookmakerEventIds);
     }
 
 }

@@ -47,16 +47,16 @@ public abstract class Handler {
                 break;
 
             case "bookmaker_events_removed":
-                List<Long> ids = new ArrayList<>();
+                List<Long> bookmakerEventIds = new ArrayList<>();
                 jsonMsg.getJSONObject("msg").getJSONArray("bookmakerEventIds").forEach(raw -> {
                     if (raw instanceof Integer) {
-                        ids.add((long) (int) raw);
+                        bookmakerEventIds.add((long) (int) raw);
                     } else if (raw instanceof Long) {
-                        ids.add((long) raw);
+                        bookmakerEventIds.add((long) raw);
                     }
                 });
 
-                internalRemoveBookmakerEvents(ids);
+                internalRemoveBookmakerEvents(bookmakerEventIds);
                 break;
 
             case "subscribed":
@@ -87,8 +87,8 @@ public abstract class Handler {
         outcomes(updatedOutcomeDtos);
     }
 
-    protected void internalRemoveBookmakerEvents(Collection<Long> ids) {
-        removeBookmakerEvents(ids);
+    protected void internalRemoveBookmakerEvents(Collection<Long> bookmakerEventIds) {
+        removeBookmakerEvents(bookmakerEventIds);
     }
 
 
@@ -100,7 +100,7 @@ public abstract class Handler {
 
     public abstract void outcomes(List<OutcomeDto> updatedOutcomeDtos);
 
-    public abstract void removeBookmakerEvents(Collection<Long> ids);
+    public abstract void removeBookmakerEvents(Collection<Long> bookmakerEventIds);
 
     public abstract void onDisconnected(boolean closedByServer);
 }

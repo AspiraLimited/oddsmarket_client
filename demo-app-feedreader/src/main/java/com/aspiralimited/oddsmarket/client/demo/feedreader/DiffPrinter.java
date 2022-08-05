@@ -144,8 +144,8 @@ public class DiffPrinter {
             }
 
             @Override
-            public void removeBookmakerEvents(Collection<Long> ids) {
-                for (Long bookmakerEventId : ids) {
+            public void removeBookmakerEvents(Collection<Long> bookmakerEventIds) {
+                for (Long bookmakerEventId : bookmakerEventIds) {
                     BookmakerEventState bkEvent = inMemoryStateStorage.removeBookmakerEvent(bookmakerEventId);
                     if (bkEvent != null) {
                         printToConsole("[DEL] " + bkEvent);

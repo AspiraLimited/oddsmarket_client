@@ -1,5 +1,6 @@
 package com.aspiralimited.oddsmarket.client.v4.rest;
 
+import com.aspiralimited.oddsmarket.api.ApiVersion;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
@@ -42,50 +43,50 @@ public class OddsmarketRestHttpClient {
     }
 
     public CompletableFuture<List<BetTypeDto>> getBetTypes() {
-        return getGenericJsonEndpoint(baseUrlMst + "/v1/bet_types", new TypeReference<ResponseContainer<List<BetTypeDto>>>() {
+        return getGenericJsonEndpoint(baseUrlMst + ApiVersion.LATEST_VERSION_URL_PREFIX + "/bet_types", new TypeReference<ResponseContainer<List<BetTypeDto>>>() {
         })
                 .thenApply(x -> x.response);
     }
 
     public CompletableFuture<List<BookmakerDto>> getBookmakers() {
-        return getGenericJsonEndpoint(baseUrlMst + "/v1/bookmakers", new TypeReference<ResponseContainer<List<BookmakerDto>>>() {
+        return getGenericJsonEndpoint(baseUrlMst + ApiVersion.LATEST_VERSION_URL_PREFIX + "/bookmakers", new TypeReference<ResponseContainer<List<BookmakerDto>>>() {
         })
                 .thenApply(x -> x.response);
     }
 
     public CompletableFuture<List<MarketAndBetTypeDto>> getMarketAndBetTypes() {
-        return getGenericJsonEndpoint(baseUrlMst + "/v1/market_and_bet_types", new TypeReference<List<MarketAndBetTypeDto>>() {
+        return getGenericJsonEndpoint(baseUrlMst + ApiVersion.LATEST_VERSION_URL_PREFIX + "/market_and_bet_types", new TypeReference<List<MarketAndBetTypeDto>>() {
         });
     }
 
     public CompletableFuture<List<MarketDto>> getMarkets() {
-        return getGenericJsonEndpoint(baseUrlMst + "/v1/markets", new TypeReference<ResponseContainer<List<MarketDto>>>() {
+        return getGenericJsonEndpoint(baseUrlMst + ApiVersion.LATEST_VERSION_URL_PREFIX + "/markets", new TypeReference<ResponseContainer<List<MarketDto>>>() {
         })
                 .thenApply(x -> x.response);
     }
 
     public CompletableFuture<List<SportDto>> getSports() {
-        return getGenericJsonEndpoint(baseUrlMst + "/v1/sports", new TypeReference<ResponseContainer<List<SportDto>>>() {
+        return getGenericJsonEndpoint(baseUrlMst + ApiVersion.LATEST_VERSION_URL_PREFIX + "/sports", new TypeReference<ResponseContainer<List<SportDto>>>() {
         })
                 .thenApply(x -> x.response);
     }
 
     public CompletableFuture<String> getPeriodName(short identifier, short sportId) {
-        return getGenericTextEndpoint(baseUrlMst + "/v1/periodName?identifier=" + identifier + "&sportId=" + sportId);
+        return getGenericTextEndpoint(baseUrlMst + ApiVersion.LATEST_VERSION_URL_PREFIX + "/periodName?identifier=" + identifier + "&sportId=" + sportId);
     }
 
     public CompletableFuture<List<InternalEventDto>> getInternalEvents(Collection<Long> eventIds) {
-        return getGenericJsonEndpoint(baseUrlLivePrematch + "/v1/internal_events/" + collectionToCommaSeparatedString(eventIds), new TypeReference<>() {
+        return getGenericJsonEndpoint(baseUrlLivePrematch + ApiVersion.LATEST_VERSION_URL_PREFIX + "/internal_events/" + collectionToCommaSeparatedString(eventIds), new TypeReference<>() {
         });
     }
 
     public CompletableFuture<List<LeagueDto>> getLeagues(Collection<Long> leagueIds) {
-        return getGenericJsonEndpoint(baseUrlLivePrematch + "/v1/leagues/" + collectionToCommaSeparatedString(leagueIds), new TypeReference<>() {
+        return getGenericJsonEndpoint(baseUrlLivePrematch + ApiVersion.LATEST_VERSION_URL_PREFIX + "/leagues/" + collectionToCommaSeparatedString(leagueIds), new TypeReference<>() {
         });
     }
 
     public CompletableFuture<List<PlayerDto>> getPlayers(Collection<Long> playerIds) {
-        return getGenericJsonEndpoint(baseUrlMst + "/v1/players/" + collectionToCommaSeparatedString(playerIds),
+        return getGenericJsonEndpoint(baseUrlMst + ApiVersion.LATEST_VERSION_URL_PREFIX + "/players/" + collectionToCommaSeparatedString(playerIds),
                 new TypeReference<ResponseContainer<List<PlayerDto>>>() {
                 }
         )

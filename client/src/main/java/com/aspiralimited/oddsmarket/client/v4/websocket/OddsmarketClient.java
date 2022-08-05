@@ -27,8 +27,8 @@ public class OddsmarketClient {
     private Consumer<JSONObject> onJsonMessageConsumer;
 
     // TODO timeouts
-    private OddsmarketClient(String host) throws IOException {
-        this.ws = new WebSocketFactory().createSocket(host);
+    private OddsmarketClient(String websocketUrl) throws IOException {
+        this.ws = new WebSocketFactory().createSocket(websocketUrl);
 
         ws.addListener(new WebSocketAdapter() {
             @Override
@@ -39,26 +39,30 @@ public class OddsmarketClient {
 
             @Override
             public void onTextMessage(WebSocket websocket, String message) throws Exception {
-                try {
-                    if (onTextMessageConsumer != null) {
-                        onTextMessageConsumer.accept(message);
-                    }
-
-                    JSONObject json = new JSONObject(message);
-                    if (onJsonMessageConsumer != null) {
-                        onJsonMessageConsumer.accept(json);
-                    }
-
-                    if (handler != null) {
-                        handler.handle(json);
-                    }
-                } catch (Exception e) {
-                    if (handler != null) {
-                        handler.error("Websocket message handler exception. Incoming message: " + message, e);
-                    }
-                }
+                handleTextMessage(message);
             }
         });
+    }
+
+    void handleTextMessage(String message) {
+        try {
+            if (onTextMessageConsumer != null) {
+                onTextMessageConsumer.accept(message);
+            }
+
+            JSONObject json = new JSONObject(message);
+            if (onJsonMessageConsumer != null) {
+                onJsonMessageConsumer.accept(json);
+            }
+
+            if (handler != null) {
+                handler.handle(json);
+            }
+        } catch (Exception e) {
+            if (handler != null) {
+                handler.error("Websocket message handler exception. Incoming message: " + message, e);
+            }
+        }
     }
 
     public static OddsmarketClient connect(String host) throws IOException, WebSocketException {
