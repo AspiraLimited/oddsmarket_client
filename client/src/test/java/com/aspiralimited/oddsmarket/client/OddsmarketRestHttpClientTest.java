@@ -40,7 +40,7 @@ class OddsmarketRestHttpClientTest {
     @SneakyThrows
     @Test
     void shouldParseBookmakersResponse() {
-        makeWiremockStub("/v1/bookmakers", "/rest-response-samples/bookmakers.json");
+        makeWiremockStub("/v4/bookmakers", "/rest-response-samples/bookmakers.json");
 
         List<BookmakerDto> actual = oddsmarketRestHttpClient.getBookmakers().get();
         Assertions.assertFalse(actual.isEmpty());
@@ -49,7 +49,7 @@ class OddsmarketRestHttpClientTest {
     @SneakyThrows
     @Test
     void shouldParseMarketAndBetTypesResponse() {
-        makeWiremockStub("/v1/market_and_bet_types", "/rest-response-samples/market_and_bet_types.json");
+        makeWiremockStub("/v4/market_and_bet_types", "/rest-response-samples/market_and_bet_types.json");
 
         List<MarketAndBetTypeDto> actual = oddsmarketRestHttpClient.getMarketAndBetTypes().get();
         Assertions.assertFalse(actual.isEmpty());
@@ -58,7 +58,7 @@ class OddsmarketRestHttpClientTest {
     @SneakyThrows
     @Test
     void shouldParseMarketsResponse() {
-        makeWiremockStub("/v1/markets", "/rest-response-samples/markets.json");
+        makeWiremockStub("/v4/markets", "/rest-response-samples/markets.json");
 
         List<MarketDto> actual = oddsmarketRestHttpClient.getMarkets().get();
         Assertions.assertFalse(actual.isEmpty());
@@ -67,7 +67,7 @@ class OddsmarketRestHttpClientTest {
     @SneakyThrows
     @Test
     void shouldParseSportsResponse() {
-        makeWiremockStub("/v1/sports", "/rest-response-samples/sports.json");
+        makeWiremockStub("/v4/sports", "/rest-response-samples/sports.json");
 
         List<SportDto> actual = oddsmarketRestHttpClient.getSports().get();
         Assertions.assertFalse(actual.isEmpty());
@@ -76,7 +76,7 @@ class OddsmarketRestHttpClientTest {
     @SneakyThrows
     @Test
     void shouldParsePeriodNameResponse() {
-        makeWiremockStub("/v1/periodName?identifier=0&sportId=6", "/rest-response-samples/periodName.txt");
+        makeWiremockStub("/v4/periodName?identifier=0&sportId=6", "/rest-response-samples/periodName.txt");
 
         String actual = oddsmarketRestHttpClient.getPeriodName((short) 0, (short) 6).get();
         Assertions.assertEquals("regular time", actual);
@@ -85,7 +85,7 @@ class OddsmarketRestHttpClientTest {
     @SneakyThrows
     @Test
     void shouldParseInternalEventsResponse() {
-        makeWiremockStub("/v1/internal_events/374092363,374518899", "/rest-response-samples/internal_events.json");
+        makeWiremockStub("/v4/internal_events/374092363,374518899", "/rest-response-samples/internal_events.json");
 
         List<InternalEventDto> actual = oddsmarketRestHttpClient.getInternalEvents(List.of(374092363L, 374518899L)).get();
         Assertions.assertEquals(2, actual.size());
@@ -94,7 +94,7 @@ class OddsmarketRestHttpClientTest {
     @SneakyThrows
     @Test
     void shouldParseLeaguesResponse() {
-        makeWiremockStub("/v1/leagues/5944,8719", "/rest-response-samples/leagues.json");
+        makeWiremockStub("/v4/leagues/5944,8719", "/rest-response-samples/leagues.json");
 
         List<LeagueDto> actual = oddsmarketRestHttpClient.getLeagues(List.of(5944L, 8719L)).get();
         Assertions.assertEquals(2, actual.size());
@@ -103,7 +103,7 @@ class OddsmarketRestHttpClientTest {
     @SneakyThrows
     @Test
     void shouldParsePlayersResponse() {
-        makeWiremockStub("/v1/players/3654837", "/rest-response-samples/players.json");
+        makeWiremockStub("/v4/players/3654837", "/rest-response-samples/players.json");
 
         List<PlayerDto> actual = oddsmarketRestHttpClient.getPlayers(List.of(3654837L)).get();
         Assertions.assertEquals(1, actual.size());

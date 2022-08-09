@@ -40,7 +40,7 @@ bash feedreader.sh api-lv.oddsmarket.org 00000000000000000000000000000000 1
 ```
 
 ```
-feedreader.cmd wss://api-lv.oddsmarket.org/v3/odds_ws 00000000000000000000000000000000 1 8,16
+feedreader.cmd wss://api-lv.oddsmarket.org/v4/odds_ws 00000000000000000000000000000000 1 8,16
 ```
 
 Output status prefixes explanation:
