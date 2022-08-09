@@ -1,6 +1,6 @@
 # Oddsmarket client
 
-For API documentation and integration manual please read the [Wiki](wiki/) section. 
+For API documentation and integration manual please read the [Wiki](/AspiraLimited/oddsmarket_client/wiki) section. 
 
 This repository contains following modules:
 
