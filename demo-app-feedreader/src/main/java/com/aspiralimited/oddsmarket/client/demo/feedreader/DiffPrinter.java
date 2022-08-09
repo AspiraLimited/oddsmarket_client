@@ -5,7 +5,6 @@ import com.aspiralimited.oddsmarket.client.demo.feedreader.state.OutcomeDataDiff
 import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.Handler;
 import com.aspiralimited.oddsmarket.client.v4.websocket.OddsmarketClient;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.diff.DiffList;
-import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.BetSpecCache;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.OutcomeNameTranslator;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.outcomenametranslator.ReverseBetSpecCalculator;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.state.BookmakerEventStateDiffDetector;
@@ -45,8 +44,7 @@ public class DiffPrinter {
         this.dictionariesService = dictionariesService;
         ReverseBetSpecCalculator reverseBetSpecCalculator = new ReverseBetSpecCalculator(
                 dictionariesService.getMarketAndBetTypeDtoById(),
-                dictionariesService.getBetTypeDtoById(),
-                new BetSpecCache()
+                dictionariesService.getBetTypeDtoById()
         );
         outcomeNameTranslator = new OutcomeNameTranslator(
                 dictionariesService.getMarketAndBetTypeDtoById(),
@@ -80,12 +78,10 @@ public class DiffPrinter {
                     BookmakerEventState bookmakerEventState = inMemoryStateStorage.getBookmakerEvent(bookmakerEventId);
 
                     DiffList diffList = BookmakerEventStateDiffDetector.getStateVsDtoDiff(bookmakerEventState, bkEvent);
-                    bookmakerEventState.updateProperties(bkEvent);
                     if (!diffList.isEmpty()) {
                         printToConsole("[UPD] " + bookmakerEventIdName + ": " + diffList.toString());
                     }
                 } else {
-                    inMemoryStateStorage.putBookmakerEvent(bkEvent);
                     printToConsole("[NEW] " + getBookmakerEventIdName(bkEvent) + " " + bkEvent);
                 }
             }
@@ -115,21 +111,16 @@ public class DiffPrinter {
                             String outcomeName = generateOutcomeName(outcomeKey, bookmakerEventState.isSwapTeams(), (short) bookmakerEventState.getSportId());
                             if (bookmakerEventState.hasOutcome(outcomeKey)) {
                                 if (outcomeDto.active()) {
-                                    DiffList diffList = OutcomeDataDiffDetector.updatePropertiesAndReturnDiff(bookmakerEventState.getOutcome(outcomeKey), outcomeDto);
-                                    bookmakerEventState.putOutcome(outcomeKey, outcomeDto);
+                                    DiffList diffList = OutcomeDataDiffDetector.getDiffList(bookmakerEventState.getOutcome(outcomeKey), outcomeDto);
                                     if (!diffList.isEmpty()) {
                                         printToConsole("    [UPD] " + outcomeName + ": " + diffList);
                                     }
-                                    bookmakerEventState.putOutcome(outcomeKey, outcomeDto);
                                 } else {
-                                    // Deactivated outcomes must be removed
-                                    bookmakerEventState.removeOutcome(outcomeKey);
                                     printToConsole("    [DEL] " + outcomeName);
                                 }
                             } else {
                                 if (outcomeDto.active()) {
-                                    OutcomeData newOutcomeData = bookmakerEventState.putOutcome(outcomeKey, outcomeDto);
-                                    printToConsole("    [NEW] " + outcomeName + ": " + OutcomeDataDiffDetector.outcomeDataToShortString(newOutcomeData));
+                                    printToConsole("    [NEW] " + outcomeName + ": " + OutcomeDataDiffDetector.outcomeDtoToShortString(outcomeDto));
                                 } else {
                                     throw new IllegalStateException("Missing outcome is being deactivated. ID=" + outcomeDto.id);
                                 }

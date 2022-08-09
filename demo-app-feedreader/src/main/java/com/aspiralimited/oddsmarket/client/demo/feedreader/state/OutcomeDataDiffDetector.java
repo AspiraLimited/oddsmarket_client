@@ -4,13 +4,14 @@ import com.aspiralimited.oddsmarket.client.demo.feedreader.diff.Diff;
 import com.aspiralimited.oddsmarket.client.demo.feedreader.diff.DiffList;
 import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.OutcomeData;
 import com.aspiralimited.oddsmarket.api.v4.websocket.dto.OutcomeDto;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.statekeeping.model.OutcomeKey;
 
 import java.util.Objects;
 
 public class OutcomeDataDiffDetector {
 
 
-    public static DiffList updatePropertiesAndReturnDiff(OutcomeData state, OutcomeDto dto) {
+    public static DiffList getDiffList(OutcomeData state, OutcomeDto dto) {
         DiffList diffList = new DiffList();
         if (!Objects.equals(state.getPlayerName1(), dto.playerName1)) {
             diffList.addDiff(new Diff("playerName1", state.getPlayerName1(), dto.playerName1));
@@ -33,10 +34,10 @@ public class OutcomeDataDiffDetector {
         return diffList;
     }
 
-    public static String outcomeDataToShortString(OutcomeData state) {
-        return "odds=" + state.getOdds()
-                + (state.getOddsLay() != null && state.getOddsLay() > 0 ? ", oddsLay=" + state.getOddsLay() : "")
-                + (state.getMarketDepth() != null && state.getMarketDepth() > 0 ? ", marketDepth=" + state.getMarketDepth() : "")
-                + ", directLink=" + state.getDirectLink();
+    public static String outcomeDtoToShortString(OutcomeDto outcomeDto) {
+        return "odds=" + outcomeDto.odds
+                + (outcomeDto.isLay ? ", oddsLay=" + outcomeDto.oddsLay : "")
+                + (outcomeDto.marketDepth != null && outcomeDto.marketDepth > 0 ? ", marketDepth=" + outcomeDto.marketDepth : "")
+                + ", directLink=" + outcomeDto.directLink;
     }
 }

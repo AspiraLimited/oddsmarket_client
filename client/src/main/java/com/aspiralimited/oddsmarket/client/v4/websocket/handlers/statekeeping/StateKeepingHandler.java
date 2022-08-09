@@ -23,6 +23,8 @@ public abstract class StateKeepingHandler extends Handler {
 
     @Override
     protected void internalBookmakerEvent(BookmakerEventDto bkEvent) {
+        super.internalBookmakerEvent(bkEvent);
+
         long bookmakerEventId = bkEvent.id;
         if (inMemoryStateStorage.hasBookmakerEvent(bookmakerEventId)) {
             BookmakerEventState bookmakerEventState = inMemoryStateStorage.getBookmakerEvent(bookmakerEventId);
@@ -30,12 +32,12 @@ public abstract class StateKeepingHandler extends Handler {
         } else {
             BookmakerEventState bookmakerEventState = inMemoryStateStorage.putBookmakerEvent(bkEvent);
         }
-
-        super.internalBookmakerEvent(bkEvent);
     }
 
     @Override
     protected void internalOutcomes(List<OutcomeDto> updatedOutcomeDtos) {
+        super.internalOutcomes(updatedOutcomeDtos);
+
         for (OutcomeDto outcomeDto : updatedOutcomeDtos) {
             long bookmakerEventId = outcomeDto.bookmakerEventId;
             if (inMemoryStateStorage.hasBookmakerEvent(bookmakerEventId)) {
@@ -64,22 +66,19 @@ public abstract class StateKeepingHandler extends Handler {
             } else {
                 throw new IllegalStateException("Missing bookmaker event information for id=" + bookmakerEventId);
             }
-
         }
-
-        super.internalOutcomes(updatedOutcomeDtos);
     }
 
     @Override
     protected void internalRemoveBookmakerEvents(Collection<Long> bookmakerEventIds) {
+        super.internalRemoveBookmakerEvents(bookmakerEventIds);
+
         for (Long bookmakerEventId : bookmakerEventIds) {
             BookmakerEventState bkEvent = inMemoryStateStorage.removeBookmakerEvent(bookmakerEventId);
             if (bkEvent == null) {
                 throw new IllegalStateException("Missing bookmaker event information when trying to remove bookmaker event id=" + bookmakerEventId);
             }
         }
-
-        super.internalRemoveBookmakerEvents(bookmakerEventIds);
     }
 
 }

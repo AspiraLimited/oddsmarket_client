@@ -16,14 +16,12 @@ public class ReverseBetSpecCalculator {
     public static final Set<Short> _DC_BET_TYPES = Set.of(BetType._1X.id, BetType._X2.id, BetType._12.id);
     final Map<Short, MarketAndBetTypeDto> marketAndBetTypeDto;
     final Map<Short, BetTypeDto> betTypeConfigMap;
-    final BetSpecCache betSpecCache;
     // Индекс MarketAndBetTypeDto по betTypeId, marketId
     final Map<Short, Map<Short, MarketAndBetTypeDto>> marketAndBetTypeDtoByBetTypeAndMarket;
 
-    public ReverseBetSpecCalculator(Map<Short, MarketAndBetTypeDto> marketAndBetTypeDto, Map<Short, BetTypeDto> betTypeConfigMap, BetSpecCache betSpecCache) {
+    public ReverseBetSpecCalculator(Map<Short, MarketAndBetTypeDto> marketAndBetTypeDto, Map<Short, BetTypeDto> betTypeConfigMap) {
         this.marketAndBetTypeDto = marketAndBetTypeDto;
         this.betTypeConfigMap = betTypeConfigMap;
-        this.betSpecCache = betSpecCache;
 
         marketAndBetTypeDtoByBetTypeAndMarket = new HashMap<>();
         for (MarketAndBetTypeDto marketAndBetTypeDtoValue : marketAndBetTypeDto.values()) {
@@ -73,7 +71,7 @@ public class ReverseBetSpecCalculator {
             } else if (betType.changeSign != null && betType.changeSign) {
                 reverseParam = 0-betSpec.marketAndBetTypeParam;
             }
-            return betSpecCache.getOrCreateBetSpec(reverseMarketAndBetTypeDto.id, reverseParam, betSpec.period, betSpec.isLay, betSpec.playerId1, betSpec.playerId2);
+            return new BetSpec(reverseMarketAndBetTypeDto.id, reverseParam, betSpec.period, betSpec.isLay, betSpec.playerId1, betSpec.playerId2);
         } else {
             return null;
         }
@@ -103,7 +101,7 @@ public class ReverseBetSpecCalculator {
                     throw new RuntimeException("No marketAndBetType found for betId=" + reverseBetId + " and marketId=" + sourceMarketAndBetType.marketId);
                 }
                 result.add(
-                        betSpecCache.getOrCreateBetSpec(reverseMarketAndBetTypeDto.id, betSpec.marketAndBetTypeParam, betSpec.period, betSpec.isLay, betSpec.playerId1, betSpec.playerId2)
+                        new BetSpec(reverseMarketAndBetTypeDto.id, betSpec.marketAndBetTypeParam, betSpec.period, betSpec.isLay, betSpec.playerId1, betSpec.playerId2)
                 );
             }
             return result;
