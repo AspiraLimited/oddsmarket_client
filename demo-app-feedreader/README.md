@@ -30,8 +30,8 @@ feedreader.cmd {websocket feed domain} {your API key} {bookmaker ID} [{sport ID 
 Command line parameters explanation:
 * `{websocket feed domain}` - use `api-pr.oddsmarket.org` for prematch events and `api-lv.oddsmarket.org` for live events
 * `{your API key}` - your oddsmarket API key 
-* `{bookmaker ID}` - bookmaker ID you want to subscribe to. See [bookmakers dictionary](https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Bookmakers) for list of all IDs. 
-* `[{sport ID 1},{sport ID 2},..]` - optional list of comma-separated sport IDs. See [sports dictionary](https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Sports) for list of all IDs.
+* `{bookmaker ID}` - bookmaker ID you want to subscribe to. See [bookmakers dictionary](https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Bookmakers-(API-v4)) for list of all IDs. 
+* `[{sport ID 1},{sport ID 2},..]` - optional list of comma-separated sport IDs. See [sports dictionary](https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Sports-(API-v4)) for list of all IDs.
 
 
 Command line examples:
