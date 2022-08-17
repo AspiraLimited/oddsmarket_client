@@ -57,7 +57,7 @@ public class BookmakerEventStateDiffDetector {
             diffList.addDiff(new Diff("directLink", state.getDirectLink(), dto.directLink));
         }
         if (!Objects.equals(state.getUpdatedAt(), dto.updatedAt)) {
-            diffList.addDiff(new Diff("updatedAt", updatedAtTimeFormat(state.getUpdatedAt()), updatedAtTimeFormat(dto.updatedAt)));
+            diffList.addDiff(new Diff("updatedAt", updatedAtTimeFormat(state.getUpdatedAt() * 1000L), updatedAtTimeFormat(dto.updatedAt * 1000L)));
         }
         if (!Objects.equals(state.getHome(), dto.home)) {
             diffList.addDiff(new Diff("home", state.getHome(), dto.home));
