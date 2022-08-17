@@ -42,7 +42,7 @@ public class BookmakerEventStateDiffDetector {
             diffList.addDiff(new Diff("currentScore", state.getCurrentScore(), dto.currentScore));
         }
         if (!Objects.equals(state.getStartedAt(), dto.startedAt)) {
-            diffList.addDiff(new Diff("startedAt", DiffPrinter.longToDateTimeWithMinutePrecisionWitoutYear(state.getStartedAt()), DiffPrinter.longToDateTimeWithMinutePrecisionWitoutYear(dto.startedAt)));
+            diffList.addDiff(new Diff("startedAt", DiffPrinter.longToDateTimeWithMinutePrecisionWitoutYear(state.getStartedAt() * 1000L), DiffPrinter.longToDateTimeWithMinutePrecisionWitoutYear(dto.startedAt)));
         }
         if (!Objects.equals(state.getSportId(), dto.sportId)) {
             diffList.addDiff(new Diff("sportId", state.getSportId(), dto.sportId));
