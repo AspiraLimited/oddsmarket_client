@@ -1,6 +1,6 @@
 package com.aspiralimited.oddsmarket.client;
 
-import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.AvgValueDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.LeagueDto;
@@ -8,14 +8,18 @@ import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketAndBetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.PlayerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportDto;
+import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 class OddsmarketRestHttpClientTest {
@@ -110,6 +114,26 @@ class OddsmarketRestHttpClientTest {
     }
 
     @SneakyThrows
+    @Test
+    void shouldParseAvgValueResponse() {
+        WireMock.stubFor(
+                WireMock.get(WireMock.urlPathEqualTo("/v4/avg_value"))
+                        .withQueryParam("averageLineBookmakerId", WireMock.equalTo("1"))
+                        .withQueryParam("eventId", WireMock.equalTo("2"))
+                        .withQueryParam("marketAndBetTypeId", WireMock.equalTo("3"))
+                        .withQueryParam("marketAndBetTypeParam", WireMock.equalTo("4"))
+                        .withQueryParam("periodIdentifier", WireMock.equalTo("-3"))
+                        .withQueryParam("playerId1", WireMock.equalTo("10"))
+                        .withQueryParam("playerId2", WireMock.equalTo("20"))
+                        .willReturn(WireMock.okJson(resourceAsString("/rest-response-samples/avg_value.json")))
+        );
+
+        AvgValueDto actual = oddsmarketRestHttpClient.getAvgValue((short) 1, 2L, (short) 3, (short) 4, (short) -3, 10, 20).get();
+        Assertions.assertEquals(AvgValueDto.Status.SUCCESS, actual.status);
+        Assertions.assertEquals(1.5F, actual.odds);
+    }
+
+    @SneakyThrows
     private void makeWiremockStub(String url, String filename) {
         byte[] body = getClass().getResourceAsStream(filename).readAllBytes();
         WireMock.stubFor(
@@ -123,5 +147,17 @@ class OddsmarketRestHttpClientTest {
         );
     }
 
+    private String resourceAsString(String resourceName) {
+        URL resource = getClass().getResource(resourceName);
 
+        if (resource == null) {
+            throw new RuntimeException("Resource not found: [" + resourceName + "]");
+        }
+
+        try {
+            return IOUtils.toString(resource);
+        } catch (IOException e) {
+            throw new RuntimeException("Resource error", e);
+        }
+    }
 }

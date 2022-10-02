@@ -1,6 +1,7 @@
 package com.aspiralimited.oddsmarket.client.v4.rest;
 
 import com.aspiralimited.oddsmarket.api.ApiVersion;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.AvgValueDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
@@ -21,6 +22,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -93,6 +95,24 @@ public class OddsmarketRestHttpClient {
                 .thenApply(x -> x.response);
     }
 
+    public CompletableFuture<AvgValueDto> getAvgValue(short averageLineBookmakerId, long eventId,
+                                                      short marketAndBetTypeId, short marketAndBetTypeParam,
+                                                      short periodIdentifier, int playerId1, int playerId2) {
+
+        String queryString = buildQueryString(Map.of(
+                "averageLineBookmakerId", averageLineBookmakerId,
+                "eventId", eventId,
+                "marketAndBetTypeId", marketAndBetTypeId,
+                "marketAndBetTypeParam", marketAndBetTypeParam,
+                "periodIdentifier", periodIdentifier,
+                "playerId1", playerId1,
+                "playerId2", playerId2
+        ));
+
+        return getGenericJsonEndpoint(baseUrlLivePrematch + ApiVersion.LATEST_VERSION_URL_PREFIX + "/avg_value?" + queryString, new TypeReference<>() {
+        });
+    }
+
     private String collectionToCommaSeparatedString(Collection<Long> longs) {
         return longs.stream().map(x -> Long.toString(x)).collect(Collectors.joining(","));
     }
@@ -136,5 +156,12 @@ public class OddsmarketRestHttpClient {
                 .header("Accept", accept)
                 .uri(URI.create(url)).build();
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray());
+    }
+
+    private String buildQueryString(Map<String, Object> params) {
+        return params.entrySet()
+                .stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("&"));
     }
 }
