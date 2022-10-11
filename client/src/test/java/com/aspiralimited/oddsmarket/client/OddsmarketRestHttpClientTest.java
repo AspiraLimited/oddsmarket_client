@@ -1,13 +1,14 @@
 package com.aspiralimited.oddsmarket.client;
 
-import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.DataHealthDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.LeagueDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketAndBetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.PlayerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportDto;
+import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import lombok.SneakyThrows;
@@ -107,6 +108,17 @@ class OddsmarketRestHttpClientTest {
 
         List<PlayerDto> actual = oddsmarketRestHttpClient.getPlayers(List.of(3654837L)).get();
         Assertions.assertEquals(1, actual.size());
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldParseDataHealthResponse() {
+        makeWiremockStub("/v4/data_health?bookmakerId=1", "/rest-response-samples/data_health.json");
+
+        DataHealthDto dataHealth = oddsmarketRestHttpClient.getDataHealth((short) 1).get();
+        Assertions.assertEquals(2, dataHealth.bookmakerEventsCount);
+        Assertions.assertEquals(1, dataHealth.bookmakerEventsWithActiveOutcomesCount);
+        Assertions.assertEquals(10, dataHealth.outcomesCount);
     }
 
     @SneakyThrows
