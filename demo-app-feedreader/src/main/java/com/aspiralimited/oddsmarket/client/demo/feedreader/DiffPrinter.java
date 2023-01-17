@@ -34,7 +34,6 @@ import static java.lang.Thread.sleep;
 public class DiffPrinter {
     private final OddsmarketClient client;
     private final DictionariesService dictionariesService;
-    private final InMemoryStateStorage inMemoryStateStorage = new InMemoryStateStorage();
     private final OutcomeNameTranslator outcomeNameTranslator;
 
     static private final DateFormat matchStartTimeFormat = new SimpleDateFormat("MMM d HH:mm", Locale.ENGLISH);
@@ -137,9 +136,9 @@ public class DiffPrinter {
             @Override
             public void removeBookmakerEvents(Collection<Long> bookmakerEventIds) {
                 for (Long bookmakerEventId : bookmakerEventIds) {
-                    BookmakerEventState bkEvent = inMemoryStateStorage.removeBookmakerEvent(bookmakerEventId);
+                    BookmakerEventState bkEvent = inMemoryStateStorage.getBookmakerEvent(bookmakerEventId);
                     if (bkEvent != null) {
-                        printToConsole("[DEL] " + bkEvent);
+                        printToConsole("[DEL] " + getBookmakerEventIdName(bkEvent) + " [#" + bookmakerEventId + "]");
                     } else {
                         throw new IllegalStateException("Missing bookmaker event information when trying to remove bookmaker event id=" + bookmakerEventId);
                     }
