@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class InternalEventDto {
     public long id;
     public String name;
+    public Integer homeId;
+    public Integer awayId;
     public short sportId;
     public Long leagueId;
     public long startDatetime;

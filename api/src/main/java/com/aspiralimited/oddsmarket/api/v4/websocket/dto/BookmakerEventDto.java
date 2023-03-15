@@ -29,6 +29,8 @@ public class BookmakerEventDto {
     public Long awayId;
     public String home;
     public String away;
+    public Integer eventHomeId;
+    public Integer eventAwayId;
 
     public BookmakerEventDto(List<Object> values, List<String> fields) {
         for (int i = 0; i < values.size(); i++) {
@@ -118,6 +120,14 @@ public class BookmakerEventDto {
                     this.away = (String) value;
                     break;
 
+                case "eventHomeId":
+                    this.eventHomeId = (int) value;
+                    break;
+
+                case "eventAwayId":
+                    this.eventAwayId = (int) value;
+                    break;
+
                 default:
                     System.out.println("unknown field: " + field + "[" + value + "]");
             }
@@ -137,6 +147,8 @@ public class BookmakerEventDto {
                 ", away='" + away + '\'' +
                 ", homeId='" + homeId + '\'' +
                 ", awayId='" + awayId + '\'' +
+                ", eventHomeId='" + eventHomeId + '\'' +
+                ", eventAwayId='" + eventAwayId + '\'' +
                 ", swapTeams=" + swapTeams +
                 ", currentScore='" + currentScore + '\'' +
                 ", startedAt=" + startedAt +
