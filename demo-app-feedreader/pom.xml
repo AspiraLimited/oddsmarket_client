@@ -13,7 +13,7 @@
 
     <repositories>
         <repository>
-            <id>oddsmarket_client</id>
+            <id>github-oddsmarket_client</id>
             <url>https://maven.pkg.github.com/AspiraLimited/oddsmarket_client</url>
             <snapshots>
                 <enabled>true</enabled>
