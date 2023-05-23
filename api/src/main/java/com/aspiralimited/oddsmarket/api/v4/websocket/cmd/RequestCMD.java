@@ -6,7 +6,7 @@ public enum RequestCMD {
     AUTHORIZATION, SUBSCRIBE, PING, UNSUBSCRIBE;
 
     public String getName(ApiVersion version) {
-        return toString();
+        return name().toLowerCase();
     }
 
     @Override
