@@ -2,6 +2,12 @@ package com.aspiralimited.oddsmarket.client.models;
 
 import java.util.List;
 
+import static com.aspiralimited.oddsmarket.client.models.ValueReader.asBoolean;
+import static com.aspiralimited.oddsmarket.client.models.ValueReader.asFloat;
+import static com.aspiralimited.oddsmarket.client.models.ValueReader.asInt;
+import static com.aspiralimited.oddsmarket.client.models.ValueReader.asLong;
+import static com.aspiralimited.oddsmarket.client.models.ValueReader.asShort;
+
 public class Odd {
 
     public String id;
@@ -34,83 +40,83 @@ public class Odd {
 
             switch (field) {
                 case "id":
-                    this.id = ((value instanceof String) ? (String) value : value.toString());
+                    this.id = value.toString();
                     break;
 
                 case "bookmakerEventId":
-                    this.bookmakerEventId = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.bookmakerEventId = asLong(value);
                     break;
 
                 case "periodId":
-                    this.periodId = (Integer) value;
+                    this.periodId = asInt(value);
                     break;
 
                 case "periodIdentifier":
-                    this.periodIdentifier = (Integer) value;
+                    this.periodIdentifier = asInt(value);
                     break;
 
                 case "periodName":
-                    this.periodName = (String) value;
+                    this.periodName = value.toString();
                     break;
 
                 case "betCombinationId":
-                    this.betCombinationId = (Integer) value;
+                    this.betCombinationId = asInt(value);
                     break;
 
                 case "betCombination":
-                    this.betCombination = (String) value;
+                    this.betCombination = value.toString();
                     break;
 
                 case "marketAndBetTypeId":
-                    this.marketAndBetTypeId = (short) (int) value;
+                    this.marketAndBetTypeId = asShort(value);
                     break;
 
                 case "marketAndBetTypeTitle":
-                    this.marketAndBetTypeTitle = (String) value;
+                    this.marketAndBetTypeTitle = value.toString();
                     break;
 
                 case "marketAndBetTypeParameterValue":
-                    this.marketAndBetTypeParameterValue = ((Double) value).floatValue();
+                    this.marketAndBetTypeParameterValue = asFloat(value);
                     break;
 
                 case "playerId1":
-                    this.playerId1 = (Integer) value;
+                    this.playerId1 = asInt(value);
                     break;
 
                 case "playerName1":
-                    this.playerName1 = (String) value;
+                    this.playerName1 = value.toString();
                     break;
 
                 case "playerId2":
-                    this.playerId2 = (Integer) value;
+                    this.playerId2 = asInt(value);
                     break;
 
                 case "playerName2":
-                    this.playerName2 = (String) value;
+                    this.playerName2 = value.toString();
                     break;
 
                 case "odd":
-                    this.odd = ((Double) value).floatValue();
+                    this.odd = asFloat(value);
                     break;
 
                 case "oddLay":
-                    this.oddLay = ((Double) value).floatValue();
+                    this.oddLay = asFloat(value);
                     break;
 
                 case "marketDepth":
-                    this.marketDepth = ((Double) value).floatValue();
+                    this.marketDepth = asFloat(value);
                     break;
 
                 case "directLink":
-                    this.directLink = (String) value;
+                    this.directLink = value.toString();
                     break;
 
                 case "updatedAt":
-                    this.updatedAt = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.updatedAt = asLong(value);
                     break;
 
                 case "active":
-                    this.active = (boolean) value;
+                    this.active = asBoolean(value);
                     break;
 
                 default:

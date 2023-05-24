@@ -6,7 +6,7 @@
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
     <artifactId>client</artifactId>
-    <version>0.8.3</version>
+    <version>0.8.4</version>
 
 
     <distributionManagement>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20180813</version>
+            <version>20230227</version>
         </dependency>
     </dependencies>
 </project>
