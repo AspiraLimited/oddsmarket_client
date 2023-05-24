@@ -129,11 +129,11 @@ public class OddsmarketClient {
     }
 
     public void subscribe(Subscribe subscribe) {
-        send(RequestCMD.SUBSCRIBE, subscribe.toMap());
+        send(RequestCMD.SUBSCRIBE, new JSONObject(subscribe.toMap()));
     }
 
     public void unsubscribe(Subscribe subscribe) {
-        send(RequestCMD.UNSUBSCRIBE, subscribe.toMap());
+        send(RequestCMD.UNSUBSCRIBE, new JSONObject(subscribe.toMap()));
     }
 
     public static class Subscribe {

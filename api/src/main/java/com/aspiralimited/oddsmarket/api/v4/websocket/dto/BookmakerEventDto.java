@@ -5,6 +5,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asBoolean;
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asInt;
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asLong;
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asShort;
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookmakerEventDto {
@@ -41,91 +46,91 @@ public class BookmakerEventDto {
 
             switch (field) {
                 case "id":
-                    this.id = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.id = asLong(value);
                     break;
 
                 case "bookmakerId":
-                    this.bookmakerId = (short) (int) value;
+                    this.bookmakerId = asShort(value);
                     break;
 
                 case "active":
-                    this.active = (boolean) value;
+                    this.active = asBoolean(value);
                     break;
 
                 case "eventId":
-                    this.eventId = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.eventId = asLong(value);
                     break;
 
                 case "name":
-                    this.name = (String) value;
+                    this.name = value.toString();
                     break;
 
                 case "nameRu":
-                    this.nameRu = (String) value;
+                    this.nameRu = value.toString();
                     break;
 
                 case "swapTeams":
-                    this.swapTeams = (boolean) value;
+                    this.swapTeams = asBoolean(value);
                     break;
 
                 case "currentScore":
-                    this.currentScore = (String) value;
+                    this.currentScore = value.toString();
                     break;
 
                 case "startedAt":
-                    this.startedAt = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.startedAt = asLong(value);
                     break;
 
                 case "sportId":
-                    this.sportId = (int) value;
+                    this.sportId = asInt(value);
                     break;
 
                 case "sportName":
-                    this.sportName = (String) value;
+                    this.sportName = value.toString();
                     break;
 
                 case "leagueId":
-                    this.leagueId = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.leagueId = asLong(value);
                     break;
 
                 case "leagueName":
-                    this.leagueName = (String) value;
+                    this.leagueName = value.toString();
                     break;
 
                 case "rawId":
-                    this.rawId = (String) value;
+                    this.rawId = value.toString();
                     break;
 
                 case "directLink":
-                    this.directLink = (String) value;
+                    this.directLink = value.toString();
                     break;
 
                 case "updatedAt":
-                    this.updatedAt = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.updatedAt = asLong(value);
                     break;
 
                 case "homeId":
-                    this.homeId = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.homeId = asLong(value);
                     break;
 
                 case "awayId":
-                    this.awayId = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.awayId = asLong(value);
                     break;
 
                 case "home":
-                    this.home = (String) value;
+                    this.home = value.toString();
                     break;
 
                 case "away":
-                    this.away = (String) value;
+                    this.away = value.toString();
                     break;
 
                 case "eventHomeId":
-                    this.eventHomeId = (int) value;
+                    this.eventHomeId = asInt(value);
                     break;
 
                 case "eventAwayId":
-                    this.eventAwayId = (int) value;
+                    this.eventAwayId = asInt(value);
                     break;
 
                 default:

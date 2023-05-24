@@ -5,6 +5,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asBoolean;
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asFloat;
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asInt;
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asLong;
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asShort;
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class OutcomeDto {
@@ -36,15 +42,15 @@ public class OutcomeDto {
 
             switch (field) {
                 case "id":
-                    this.id = ((value instanceof String) ? (String) value : value.toString());
+                    this.id = value.toString();
                     break;
 
                 case "bookmakerEventId":
-                    this.bookmakerEventId = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.bookmakerEventId = asLong(value);
                     break;
 
                 case "periodIdentifier":
-                    this.periodIdentifier = value instanceof Short ? (short) value : (short) (int) value;
+                    this.periodIdentifier = asShort(value);
                     break;
 
                 case "periodName":
@@ -52,55 +58,55 @@ public class OutcomeDto {
                     break;
 
                 case "marketAndBetTypeId":
-                    this.marketAndBetTypeId = value instanceof Short ? (short) value : (short) (int) value;
+                    this.marketAndBetTypeId = asShort(value);
                     break;
 
                 case "marketAndBetTypeParameterValue":
-                    this.marketAndBetTypeParameterValue = value instanceof Double ? ((Double) value).floatValue() : (Float) value;
+                    this.marketAndBetTypeParameterValue = asFloat(value);
                     break;
 
                 case "playerId1":
-                    this.playerId1 = (Integer) value;
+                    this.playerId1 = asInt(value);
                     break;
 
                 case "playerName1":
-                    this.playerName1 = (String) value;
+                    this.playerName1 = value.toString();
                     break;
 
                 case "playerId2":
-                    this.playerId2 = (Integer) value;
+                    this.playerId2 = asInt(value);
                     break;
 
                 case "playerName2":
-                    this.playerName2 = (String) value;
+                    this.playerName2 = value.toString();
                     break;
 
                 case "active":
-                    this.active = (boolean) value;
+                    this.active = asBoolean(value);
                     break;
 
                 case "odds":
-                    this.odds = ((Double) value).floatValue();
+                    this.odds = asFloat(value);
                     break;
 
                 case "oddsLay":
-                    this.oddsLay = ((Double) value).floatValue();
+                    this.oddsLay = asFloat(value);
                     break;
 
                 case "isLay":
-                    this.isLay = (boolean) value;
+                    this.isLay = asBoolean(value);
                     break;
 
                 case "marketDepth":
-                    this.marketDepth = ((Double) value).floatValue();
+                    this.marketDepth = asFloat(value);
                     break;
 
                 case "directLink":
-                    this.directLink = (String) value;
+                    this.directLink = value.toString();
                     break;
 
                 case "updatedAt":
-                    this.updatedAt = ((value instanceof Integer) ? (long) (int) value : (long) value);
+                    this.updatedAt = asLong(value);
                     break;
 
                 default:
