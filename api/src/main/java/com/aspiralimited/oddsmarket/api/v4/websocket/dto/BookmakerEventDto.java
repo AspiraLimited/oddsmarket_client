@@ -3,10 +3,12 @@ package com.aspiralimited.oddsmarket.api.v4.websocket.dto;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asBoolean;
 import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asInt;
+import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asList;
 import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asLong;
 import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asShort;
 
@@ -36,8 +38,9 @@ public class BookmakerEventDto {
     public String away;
     public Integer eventHomeId;
     public Integer eventAwayId;
+    public List<PlayerDto> players;
 
-    public BookmakerEventDto(List<Object> values, List<String> fields) {
+    public BookmakerEventDto(List<Object> values, List<String> fields, List<String> playerFields) {
         for (int i = 0; i < values.size(); i++) {
             String field = fields.get(i);
             Object value = values.get(i);
@@ -131,6 +134,13 @@ public class BookmakerEventDto {
 
                 case "eventAwayId":
                     this.eventAwayId = asInt(value);
+                    break;
+
+                case "players":
+                    this.players = new ArrayList<>();
+                    for (Object player : asList(value)) {
+                        this.players.add(new PlayerDto(asList(player), playerFields));
+                    }
                     break;
 
                 default:

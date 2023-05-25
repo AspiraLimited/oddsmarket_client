@@ -1,6 +1,8 @@
 package com.aspiralimited.oddsmarket.api.v4.websocket.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 final class ValueReader {
 
@@ -70,6 +72,21 @@ final class ValueReader {
             return (Boolean) value;
         } else {
             return Boolean.parseBoolean(value.toString());
+        }
+    }
+
+    static List<Object> asList(Object value) {
+        assertNotNull(value);
+
+        if (value instanceof Iterable) {
+            Iterable<?> iterable = (Iterable<?>) value;
+            List<Object> list = new ArrayList<>();
+            for (Object object : iterable) {
+                list.add(object);
+            }
+            return list;
+        } else {
+            throw new IllegalArgumentException("Value is not iterable");
         }
     }
 

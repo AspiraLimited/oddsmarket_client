@@ -14,6 +14,7 @@ import static java.util.stream.Collectors.toList;
 public abstract class Handler {
     private final List<String> outcomeFields = new ArrayList<>();
     private final List<String> bookmakerEventFields = new ArrayList<>();
+    private final List<String> playerFields = new ArrayList<>();
 
     public void handle(JSONObject jsonMsg) {
         String command = jsonMsg.optString("cmd");
@@ -21,15 +22,17 @@ public abstract class Handler {
         switch (command) {
             case "fields":
                 outcomeFields.clear();
-                outcomeFields.addAll( jsonMsg.getJSONObject("msg").getJSONArray("Outcome").toList().stream().map(x -> (String) x).collect(toList()));
+                outcomeFields.addAll( jsonMsg.getJSONObject("msg").getJSONArray("Outcome").toList().stream().map(Object::toString).collect(toList()));
                 bookmakerEventFields.clear();
-                bookmakerEventFields.addAll(jsonMsg.getJSONObject("msg").getJSONArray("BookmakerEvent").toList().stream().map(x -> (String) x).collect(toList()));
+                bookmakerEventFields.addAll(jsonMsg.getJSONObject("msg").getJSONArray("BookmakerEvent").toList().stream().map(Object::toString).collect(toList()));
+                playerFields.clear();
+                playerFields.addAll(jsonMsg.getJSONObject("msg").getJSONArray("Player").toList().stream().map(Object::toString).collect(toList()));
                 this.internalInfo("init fields: " + jsonMsg);
                 break;
 
             case "bookmaker_events":
                 for (Object raw : jsonMsg.getJSONArray("msg")) {
-                    BookmakerEventDto bkEvent = new BookmakerEventDto(((JSONArray) raw).toList(), bookmakerEventFields);
+                    BookmakerEventDto bkEvent = new BookmakerEventDto(((JSONArray) raw).toList(), bookmakerEventFields, playerFields);
                     internalBookmakerEvent(bkEvent);
                 }
                 break;

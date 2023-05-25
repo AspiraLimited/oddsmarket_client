@@ -5,8 +5,11 @@ import com.aspiralimited.oddsmarket.api.v4.websocket.dto.OutcomeDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class BookmakerEventState {
     private volatile String home;
     private volatile String away;
 
+    private List<Player> players = new ArrayList<>();
 
     private Map<OutcomeKey, OutcomeData> outcomes = new ConcurrentHashMap<>();
 
@@ -53,6 +57,7 @@ public class BookmakerEventState {
         homeId = bkEvent.homeId;
         away = bkEvent.away;
         awayId = bkEvent.awayId;
+        players = bkEvent.players.stream().map(Player::of).collect(Collectors.toList());
     }
 
 
