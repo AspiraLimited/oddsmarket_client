@@ -37,7 +37,9 @@ public class BookmakerEventDto {
     public String home;
     public String away;
     public Integer eventHomeId;
+    public String eventHome;
     public Integer eventAwayId;
+    public String eventAway;
     public List<PlayerDto> players;
 
     public BookmakerEventDto(List<Object> values, List<String> fields, List<String> playerFields) {
@@ -132,8 +134,16 @@ public class BookmakerEventDto {
                     this.eventHomeId = asInt(value);
                     break;
 
+                case "eventHome":
+                    this.eventHome = value.toString();
+                    break;
+
                 case "eventAwayId":
                     this.eventAwayId = asInt(value);
+                    break;
+
+                case "eventAway":
+                    this.eventAway = value.toString();
                     break;
 
                 case "players":
@@ -143,8 +153,8 @@ public class BookmakerEventDto {
                     }
                     break;
 
-                default:
-                    System.out.println("unknown field: " + field + "[" + value + "]");
+//                default:
+//                    System.out.println("unknown field: " + field + "[" + value + "]");
             }
         }
     }
@@ -163,7 +173,9 @@ public class BookmakerEventDto {
                 ", homeId='" + homeId + '\'' +
                 ", awayId='" + awayId + '\'' +
                 ", eventHomeId='" + eventHomeId + '\'' +
+                ", eventHome='" + eventHome + '\'' +
                 ", eventAwayId='" + eventAwayId + '\'' +
+                ", eventAway='" + eventAway + '\'' +
                 ", swapTeams=" + swapTeams +
                 ", currentScore='" + currentScore + '\'' +
                 ", startedAt=" + startedAt +

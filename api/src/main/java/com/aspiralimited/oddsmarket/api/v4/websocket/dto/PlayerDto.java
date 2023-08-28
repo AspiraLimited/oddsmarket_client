@@ -28,8 +28,8 @@ public class PlayerDto {
                     this.name = value.toString();
                     break;
 
-                default:
-                    System.out.println("unknown field: " + field + "[" + value + "]");
+//                default:
+//                    System.out.println("unknown field: " + field + "[" + value + "]");
             }
         }
     }

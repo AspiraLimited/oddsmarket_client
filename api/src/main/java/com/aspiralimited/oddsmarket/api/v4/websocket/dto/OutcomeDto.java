@@ -109,8 +109,8 @@ public class OutcomeDto {
                     this.updatedAt = asLong(value);
                     break;
 
-                default:
-                    System.out.println("unknown field: " + field + "[" + value + "]");
+//                default:
+//                    System.out.println("unknown field: " + field + "[" + value + "]");
             }
         }
     }

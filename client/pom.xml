@@ -7,7 +7,7 @@
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
     <artifactId>client</artifactId>
-    <version>4.4.0</version>
+    <version>4.5.0</version>
 
 
     <properties>
@@ -18,7 +18,8 @@
 
     <distributionManagement>
         <repository>
-            <id>github-oddsmarket_client</id>
+            <id>github</id>
+            <name>Aspira Public Artifactory</name>
             <url>https://maven.pkg.github.com/AspiraLimited/oddsmarket_client</url>
         </repository>
     </distributionManagement>
@@ -27,7 +28,7 @@
         <dependency>
             <groupId>com.aspiralimited.oddsmarket</groupId>
             <artifactId>api</artifactId>
-            <version>4.4.0</version>
+            <version>4.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
