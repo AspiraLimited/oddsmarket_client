@@ -2,6 +2,8 @@ package com.aspiralimited.oddsmarket.client.v4.websocket;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.cmd.RequestCMD;
 import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.Handler;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.PingPongHandler;
+import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.PongTimeoutListener;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -10,14 +12,20 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public class OddsmarketClient {
+public class OddsmarketClient implements PongTimeoutListener {
+
+    public static final Duration DEFAULT_PING_INTERVAL = Duration.ofSeconds(30);
+    public static final Duration DEFAULT_PONG_TIMEOUT = Duration.ofSeconds(10);
 
     private final WebSocket ws;
 
@@ -26,25 +34,39 @@ public class OddsmarketClient {
     private Consumer<String> onTextMessageConsumer;
     private Consumer<JSONObject> onJsonMessageConsumer;
 
+    private final Map<WebSocket, PingPongHandler> pingPongHandlerMap = new ConcurrentHashMap<>();
+
     // TODO timeouts
     private OddsmarketClient(String websocketUrl) throws IOException {
         this.ws = new WebSocketFactory().createSocket(websocketUrl);
 
         ws.addListener(new WebSocketAdapter() {
+
             @Override
-            public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+            public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
+                PingPongHandler pingPongHandler = new PingPongHandler(websocket, DEFAULT_PING_INTERVAL, DEFAULT_PONG_TIMEOUT);
+                pingPongHandler.setPongTimeoutListener(OddsmarketClient.this);
+                pingPongHandlerMap.put(websocket, pingPongHandler);
+                pingPongHandler.start();
+            }
+
+            @Override
+            public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) {
                 handler.onDisconnected(closedByServer);
-                super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
+                PingPongHandler pingPongHandler = pingPongHandlerMap.remove(websocket);
+                if (pingPongHandler != null) {
+                    pingPongHandler.stop();
+                }
             }
 
             @Override
             public void onTextMessage(WebSocket websocket, String message) throws Exception {
-                handleTextMessage(message);
+                handleTextMessage(websocket, message);
             }
         });
     }
 
-    void handleTextMessage(String message) {
+    void handleTextMessage(WebSocket websocket, String message) {
         try {
             if (onTextMessageConsumer != null) {
                 onTextMessageConsumer.accept(message);
@@ -58,11 +80,22 @@ public class OddsmarketClient {
             if (handler != null) {
                 handler.handle(json);
             }
+
+            PingPongHandler pingPongHandler = pingPongHandlerMap.get(websocket);
+            if (pingPongHandler != null) {
+                pingPongHandler.onMessage(json);
+            }
         } catch (Exception e) {
             if (handler != null) {
                 handler.error("Websocket message handler exception. Incoming message: " + message, e);
             }
         }
+    }
+
+    @Override
+    public void onPongTimeout(WebSocket webSocket) {
+        handler.info("Pong timeout. Disconnecting websocket.");
+        webSocket.disconnect();
     }
 
     public static OddsmarketClient connect(String host) throws IOException, WebSocketException {
