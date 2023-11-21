@@ -58,8 +58,12 @@ public class OutcomeNameTranslator {
             throw new RuntimeException("MarketAndBetType not found by id=" + marketAndBetTypeId);
         }
         String title = marketAndBetTypeConfig.title;
-        String translatedTemplate = resourceBundle.getString(title);
-
+        String translatedTemplate;
+        try {
+            translatedTemplate = resourceBundle.getString(title);
+        } catch (Exception e) {
+            translatedTemplate = title + "(%s)";
+        }
         OutcomeName result = null;
         if (swapTeams && marketAndBetTypeConfig.swapId != null
                 && !marketAndBetTypeConfig.swapId.equals((int) marketAndBetTypeConfig.id)

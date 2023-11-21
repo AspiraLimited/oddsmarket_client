@@ -19,6 +19,7 @@ import lombok.SneakyThrows;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -57,6 +58,7 @@ public class DiffPrinter {
     public void listenFeedAndPrintDiffs(int bookmakerId, Set<Integer> sportIds) {
 
         Handler handler = new StateKeepingHandler() {
+            long lastStatsPrintedAt = System.currentTimeMillis();
 
             @Override
             public void info(String msg) {
@@ -131,6 +133,14 @@ public class DiffPrinter {
 
                 }
 
+                if (lastStatsPrintedAt + 60_000 < System.currentTimeMillis()) {
+                    lastStatsPrintedAt = System.currentTimeMillis();
+                    int outcomesCount = inMemoryStateStorage.getBookmakerEventById().values().stream()
+                            .mapToInt(value -> value.getOutcomes().size())
+                            .sum();
+                    printToConsole("[STATS SNAPSHOT] ["+ Instant.now() + "] Bookmaker events count: " + inMemoryStateStorage.getBookmakerEventById().size() +"; Outcomes count: " + outcomesCount
+                    );
+                }
             }
 
             @Override
