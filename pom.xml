@@ -12,6 +12,8 @@
         <module>client</module>
         <module>demo-app-feedreader</module>
         <module>api</module>
+        <module>ws-events-client</module>
+        <module>demo-app-events</module>
     </modules>
     <properties>
         <java.version>11</java.version>

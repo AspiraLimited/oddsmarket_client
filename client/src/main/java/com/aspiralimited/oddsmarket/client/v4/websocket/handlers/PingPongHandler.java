@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PingPongHandler {
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final BlockingDeque<String> pongQueue = new LinkedBlockingDeque<>(10);
 
     private final WebSocket websocket;
