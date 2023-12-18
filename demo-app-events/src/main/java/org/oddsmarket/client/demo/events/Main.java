@@ -78,7 +78,7 @@ public class Main {
 
             @Override
             public void onEvent(Event event) {
-                log.trace("Event: {}", event);
+                log.trace("Event received: {}", event);
             }
 
             @Override
