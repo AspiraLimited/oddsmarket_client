@@ -5,7 +5,7 @@
 
     <servers>
         <server>
-            <id>oddsmarket_client</id>
+            <id>github-oddsmarket_client</id>
             <username>public</username>
             <password>&#103;hp_U8EDZgjmRsd2BIWznz3UQLcSDW14gV4LGDRF</password>
         </server>
