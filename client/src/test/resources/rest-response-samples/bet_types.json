@@ -132,12 +132,6 @@
     },
     {
       "changeSign": false,
-      "name": "OTS_Y",
-      "description": "Only one to score",
-      "id": 42
-    },
-    {
-      "changeSign": false,
       "name": "Y",
       "reverseId": 49,
       "description": "Yes",
