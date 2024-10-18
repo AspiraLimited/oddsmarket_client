@@ -32,6 +32,7 @@ public class OutcomeDto {
     public Float marketDepth = null;
     public String directLink = null;
     public Long updatedAt;
+    public String outcomeRawId;
 
     public OutcomeDto(List<Object> values, List<String> fields) {
         for (int i = 0; i < values.size(); i++) {
@@ -108,6 +109,9 @@ public class OutcomeDto {
                 case "updatedAt":
                     this.updatedAt = asLong(value);
                     break;
+                case "outcomeRawId":
+                    this.outcomeRawId = value.toString();
+                    break;
 
 //                default:
 //                    System.out.println("unknown field: " + field + "[" + value + "]");
@@ -139,6 +143,7 @@ public class OutcomeDto {
                 ", marketDepth=" + marketDepth +
                 ", directLink='" + directLink + '\'' +
                 ", updatedAt=" + updatedAt +
+                ", outcomeRawId='" + outcomeRawId + '\'' +
                 '}';
     }
 }
