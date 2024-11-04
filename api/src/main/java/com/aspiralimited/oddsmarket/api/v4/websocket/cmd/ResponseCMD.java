@@ -3,7 +3,7 @@ package com.aspiralimited.oddsmarket.api.v4.websocket.cmd;
 import com.aspiralimited.oddsmarket.api.ApiVersion;
 
 public enum ResponseCMD {
-    AUTHORIZED, SUBSCRIBED, UNSUBSCRIBED, FIELDS, BOOKMAKER_EVENTS, OUTCOMES, BOOKMAKER_EVENTS_REMOVED, PONG, ERROR, UNKNOWN;
+    AUTHORIZED, SUBSCRIBED, UNSUBSCRIBED, FIELDS, BOOKMAKER_EVENTS, OUTCOMES, BOOKMAKER_EVENTS_REMOVED, PONG, ERROR, UNKNOWN, INITIAL_STATE_TRANSFERRED;
 
     public String getName(ApiVersion version) {
         if (version.ordinal() < ApiVersion.V4.ordinal()) {
