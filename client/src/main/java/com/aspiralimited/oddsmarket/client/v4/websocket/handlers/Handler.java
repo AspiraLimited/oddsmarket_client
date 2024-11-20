@@ -62,6 +62,10 @@ public abstract class Handler {
                 internalRemoveBookmakerEvents(bookmakerEventIds);
                 break;
 
+            case "initial_state_transferred":
+                initialStateTransferred();
+                break;
+
             case "subscribed":
                 internalInfo("Subscribed successfully: " + jsonMsg);
                 break;
@@ -104,6 +108,8 @@ public abstract class Handler {
     public abstract void outcomes(List<OutcomeDto> updatedOutcomeDtos);
 
     public abstract void removeBookmakerEvents(Collection<Long> bookmakerEventIds);
+
+    public abstract void initialStateTransferred();
 
     public abstract void onDisconnected(boolean closedByServer);
 }
