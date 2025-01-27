@@ -1,0 +1,16 @@
+[
+  {
+    "id": 2,
+    "name": "Italy",
+    "code": "it",
+    "iso3Code": "ITA",
+    "slug": "italy"
+  },
+  {
+    "id": 3,
+    "name": "Brazil",
+    "code": "br",
+    "iso3Code": "BRA",
+    "slug": "brazil"
+  }
+]

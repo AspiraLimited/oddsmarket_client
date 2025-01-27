@@ -3,6 +3,7 @@ package com.aspiralimited.oddsmarket.client.v4.rest;
 import com.aspiralimited.oddsmarket.api.ApiVersion;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.CountryDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.LeagueDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketAndBetTypeDto;
@@ -82,6 +83,16 @@ public class OddsmarketRestHttpClient {
 
     public CompletableFuture<List<LeagueDto>> getLeagues(Collection<Long> leagueIds) {
         return getGenericJsonEndpoint(baseUrlLivePrematch + ApiVersion.LATEST_VERSION_URL_PREFIX + "/leagues/" + collectionToCommaSeparatedString(leagueIds), new TypeReference<>() {
+        });
+    }
+
+    public CompletableFuture<List<CountryDto>> getCountries(Short sportId) {
+        String queryParamsSection = "";
+        if (sportId != null) {
+            queryParamsSection = "?sportId=" + sportId;
+        }
+
+        return getGenericJsonEndpoint(baseUrlLivePrematch + ApiVersion.LATEST_VERSION_URL_PREFIX + "/countries" + queryParamsSection, new TypeReference<>() {
         });
     }
 

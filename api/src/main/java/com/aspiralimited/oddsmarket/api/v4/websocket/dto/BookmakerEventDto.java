@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asBoolean;
 import static com.aspiralimited.oddsmarket.api.v4.websocket.dto.ValueReader.asInt;
@@ -41,6 +42,10 @@ public class BookmakerEventDto {
     public Integer eventAwayId;
     public String eventAway;
     public List<PlayerDto> players;
+    public MatchStatus status;
+    public EventType eventType;
+    public Long uniformEventId;
+
 
     public BookmakerEventDto(List<Object> values, List<String> fields, List<String> playerFields) {
         for (int i = 0; i < values.size(); i++) {
@@ -152,6 +157,15 @@ public class BookmakerEventDto {
                         this.players.add(new PlayerDto(asList(player), playerFields));
                     }
                     break;
+                case "status":
+                    this.status = MatchStatus.byId(asShort(value));
+                    break;
+                case "eventType":
+                    this.eventType = EventType.byId(asShort(value));
+                    break;
+                case "uniformEventId":
+                    this.uniformEventId = asLong(value);
+                    break;
 
 //                default:
 //                    System.out.println("unknown field: " + field + "[" + value + "]");
@@ -186,6 +200,9 @@ public class BookmakerEventDto {
                 ", rawId='" + rawId + '\'' +
                 ", directLink='" + directLink + '\'' +
                 ", updatedAt=" + updatedAt +
+                ", status='" + Optional.ofNullable(status).map(MatchStatus::getId).orElse(null) + '\'' +
+                ", eventType=" + eventType.getId() +
+                ", uniformEventId='" + uniformEventId + '\'' +
                 '}';
     }
 }
