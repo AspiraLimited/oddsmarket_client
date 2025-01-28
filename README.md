@@ -15,14 +15,14 @@ service and REST dictionaries.
 
 ## `demo-app-events`
 
-Demo application which consumes data from Oddsmarket Events websocket feed and 
+Demo application which consumes data from [Oddsmarket Events websocket](wiki/Events-WebSocket-(API-v4)) feed and 
 prints received data into STDOUT.
 This application is intended to be used by oddsmarket customers as 
 reference implementation of Events websocket feed consumption.  
 
 ## `demo-app-feedreader`
 
-Demo application which consumes data from Oddsmarket Odds websocket feed and 
+Demo application which consumes data from [Oddsmarket Odds websocket](wiki/Push-contract-(Websocket-API-specification)-(API-v4)) feed and 
 prints received updates into STDOUT in human-readable format.
 This application is intended to be used by oddsmarket customers as 
 reference implementation of websocket feed consumption.  
