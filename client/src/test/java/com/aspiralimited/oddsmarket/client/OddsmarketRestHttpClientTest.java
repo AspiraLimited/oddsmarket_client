@@ -1,5 +1,6 @@
 package com.aspiralimited.oddsmarket.client;
 
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.CountryDto;
 import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
@@ -98,6 +99,19 @@ class OddsmarketRestHttpClientTest {
 
         List<LeagueDto> actual = oddsmarketRestHttpClient.getLeagues(List.of(5944L, 8719L)).get();
         Assertions.assertEquals(2, actual.size());
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldParseCountriesResponse() {
+        List<CountryDto> expected = List.of(
+                new CountryDto(2, "Italy", "it", "ITA", "italy"),
+                new CountryDto(3, "Brazil", "br", "BRA", "brazil")
+        );
+        makeWiremockStub("/v4/countries?sportId=7", "/rest-response-samples/countries.json");
+
+        List<CountryDto> actual = oddsmarketRestHttpClient.getCountries((short) 7).get();
+        Assertions.assertEquals(expected, actual);
     }
 
     @SneakyThrows
