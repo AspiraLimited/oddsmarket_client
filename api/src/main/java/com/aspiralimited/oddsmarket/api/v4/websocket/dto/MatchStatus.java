@@ -31,6 +31,6 @@ public enum MatchStatus {
     private final short id;
 
     public static MatchStatus byId(short id) {
-        return byId.getOrDefault(id, null);
+        return byId.get(id);
     }
 }

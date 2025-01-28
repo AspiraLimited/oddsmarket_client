@@ -25,6 +25,6 @@ public enum EventType {
     private final short id;
 
     public static EventType byId(short id) {
-        return byId.getOrDefault(id, null);
+        return byId.get(id);
     }
 }
