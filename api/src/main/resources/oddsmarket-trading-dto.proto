@@ -433,7 +433,9 @@ enum MarketGroup {
   STATISTIC = 4;
   ADDITIONAL_MARKETS = 5;
   GAME_WINNER = 6;
+  /** Group for corner markets. Original enum name was changed to avoid collision with other enum's CORNERS entry. */
   CORNERS_GROUP = 7;
+  /** Group for cards markets. Original enum name was changed to avoid collision with other enum's CARDS entry. */
   CARDS_GROUP = 8;
   PLAYER_PROPS = 9;
 }
