@@ -196,13 +196,13 @@ message EventDelta {
 }
 
 /**
- * Delta message for event deletion.
+ * Delta message for events deletion.
  */
 message EventDelete {
   /**
-   * Unique identifier of the event.
+   * Unique identifiers of the events to be deleted.
    */
-  uint64 eventId = 1;
+  repeated uint64 eventIds = 1;
 }
 
 /**
@@ -237,6 +237,16 @@ message EventProperties {
    * Planned start datetime in milliseconds since epoch.
    */
   uint64 plannedStartDatetime = 7;
+  /**
+    * Match ID, which is equal for live and prematch events, and can be used to link live and prematch event records.
+    * May change in rare cases.
+   */
+  uint64 uniformEventId = 8;
+
+  /**
+   * Event type.
+   */
+  EventType eventType = 9;
 }
 
 /**
@@ -438,6 +448,13 @@ enum MarketGroup {
   /** Group for cards markets. Original enum name was changed to avoid collision with other enum's CARDS entry. */
   CARDS_GROUP = 8;
   PLAYER_PROPS = 9;
+}
+
+enum EventType {
+  REGULAR = 0;
+  RACE = 1;
+  FIELDS = 2;
+  OUTRIGHT = 3;
 }
 
 /**
