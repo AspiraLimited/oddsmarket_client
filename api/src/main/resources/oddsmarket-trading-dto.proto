@@ -4,7 +4,7 @@ package com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto;
 option java_outer_classname = "OddsmarketTradingDto";
 
 /**
- * Envelope for all messages
+ * Envelope for all messages.
  */
 message WsMessage {
   oneof message {
@@ -18,7 +18,7 @@ message WsMessage {
 }
 
 /**
-  * Data message. Contains either full event data or delta event data
+ * Data message. Contains either full event data or delta event data.
  */
 message DataMessage {
   uint64 messageId = 1;
@@ -26,216 +26,405 @@ message DataMessage {
     DataInit dataInit = 2;
     EventFull eventFull = 3;
     EventDelta eventDelta = 4;
-    InitialStateTransferred initialStateTransferred = 5;
+    EventDelete eventDelete = 5;
+    InitialStateTransferred initialStateTransferred = 6;
   }
 }
 
 /**
- * Acknowledge message. Must be sent by client at least every 1000 milliseconds.
+ * Acknowledge message. Must be sent by the client at least every 1000 milliseconds.
  */
 message Acknowledge {
   /**
-    *  Last of DataMessages (message having messageId) successfully received and consumed by client.
+   * The messageId of the last DataMessage that was successfully received and processed by the client.
    */
   uint64 messageId = 1;
 }
 
 /**
-  * Ping message. May be sent by client at any time.
+ * Ping message. May be sent by the client at any time.
  */
 message Ping {
   /**
-    *  Payload is optional and may be used to identify original Ping message
+   * Optional payload that may be used to identify the original Ping message.
    */
   string payload = 1;
 }
 
 /**
-  * Pong message. Sent by server in response to Ping message
+ * Pong message. Sent by the server in response to a Ping message.
  */
 message Pong {
   /**
-    *  Server timestamp in milliseconds since epoch
+   * Server timestamp in milliseconds since epoch.
    */
   uint64 timestamp = 1;
   /**
-    *  A copy of the payload from the original Ping message
+   * A copy of the payload from the original Ping message.
    */
   string payload = 2;
 }
 
 /**
-  * Heartbeat message. Sent by server every N milliseconds.
-  * May be used for computing consumer lag.
+ * Heartbeat message. Sent by the server every N milliseconds and may be used for computing consumer lag.
  */
 message Heartbeat {
   /**
-    *  Server timestamp in milliseconds since epoch
+   * Server timestamp in milliseconds since epoch.
    */
   uint64 timestamp = 1;
 }
 
 /**
-  * Error message. Sent by server in case of error.
+ * Error message. Sent by the server in case of an error.
  */
 message Error {
   /**
-    *  Error code
+   * Error code.
    */
   ErrorCode code = 1;
   /**
-    *  Error message
+   * Error message.
    */
   string message = 2;
 }
 
-
 /**
- *    Initial data transfer messages
+ * Initial data transfer messages.
  */
-
-
 message DataInit {
   /**
-    *  Session ID. May be used to restore connection in case of disconnect.
+   * Session ID. May be used to restore the connection in case of a disconnect.
    */
   string sessionId = 1;
 }
 
 /**
- * Message sent by server when initial data transfer of all events is complete.
- *
+ * Message sent by the server when the initial data transfer of all events is complete.
  */
 message InitialStateTransferred {
-
 }
 
 /**
- * Full initial state of event (match)
+ * Full initial state of an event (match).
  */
 message EventFull {
+  /**
+   * Unique identifier of the event.
+   */
   uint64 eventId = 1;
+  /**
+   * Properties of the event.
+   */
   EventProperties eventProperties = 2;
+  /**
+   * Live properties of the event, if available.
+   */
   optional LiveEventProperties liveEventProperties = 3;
+  /**
+   * Full list of markets associated with the event.
+   */
   repeated MarketFull markets = 4;
 }
 
+/**
+ * Full market information, including market key, properties, and outcomes.
+ */
 message MarketFull {
+  /**
+   * Unique key identifying the market.
+   */
   MarketKey marketKey = 1;
+  /**
+   * Properties of the market.
+   */
   MarketProperties marketProperties = 2;
   /**
-    *  If there are no outcomes, the market should be considered as suspended
-    */
+   * List of full outcome details.
+   */
   repeated OutcomeFull outcomes = 3;
 }
 
+/**
+ * Full outcome information, including outcome key and outcome data.
+ */
 message OutcomeFull {
+  /**
+   * Unique key identifying the outcome.
+   */
   OutcomeKey outcomeKey = 1;
+  /**
+   * Data related to the outcome.
+   */
   OutcomeData outcomeData = 2;
 }
 
+/**
+ * Outcome data containing odds and maximum stake.
+ */
 message OutcomeData {
+  /**
+   * Odds for the outcome.
+   */
   float odds = 1;
+  /**
+   * Maximum stake allowed for the outcome.
+   */
   float maxStake = 4;
 }
 
 /**
- *    Delta messages
+ * Delta message for event updates, containing modifications to event properties and markets.
  */
-
 message EventDelta {
+  /**
+   * Unique identifier of the event.
+   */
   uint64 eventId = 1;
+  /**
+   * Updated event properties, if any.
+   */
   optional EventProperties eventProperties = 2;
+  /**
+   * Updated live event properties, if any.
+   */
   optional LiveEventProperties liveEventProperties = 3;
+  /**
+   * List of modified markets.
+   */
   repeated MarketFull modifiedMarkets = 4;
 }
 
+/**
+ * Delta message for event deletion.
+ */
+message EventDelete {
+  /**
+   * Unique identifier of the event.
+   */
+  uint64 eventId = 1;
+}
 
 /**
- *    Core data types
+ * Core data types.
  */
 
+/**
+ * Properties of an event.
+ */
 message EventProperties {
+  /**
+   * Identifier of the sport.
+   */
   uint32 sportId = 2;
+  /**
+   * Home team information.
+   */
   Team home = 3;
+  /**
+   * Away team information.
+   */
   Team away = 4;
+  /**
+   * League information.
+   */
   League league = 5;
+  /**
+   * Name of the event.
+   */
   string name = 6;
+  /**
+   * Planned start datetime in milliseconds since epoch.
+   */
   uint64 plannedStartDatetime = 7;
 }
 
+/**
+ * Team information including identifier and name.
+ */
 message Team {
+  /**
+   * Unique identifier of the team.
+   */
   uint64 id = 1;
+  /**
+   * Name of the team.
+   */
   string name = 2;
 }
 
+/**
+ * League information including identifier, name, and region id.
+ */
 message League {
+  /**
+   * Unique identifier of the league.
+   */
   uint64 id = 1;
+  /**
+   * Name of the league.
+   */
   string name = 2;
+  /**
+   * Identifier of the region.
+   * The dictionary of regions endpoint documentation:
+   * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
+   */
   uint32 regionId = 3;
 }
 
+/**
+ * Unique key for an outcome, including market and bet type id, parameter, period identifier, and optional players.
+ */
 message OutcomeKey {
+  /**
+   * Identifier for the "market and bet type". Bet type may also be referred as "selection".
+   * "Market and bet type" identifies valid pair of market and bet type (selection).
+   * The dictionary endpoint documentation:
+   * https://github.com/AspiraLimited/oddsmarket_client/wiki/MarketAndBetType-dictionary-(API-v4)
+   */
   uint32 marketAndBetTypeId = 1;
+  /**
+   * Parameter for the market and bet type.
+   * More information is available in documentation:
+   * https://github.com/AspiraLimited/oddsmarket_client/wiki/MarketAndBetType-parameter-(API-v4)
+   */
   float marketAndBetTypeParam = 2;
+  /**
+   * Period identifier.
+   * More info:
+   * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Period-Name-(API-v4)
+   */
   int32 periodIdentifier = 3;
+  /**
+   * Optional first player associated with the outcome.
+   */
   optional Player player1 = 4;
+  /**
+   * Optional second player associated with the outcome.
+   */
   optional Player player2 = 5;
 }
 
+/**
+ * Player information including identifier and name.
+ */
 message Player {
+  /**
+   * Unique identifier of the player.
+   */
   uint32 id = 1;
+  /**
+   * Name of the player.
+   */
   string name = 2;
 }
 
+/**
+ * Unique key for a market, including market id, parameter, and period identifier.
+ */
 message MarketKey {
+  /**
+   * Identifier of the market.
+   */
   uint32 marketId = 1;
+  /**
+   * Parameter for the market.
+   */
   float marketParam = 2;
+  /**
+   * Period identifier.
+   */
   int32 periodIdentifier = 3;
 }
 
+/**
+ * Properties of a market.
+ */
 message MarketProperties {
+  /**
+   * Title of the market.
+   */
   string title = 1;
+  /**
+   * Short title of the market.
+   */
   string shortTitle = 2;
+  /**
+   * Group to which the market belongs.
+   */
   MarketGroup marketGroup = 3;
+  /**
+   * Indicates if the market requires a parameter.
+   */
   bool requiresParameter = 4;
+  /**
+   * Score type associated with the market.
+   */
   ScoreType scoreType = 5;
 }
 
-message LeagueDto {
-  int64 id = 1;
-  uint32 countryId = 2;
-  string name = 3;
-}
-
-
-// Current state of live match
+/**
+ * Current state of a live match.
+ */
 message LiveEventProperties {
-  // Current period identifier
+  /**
+   * Current period identifier (may be not available).
+   */
   optional int32 currentPeriodIdentifier = 1;
-  // Current second
+  /**
+   * Current second of the match (may be not available).
+   */
   optional int32 currentSecond = 2;
-  // Current live match status
+  /**
+   * Current live match status (may be not available).
+   */
   optional LiveMatchStatus matchStatus = 3;
-  // Current score (broken down by period and score type)
+  /**
+   * Current scores, broken down by period and score type.
+   */
   repeated DeepScore scores = 4;
 }
 
+/**
+ * Deep score information including score key and home/away scores.
+ */
 message DeepScore {
+  /**
+   * Key identifying the deep score.
+   */
   DeepScoreKey scoreKey = 1;
+  /**
+   * Home team score.
+   */
   int32 home = 3;
+  /**
+   * Away team score.
+   */
   int32 away = 4;
 }
 
+/**
+ * Key for deep scores, including score type and period identifier.
+ */
 message DeepScoreKey {
+  /**
+   * Score type.
+   */
   ScoreType scoreType = 1;
+  /**
+   * Period identifier.
+   */
   int32 periodIdentifier = 2;
 }
 
 /**
- * Enums
+ * Enums.
  */
 
+/**
+ * Enumeration of market groups.
+ */
 enum MarketGroup {
   _1_X_2_AND_ML = 0;
   HANDICAP = 1;
@@ -249,112 +438,138 @@ enum MarketGroup {
   PLAYER_PROPS = 9;
 }
 
+/**
+ * Enumeration of live match statuses.
+ */
 enum LiveMatchStatus {
-  UNKNOWN = 0; // status not determined
-  NOT_STARTED = 1; // The event has not started yet
-  POSTPONED = 3; // The event has been postponed for some time. If an event has been postponed, it means the Event Organizer is still working to determine whether the event will be rescheduled or canceled
-  CANCELLED = 5; // The event has been cancelled
-  LIVE = 10; // The event is live
-  PAUSED = 11; // The event is paused with any other reason than a break
-  BREAK = 12; // The event is on Break
-  SUSPENDED = 13; // If your event is suspended, the team/league/artist/venue has suspended the event for the time being and will decide at a future point if the event will be postponed, cancelled, or still occur at the original date and time.
-  INTERRUPTED = 15; // The event has been interrupted. If a match is interrupted and continued within 48h after initial kickoff, all open bets will be settled with the final result. Otherwise all undecided bets are considered void.
-  FINISHED = 20; // The event is finished
+  /** Status not determined. */
+  UNKNOWN = 0;
+  /** The event has not started yet. */
+  NOT_STARTED = 1;
+  /** The event has been postponed. The organizer is determining whether to reschedule or cancel. */
+  POSTPONED = 3;
+  /** The event has been cancelled. */
+  CANCELLED = 5;
+  /** The event is live. */
+  LIVE = 10;
+  /** The event is paused for reasons other than a break. */
+  PAUSED = 11;
+  /** The event is on break. */
+  BREAK = 12;
+  /**
+   * The event is suspended; the organizer will decide later if it will be postponed, cancelled, or proceed as scheduled.
+   */
+  SUSPENDED = 13;
+  /**
+   * The event has been interrupted. If resumed within 48 hours, bets are settled with the final result; otherwise, bets are void.
+   */
+  INTERRUPTED = 15;
+  /** The event is finished. */
+  FINISHED = 20;
 }
 
-
+/**
+ * Enumeration of score types.
+ */
 enum ScoreType {
   UNKNOWN_SCORE_TYPE = 0;
-  // основной счет
+  /** Main score. */
   MAIN = 1;
-  // счет по угловым
+  /** Score for corner kicks. */
   CORNERS = 2;
-  // счет по желтым карточкам
+  /** Score for yellow cards. */
   YELLOW_CARDS = 3;
-  // счет по красным карточкам
+  /** Score for red cards. */
   RED_CARDS = 4;
-  // Количество назначенных пенальти на протяжении матча periodIdentifier=0 или на протяжении овертайма periodIdentifier=-4
-  // Пенальти, которые играют вконце матча для определения победителя, кладем в ScoreType=MAIN & periodIdentifier=-5
+  /**
+   * Count of penalties awarded during the match (periodIdentifier=0) or during overtime (periodIdentifier=-4).
+   * Penalties played at the end of the match to determine the winner are included in ScoreType=MAIN with periodIdentifier=-5.
+   */
   PENALTY = 5;
-  // счет по заменам
+  /** Score for substitutions. */
   SUBSTITUTION = 6;
-  // счет по ударам в створ
+  /** Score for shots on goal. */
   SHOTS_ON_GOAL = 7;
-  // счет по фолам
+  /** Score for fouls. */
   FOULS = 8;
-  // счет по офсайдам
+  /** Score for offsides. */
   OFFSIDE = 9;
-  // счет по владению мячом
+  /** Score for ball possession. */
   BALL_POSSESSION = 10;
-  // счет по карточкам
+  /** Score for cards. */
   CARDS = 11;
-  // счет по баллам за карточки
+  /** Score for booking points (points for cards). */
   BOOKING_POINTS = 12;
-  // счет по эйсам
+  /** Score for aces. */
   ACE = 13;
-  // счет по двойным ошибкам
+  /** Score for double faults. */
   DOUBLE_FAULT = 14;
-  // счет по проценту первой подачи
+  /** Score for first serve percentage. */
   FIRST_SERVE_PCT = 15;
-  // счет по трехочковым
+  /** Score for three-pointers. */
   THREE_POINTS = 16;
-  // счет по подборам
+  /** Score for rebounds. */
   REBOUNDS = 17;
-  // счет по передачам
+  /** Score for assists. */
   ASSISTS = 18;
-  // счет по убийствам
+  /** Score for kills. */
   KILLS = 19;
-  // счет по баронам
+  /** Score for barons. */
   BARONS = 20;
-  // счет по ингибиторам
+  /** Score for inhibitors. */
   INHIBITORS = 21;
-  // счет по драконам
+  /** Score for dragons. */
   DRAGONS = 22;
-  // счет по башням
+  /** Score for towers. */
   TOWERS = 23;
-  // счет по рошанам
+  /** Score for roshans. */
   ROSHANS = 24;
-  // счет по баракам
+  /** Score for barracks. */
   BARRACKS = 25;
-  // счет по тачдаунам
+  /** Score for touchdowns. */
   TOUCHDOWN = 26;
-  // счет по голам с поля
+  /** Score for field goals. */
   FIELD_GOALS = 27;
-  // счет по хитам
+  /** Score for hits. */
   HITS = 28;
-  // счет по ошибкам
+  /** Score for errors. */
   ERRORS = 29;
-  // счет по шестеркам
+  /** Score for sixes. */
   SIXES = 30;
-  // счет по четверкам
+  /** Score for fours. */
   FOURS = 31;
-  // вкидання за бокової у футболі
+  /** Throw-ins in football. */
   THROW_INS = 32;
-  // крікет, для визначення хто перший Bowler/Batter
+  /** Cricket: used to determine the first bowler/batter. */
   TOSS = 33;
-  // крікет, кількість втрачених командою каліток
+  /** Cricket: number of wickets lost by the team. */
   WICKETS = 34;
 }
 
+/**
+ * Enumeration of error codes.
+ */
 enum ErrorCode {
+  /** Server is terminating. */
   SERVER_TERMINATING = 0;
+  /** Authentication failed. */
   AUTHENTICATION_FAILED = 1;
-  SUBSCRIPTION_EXPIRED = 2;
-  REQUESTED_FEED_IS_NOT_INCLUDED_IN_SUBSCRIPTION = 3;
+  /** Client's IP address is not whitelisted. */
+  IP_NOT_WHITELISTED = 2;
+  /** Subscription expired. */
+  SUBSCRIPTION_EXPIRED = 3;
+  /** Requested feed is not included in the subscription. */
+  REQUESTED_FEED_IS_NOT_INCLUDED_IN_SUBSCRIPTION = 4;
   /**
-    *  Client is sending too many messages
+   * Client is sending too many messages.
    */
-  TOO_MANY_REQUESTS = 4;
+  TOO_MANY_REQUESTS = 5;
   /**
-    *  Client is not consuming messages fast enough to catch up with the feed
+   * Client is not consuming messages fast enough to catch up with the feed.
    */
-  SLOW_CONSUMER = 5;
-
+  SLOW_CONSUMER = 6;
   /**
-    *  Client is not sending Acknowledge messages
+   * Client is not sending Acknowledge messages.
    */
-  NO_ACKNOWLEDGE_RECEIVED = 6;
-
-
+  NO_ACKNOWLEDGE_RECEIVED = 7;
 }
-
