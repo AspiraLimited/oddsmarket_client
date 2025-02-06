@@ -1,0 +1,360 @@
+syntax = "proto3";
+package com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto;
+
+option java_outer_classname = "OddsmarketTradingDto";
+
+/**
+ * Envelope for all messages
+ */
+message WsMessage {
+  oneof message {
+    DataMessage dataMessage = 1;
+    Acknowledge acknowledge = 2;
+    Ping ping = 3;
+    Pong pong = 4;
+    Heartbeat heartbeat = 5;
+    Error error = 6;
+  }
+}
+
+/**
+  * Data message. Contains either full event data or delta event data
+ */
+message DataMessage {
+  uint64 messageId = 1;
+  oneof message {
+    DataInit dataInit = 2;
+    EventFull eventFull = 3;
+    EventDelta eventDelta = 4;
+    InitialStateTransferred initialStateTransferred = 5;
+  }
+}
+
+/**
+ * Acknowledge message. Must be sent by client at least every 1000 milliseconds.
+ */
+message Acknowledge {
+  /**
+    *  Last of DataMessages (message having messageId) successfully received and consumed by client.
+   */
+  uint64 messageId = 1;
+}
+
+/**
+  * Ping message. May be sent by client at any time.
+ */
+message Ping {
+  /**
+    *  Payload is optional and may be used to identify original Ping message
+   */
+  string payload = 1;
+}
+
+/**
+  * Pong message. Sent by server in response to Ping message
+ */
+message Pong {
+  /**
+    *  Server timestamp in milliseconds since epoch
+   */
+  uint64 timestamp = 1;
+  /**
+    *  A copy of the payload from the original Ping message
+   */
+  string payload = 2;
+}
+
+/**
+  * Heartbeat message. Sent by server every N milliseconds.
+  * May be used for computing consumer lag.
+ */
+message Heartbeat {
+  /**
+    *  Server timestamp in milliseconds since epoch
+   */
+  uint64 timestamp = 1;
+}
+
+/**
+  * Error message. Sent by server in case of error.
+ */
+message Error {
+  /**
+    *  Error code
+   */
+  ErrorCode code = 1;
+  /**
+    *  Error message
+   */
+  string message = 2;
+}
+
+
+/**
+ *    Initial data transfer messages
+ */
+
+
+message DataInit {
+  /**
+    *  Session ID. May be used to restore connection in case of disconnect.
+   */
+  string sessionId = 1;
+}
+
+/**
+ * Message sent by server when initial data transfer of all events is complete.
+ *
+ */
+message InitialStateTransferred {
+
+}
+
+/**
+ * Full initial state of event (match)
+ */
+message EventFull {
+  uint64 eventId = 1;
+  EventProperties eventProperties = 2;
+  optional LiveEventProperties liveEventProperties = 3;
+  repeated MarketFull markets = 4;
+}
+
+message MarketFull {
+  MarketKey marketKey = 1;
+  MarketProperties marketProperties = 2;
+  /**
+    *  If there are no outcomes, the market should be considered as suspended
+    */
+  repeated OutcomeFull outcomes = 3;
+}
+
+message OutcomeFull {
+  OutcomeKey outcomeKey = 1;
+  OutcomeData outcomeData = 2;
+}
+
+message OutcomeData {
+  float odds = 1;
+  float maxStake = 4;
+}
+
+/**
+ *    Delta messages
+ */
+
+message EventDelta {
+  uint64 eventId = 1;
+  optional EventProperties eventProperties = 2;
+  optional LiveEventProperties liveEventProperties = 3;
+  repeated MarketFull modifiedMarkets = 4;
+}
+
+
+/**
+ *    Core data types
+ */
+
+message EventProperties {
+  uint32 sportId = 2;
+  Team home = 3;
+  Team away = 4;
+  League league = 5;
+  string name = 6;
+  uint64 plannedStartDatetime = 7;
+}
+
+message Team {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message League {
+  uint64 id = 1;
+  string name = 2;
+  uint32 regionId = 3;
+}
+
+message OutcomeKey {
+  uint32 marketAndBetTypeId = 1;
+  float marketAndBetTypeParam = 2;
+  int32 periodIdentifier = 3;
+  optional Player player1 = 4;
+  optional Player player2 = 5;
+}
+
+message Player {
+  uint32 id = 1;
+  string name = 2;
+}
+
+message MarketKey {
+  uint32 marketId = 1;
+  float marketParam = 2;
+  int32 periodIdentifier = 3;
+}
+
+message MarketProperties {
+  string title = 1;
+  string shortTitle = 2;
+  MarketGroup marketGroup = 3;
+  bool requiresParameter = 4;
+  ScoreType scoreType = 5;
+}
+
+message LeagueDto {
+  int64 id = 1;
+  uint32 countryId = 2;
+  string name = 3;
+}
+
+
+// Current state of live match
+message LiveEventProperties {
+  // Current period identifier
+  optional int32 currentPeriodIdentifier = 1;
+  // Current second
+  optional int32 currentSecond = 2;
+  // Current live match status
+  optional LiveMatchStatus matchStatus = 3;
+  // Current score (broken down by period and score type)
+  repeated DeepScore scores = 4;
+}
+
+message DeepScore {
+  DeepScoreKey scoreKey = 1;
+  int32 home = 3;
+  int32 away = 4;
+}
+
+message DeepScoreKey {
+  ScoreType scoreType = 1;
+  int32 periodIdentifier = 2;
+}
+
+/**
+ * Enums
+ */
+
+enum MarketGroup {
+  _1_X_2_AND_ML = 0;
+  HANDICAP = 1;
+  TOTAL = 2;
+  IND_TOTAL = 3;
+  STATISTIC = 4;
+  ADDITIONAL_MARKETS = 5;
+  GAME_WINNER = 6;
+  CORNERS_GROUP = 7;
+  CARDS_GROUP = 8;
+  PLAYER_PROPS = 9;
+}
+
+enum LiveMatchStatus {
+  UNKNOWN = 0; // status not determined
+  NOT_STARTED = 1; // The event has not started yet
+  POSTPONED = 3; // The event has been postponed for some time. If an event has been postponed, it means the Event Organizer is still working to determine whether the event will be rescheduled or canceled
+  CANCELLED = 5; // The event has been cancelled
+  LIVE = 10; // The event is live
+  PAUSED = 11; // The event is paused with any other reason than a break
+  BREAK = 12; // The event is on Break
+  SUSPENDED = 13; // If your event is suspended, the team/league/artist/venue has suspended the event for the time being and will decide at a future point if the event will be postponed, cancelled, or still occur at the original date and time.
+  INTERRUPTED = 15; // The event has been interrupted. If a match is interrupted and continued within 48h after initial kickoff, all open bets will be settled with the final result. Otherwise all undecided bets are considered void.
+  FINISHED = 20; // The event is finished
+}
+
+
+enum ScoreType {
+  UNKNOWN_SCORE_TYPE = 0;
+  // основной счет
+  MAIN = 1;
+  // счет по угловым
+  CORNERS = 2;
+  // счет по желтым карточкам
+  YELLOW_CARDS = 3;
+  // счет по красным карточкам
+  RED_CARDS = 4;
+  // Количество назначенных пенальти на протяжении матча periodIdentifier=0 или на протяжении овертайма periodIdentifier=-4
+  // Пенальти, которые играют вконце матча для определения победителя, кладем в ScoreType=MAIN & periodIdentifier=-5
+  PENALTY = 5;
+  // счет по заменам
+  SUBSTITUTION = 6;
+  // счет по ударам в створ
+  SHOTS_ON_GOAL = 7;
+  // счет по фолам
+  FOULS = 8;
+  // счет по офсайдам
+  OFFSIDE = 9;
+  // счет по владению мячом
+  BALL_POSSESSION = 10;
+  // счет по карточкам
+  CARDS = 11;
+  // счет по баллам за карточки
+  BOOKING_POINTS = 12;
+  // счет по эйсам
+  ACE = 13;
+  // счет по двойным ошибкам
+  DOUBLE_FAULT = 14;
+  // счет по проценту первой подачи
+  FIRST_SERVE_PCT = 15;
+  // счет по трехочковым
+  THREE_POINTS = 16;
+  // счет по подборам
+  REBOUNDS = 17;
+  // счет по передачам
+  ASSISTS = 18;
+  // счет по убийствам
+  KILLS = 19;
+  // счет по баронам
+  BARONS = 20;
+  // счет по ингибиторам
+  INHIBITORS = 21;
+  // счет по драконам
+  DRAGONS = 22;
+  // счет по башням
+  TOWERS = 23;
+  // счет по рошанам
+  ROSHANS = 24;
+  // счет по баракам
+  BARRACKS = 25;
+  // счет по тачдаунам
+  TOUCHDOWN = 26;
+  // счет по голам с поля
+  FIELD_GOALS = 27;
+  // счет по хитам
+  HITS = 28;
+  // счет по ошибкам
+  ERRORS = 29;
+  // счет по шестеркам
+  SIXES = 30;
+  // счет по четверкам
+  FOURS = 31;
+  // вкидання за бокової у футболі
+  THROW_INS = 32;
+  // крікет, для визначення хто перший Bowler/Batter
+  TOSS = 33;
+  // крікет, кількість втрачених командою каліток
+  WICKETS = 34;
+}
+
+enum ErrorCode {
+  SERVER_TERMINATING = 0;
+  AUTHENTICATION_FAILED = 1;
+  SUBSCRIPTION_EXPIRED = 2;
+  REQUESTED_FEED_IS_NOT_INCLUDED_IN_SUBSCRIPTION = 3;
+  /**
+    *  Client is sending too many messages
+   */
+  TOO_MANY_REQUESTS = 4;
+  /**
+    *  Client is not consuming messages fast enough to catch up with the feed
+   */
+  SLOW_CONSUMER = 5;
+
+  /**
+    *  Client is not sending Acknowledge messages
+   */
+  NO_ACKNOWLEDGE_RECEIVED = 6;
+
+
+}
+
