@@ -175,6 +175,29 @@ message OutcomeData {
    * Odds for the outcome.
    */
   float odds = 1;
+  /**
+   * Optional first player associated with the outcome.
+   */
+  Player player1 = 2;
+  /**
+   * Optional second player associated with the outcome.
+   */
+  Player player2 = 3;
+  /**
+   * Titles of the outcome, rendered in locales requested in feed parameters.
+   * Title includes parameter value if the outcome requires a parameter.
+   */
+  repeated LocalizedName outcomeTitles = 4;
+  /**
+   * Short title of the outcome.
+   * Only English abbreviated title is available.
+   * Short title includes parameter value if the outcome requires a parameter.
+   */
+  string shortOutcomeTitle = 5;
+  /**
+    * Period titles of the outcome, rendered in locales requested in feed parameters.
+    */
+  repeated LocalizedName periodTitles = 6;
 }
 
 /**
@@ -350,13 +373,13 @@ message OutcomeKey {
    */
   int32 periodIdentifier = 3;
   /**
-   * Optional first player associated with the outcome.
+   * Optional first player ID associated with the outcome.
    */
-  Player player1 = 4;
+  optional int32 playerId1 = 4;
   /**
-   * Optional second player associated with the outcome.
+   * Optional second player ID associated with the outcome.
    */
-  Player player2 = 5;
+  optional int32 playerId2 = 5;
 }
 
 /**
@@ -396,16 +419,16 @@ message MarketKey {
  */
 message MarketInfo {
   /**
-   * Title of the market, rendered in locales requested in feed parameters.
+   * Titles of the market, rendered in locales requested in feed parameters.
    * Title includes parameter value if the market requires a parameter.
    */
-  LocalizedName title = 1;
+  repeated LocalizedName marketTitles = 1;
   /**
    * Short title of the market.
    * Only English abbreviated title is available.
    * Short title includes parameter value if the market requires a parameter.
    */
-  string shortTitle = 2;
+  string shortMarketTitle = 2;
   /**
    * Group to which the market belongs.
    */
@@ -418,6 +441,10 @@ message MarketInfo {
    * Score type that is used for settling bets on the market.
    */
   ScoreType settlingScoreType = 5;
+  /**
+  * Period titles of the market, rendered in locales requested in feed parameters.
+  */
+  repeated LocalizedName periodTitles = 8;
 }
 
 /**
