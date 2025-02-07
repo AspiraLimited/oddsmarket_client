@@ -35,7 +35,11 @@ message ClientMessage {
 }
 
 /**
- * Acknowledge message. Must be sent by the client at least every 1000 milliseconds.
+ * Acknowledge message.
+ * Client MUST send Ack message if all conditions below are true:
+ * 1. Client requested to have possibility to resume session in case of websocket disconnect.
+ * 2. Last Ack message was sent more than X milliseconds ago. X may be chosen by the client from the range from 100 to 1000.
+ * 3. Client received at least one message from the server after the last Ack message.
  */
 message Ack {
   /**
