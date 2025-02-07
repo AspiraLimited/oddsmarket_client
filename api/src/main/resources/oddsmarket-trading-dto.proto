@@ -240,9 +240,9 @@ message EventProperties {
    */
   League league = 5;
   /**
-   * Name of the event.
+   * Name of the event (possibly in different locales)
    */
-  string name = 6;
+  repeated LocalName names = 6;
   /**
    * Planned start datetime in milliseconds since epoch.
    */
@@ -268,9 +268,9 @@ message Team {
    */
   uint64 id = 1;
   /**
-   * Name of the team.
+   * Name of the team (possibly in different locales).
    */
-  string name = 2;
+  repeated LocalName names = 2;
 }
 
 /**
@@ -282,15 +282,29 @@ message League {
    */
   uint64 id = 1;
   /**
-   * Name of the league.
+   * Name of the league (possibly in different locales).
    */
-  string name = 2;
+  repeated LocalName names = 2;
   /**
    * Identifier of the region.
    * The dictionary of regions endpoint documentation:
    * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
    */
   uint32 regionId = 3;
+}
+
+/**
+ * Localized name of an entity.
+ */
+message LocalName {
+  /**
+    * ISO 639-1 language code.
+   */
+  string languageIso2Code = 1;
+  /**
+   * Name of the entity in the specified language.
+   */
+  string name = 2;
 }
 
 /**
@@ -335,9 +349,9 @@ message Player {
    */
   uint32 id = 1;
   /**
-   * Name of the player.
+   * Name of the player (possibly in different locales)
    */
-  string name = 2;
+  repeated LocalName names = 2;
 }
 
 /**
