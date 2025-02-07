@@ -284,13 +284,10 @@ message Team {
  */
   uint32 regionId = 4;
   /**
-   * Logo URL.
-  */
-  string logoUrl = 5;
-  /**
-   * Timestamp of the logo file last update, in milliseconds since epoch.
+    * Team has logo, which can be downloaded from other endpoint.
+    * TODO: add link to the endpoint documentation.
    */
-  uint64 logoLastUpdatedAt = 6;
+  bool hasLogo = 5;
 }
 
 /**
