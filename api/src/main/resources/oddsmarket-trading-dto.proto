@@ -271,6 +271,25 @@ message Team {
    * Name of the team (possibly in different locales).
    */
   repeated LocalName names = 2;
+  /**
+   * Identifier of the sport.
+   */
+  uint32 sportId = 3;
+  /**
+ * Identifier of the region.
+ * The dictionary of regions endpoint documentation:
+ * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
+ */
+  uint32 regionId = 4;
+  /**
+   * Logo file name.
+   * TODO: describe how to construct download URL
+  */
+  string logoFileName = 5;
+  /**
+   * Timestamp of the logo file last update, in milliseconds since epoch.
+   */
+  uint64 logoUpdatedAt = 6;
 }
 
 /**
@@ -286,11 +305,16 @@ message League {
    */
   repeated LocalName names = 2;
   /**
+   * Identifier of the sport.
+   */
+  uint32 sportId = 3;
+  /**
    * Identifier of the region.
    * The dictionary of regions endpoint documentation:
    * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
    */
-  uint32 regionId = 3;
+  uint32 regionId = 4;
+
 }
 
 /**
