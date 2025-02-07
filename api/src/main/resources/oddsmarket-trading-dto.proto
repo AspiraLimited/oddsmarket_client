@@ -188,14 +188,19 @@ message EventDelta {
   uint64 eventId = 1;
   /**
    * Updated event properties, if any.
+   * If eventProperties is not present, then the eventProperties is not modified.
    */
   optional EventProperties eventProperties = 2;
   /**
    * Updated live event properties, if any.
+   * If liveEventProperties is not present, then the liveEventProperties is not modified.
    */
   optional LiveEventProperties liveEventProperties = 3;
   /**
    * List of modified markets.
+   * Markets are identified by their MarketKey.
+   * New markets should be added to the list, and existing markets should be replaced.
+   * If new market state comes with empty list of outcomes, then the market should be removed.
    */
   repeated MarketFull modifiedMarkets = 4;
 }
