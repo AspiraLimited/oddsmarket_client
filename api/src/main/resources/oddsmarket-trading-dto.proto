@@ -13,7 +13,7 @@ message ServerMessage {
    */
   uint64 messageId = 1;
   oneof message {
-    SessionInit dataInit = 2;
+    SessionInit sessionInit = 2;
     EventFull eventFull = 3;
     EventDelta eventDelta = 4;
     EventDelete eventDelete = 5;
@@ -106,6 +106,8 @@ message SessionInit {
 
 /**
  * Message sent by the server when the initial data transfer of all events is complete.
+ * Client may use this message to trigger data synchronization, for example start
+ * removing events that don't exist anymore.
  */
 message InitialStateTransferred {
 }
