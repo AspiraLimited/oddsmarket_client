@@ -12,15 +12,15 @@ message ServerMessage {
    * It's guaranteed that there are no gaps in the sequence of message numbers.
    */
   uint64 messageId = 1;
-  oneof message {
-    SessionInit sessionInit = 2;
-    EventFull eventFull = 3;
-    EventDelta eventDelta = 4;
-    EventDelete eventDelete = 5;
-    InitialStateTransferred initialStateTransferred = 6;
+  oneof payload {
+    SessionStart sessionStart = 2;
+    EventSnapshot eventSnapshot = 3;
+    EventPatch eventPatch = 4;
+    EventsRemoved eventsRemoved = 5;
+    InitialSyncComplete initialSyncComplete = 6;
     Pong pong = 7;
     Heartbeat heartbeat = 8;
-    Error error = 9;
+    ErrorMessage errorMessage = 9;
   }
 }
 
@@ -28,8 +28,8 @@ message ServerMessage {
  * Client->Server message envelope.
  */
 message ClientMessage {
-  oneof message {
-    Acknowledge acknowledge = 1;
+  oneof payload {
+    Ack ack = 1;
     Ping ping = 2;
   }
 }
@@ -37,9 +37,9 @@ message ClientMessage {
 /**
  * Acknowledge message. Must be sent by the client at least every 1000 milliseconds.
  */
-message Acknowledge {
+message Ack {
   /**
-   * The messageId of the last DataMessage that was successfully received and processed by the client.
+   * The messageId of the last message from server that was successfully received and processed by the client.
    */
   uint64 messageId = 1;
 }
@@ -61,7 +61,7 @@ message Pong {
   /**
    * Server timestamp in milliseconds since epoch.
    */
-  uint64 timestamp = 1;
+  uint64 serverTimestamp = 1;
   /**
    * A copy of the payload from the original Ping message.
    */
@@ -75,21 +75,21 @@ message Heartbeat {
   /**
    * Server timestamp in milliseconds since epoch.
    */
-  uint64 timestamp = 1;
+  uint64 serverTimestamp = 1;
 }
 
 /**
  * Error message. Sent by the server in case of an error.
  */
-message Error {
+message ErrorMessage {
   /**
    * Error code.
    */
   ErrorCode code = 1;
   /**
-   * Error message.
+   * Error details.
    */
-  string message = 2;
+  string details = 2;
 }
 
 /**
@@ -97,7 +97,7 @@ message Error {
  * Sent only if authentication is successful and feed access is granted.
  * If any error occurs during initial user authentication or permissions verification, the Error message is sent to client.
  */
-message SessionInit {
+message SessionStart {
   /**
    * Session ID. May be used to restore the connection in case of a disconnect.
    */
@@ -105,57 +105,58 @@ message SessionInit {
 }
 
 /**
- * Message sent by the server when the initial data transfer of all events is complete.
+ * Message sent by the server when the initial snapshots of all events transmission is complete.
  * Client may use this message to trigger data synchronization, for example start
  * removing events that don't exist anymore.
  */
-message InitialStateTransferred {
+message InitialSyncComplete {
 }
 
 /**
  * Full initial state of an event (match).
  */
-message EventFull {
+message EventSnapshot {
   /**
    * Unique identifier of the event.
    */
   uint64 eventId = 1;
   /**
-   * Properties of the event.
+   * Attributes of the event.
    */
-  EventProperties eventProperties = 2;
+  EventMetadata eventMetadata = 2;
   /**
-   * Live properties of the event, if available.
+   * Attributes of the live event, if available.
    */
-  optional LiveEventProperties liveEventProperties = 3;
+  LiveEventInfo liveEventInfo = 3;
   /**
    * Full list of markets associated with the event.
    */
-  repeated MarketFull markets = 4;
+  repeated MarketSnapshot markets = 4;
 }
 
 /**
- * Full market information, including market key, properties, and outcomes.
+ * Full market information, including market key, attributes, and outcomes.
  */
-message MarketFull {
+message MarketSnapshot {
   /**
    * Unique key identifying the market.
    */
   MarketKey marketKey = 1;
   /**
-   * Properties of the market.
+   * Attributes of the market.
    */
-  MarketProperties marketProperties = 2;
+  MarketInfo marketInfo = 2;
   /**
    * List of full outcome details.
+   * If the list is empty, the market should be removed.
    */
-  repeated OutcomeFull outcomes = 3;
+  repeated OutcomeSnapshot outcomes = 3;
 }
 
 /**
  * Full outcome information, including outcome key and outcome data.
  */
-message OutcomeFull {
+message OutcomeSnapshot {
   /**
    * Unique key identifying the outcome.
    */
@@ -174,45 +175,41 @@ message OutcomeData {
    * Odds for the outcome.
    */
   float odds = 1;
-  /**
-   * Maximum stake allowed for the outcome.
-   */
-  float maxStake = 4;
 }
 
 /**
- * Delta message for event updates, containing modifications to event properties and markets.
+ * Patch (diff, delta) message for event updates, containing modifications to event attributes and markets.
  */
-message EventDelta {
+message EventPatch {
   /**
    * Unique identifier of the event.
    */
   uint64 eventId = 1;
   /**
-   * Updated event properties, if any.
-   * If eventProperties is not present, then the eventProperties is not modified.
+   * Updated event attributes, if any.
+   * If updatedEventMetadata is not present, then the eventMetadata is not modified.
    */
-  optional EventProperties eventProperties = 2;
+  EventMetadata updatedEventMetadata = 2;
   /**
-   * Updated live event properties, if any.
-   * If liveEventProperties is not present, then the liveEventProperties is not modified.
+   * Updated live event attributes, if any.
+   * If updatedLiveEventInfo is not present, then the liveEventInfo is not modified.
    */
-  optional LiveEventProperties liveEventProperties = 3;
+  LiveEventInfo updatedLiveEventInfo = 3;
   /**
-   * List of modified markets.
+   * List of updated markets.
    * Markets are identified by their MarketKey.
    * New markets should be added to the list, and existing markets should be replaced.
    * If new market state comes with empty list of outcomes, then the market should be removed.
    */
-  repeated MarketFull modifiedMarkets = 4;
+  repeated MarketSnapshot updatedMarkets = 4;
 }
 
 /**
- * Delta message for events deletion.
+ * Patch message for events removal.
  */
-message EventDelete {
+message EventsRemoved {
   /**
-   * Unique identifiers of the events to be deleted.
+   * Unique identifiers of the events to be removed.
    */
   repeated uint64 eventIds = 1;
 }
@@ -222,9 +219,9 @@ message EventDelete {
  */
 
 /**
- * Properties of an event.
+ * Properties (attributes) of an event.
  */
-message EventProperties {
+message EventMetadata {
   /**
    * Identifier of the sport.
    */
@@ -244,11 +241,11 @@ message EventProperties {
   /**
    * Name of the event (possibly in different locales)
    */
-  repeated LocalName names = 6;
+  repeated LocalizedName names = 6;
   /**
    * Planned start datetime in milliseconds since epoch.
    */
-  uint64 plannedStartDatetime = 7;
+  uint64 plannedStartTimestamp = 7;
   /**
     * Match ID, which is equal for live and prematch events, and can be used to link live and prematch event records.
     * May change in rare cases.
@@ -272,22 +269,22 @@ message Team {
   /**
    * Name of the team (possibly in different locales).
    */
-  repeated LocalName names = 2;
+  repeated LocalizedName names = 2;
   /**
    * Identifier of the sport.
    */
   uint32 sportId = 3;
   /**
- * Identifier of the region.
- * The dictionary of regions endpoint documentation:
- * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
- */
+   * Identifier of the region.
+   * The dictionary of regions endpoint documentation:
+   * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
+   */
   uint32 regionId = 4;
   /**
-    * Team has logo, which can be downloaded from other endpoint.
-    * TODO: add link to the endpoint documentation.
+   * Team has logo available, which can be downloaded from following endpoint:
+   * TODO: add link to the endpoint documentation.
    */
-  bool hasLogo = 5;
+  bool logoAvailable = 5;
 }
 
 /**
@@ -301,7 +298,7 @@ message League {
   /**
    * Name of the league (possibly in different locales).
    */
-  repeated LocalName names = 2;
+  repeated LocalizedName names = 2;
   /**
    * Identifier of the sport.
    */
@@ -318,7 +315,7 @@ message League {
 /**
  * Localized name of an entity.
  */
-message LocalName {
+message LocalizedName {
   /**
     * ISO 639-1 language code.
    */
@@ -355,11 +352,11 @@ message OutcomeKey {
   /**
    * Optional first player associated with the outcome.
    */
-  optional Player player1 = 4;
+  Player player1 = 4;
   /**
    * Optional second player associated with the outcome.
    */
-  optional Player player2 = 5;
+  Player player2 = 5;
 }
 
 /**
@@ -373,7 +370,7 @@ message Player {
   /**
    * Name of the player (possibly in different locales)
    */
-  repeated LocalName names = 2;
+  repeated LocalizedName names = 2;
 }
 
 /**
@@ -395,15 +392,18 @@ message MarketKey {
 }
 
 /**
- * Properties of a market.
+ * Attributes of a market.
  */
-message MarketProperties {
+message MarketInfo {
   /**
-   * Title of the market.
+   * Title of the market, rendered in locales requested in feed parameters.
+   * Title includes parameter value if the market requires a parameter.
    */
-  string title = 1;
+  LocalizedName title = 1;
   /**
    * Short title of the market.
+   * Only English abbreviated title is available.
+   * Short title includes parameter value if the market requires a parameter.
    */
   string shortTitle = 2;
   /**
@@ -415,15 +415,15 @@ message MarketProperties {
    */
   bool requiresParameter = 4;
   /**
-   * Score type associated with the market.
+   * Score type that is used for settling bets on the market.
    */
-  ScoreType scoreType = 5;
+  ScoreType settlingScoreType = 5;
 }
 
 /**
  * Current state of a live match.
  */
-message LiveEventProperties {
+message LiveEventInfo {
   /**
    * Current period identifier (may be not available).
    */
@@ -435,21 +435,21 @@ message LiveEventProperties {
   /**
    * Current live match status (may be not available).
    */
-  optional LiveMatchStatus matchStatus = 3;
+  LiveMatchStatus matchStatus = 3;
   /**
    * Current scores, broken down by period and score type.
    */
-  repeated DeepScore scores = 4;
+  repeated DetailedScore detailedScores = 4;
 }
 
 /**
- * Deep score information including score key and home/away scores.
+ * Detailed score information including score key and home/away scores.
  */
-message DeepScore {
+message DetailedScore {
   /**
-   * Key identifying the deep score.
+   * Key identifying the score.
    */
-  DeepScoreKey scoreKey = 1;
+  ScoreKey scoreKey = 1;
   /**
    * Home team score.
    */
@@ -461,9 +461,9 @@ message DeepScore {
 }
 
 /**
- * Key for deep scores, including score type and period identifier.
+ * Key for scores, including score type and period identifier.
  */
-message DeepScoreKey {
+message ScoreKey {
   /**
    * Score type.
    */
@@ -480,20 +480,20 @@ message DeepScoreKey {
 
 /**
  * Enumeration of market groups.
+ * Original enum name was changed to avoid collision with other enum's CORNERS and CARDS entry (protobuf
+ * doesn't allow repeating enum constants across all enums in proto file).
  */
 enum MarketGroup {
-  _1_X_2_AND_ML = 0;
-  HANDICAP = 1;
-  TOTAL = 2;
-  IND_TOTAL = 3;
-  STATISTIC = 4;
-  ADDITIONAL_MARKETS = 5;
-  GAME_WINNER = 6;
-  /** Group for corner markets. Original enum name was changed to avoid collision with other enum's CORNERS entry. */
+  ONE_X_TWO_AND_MONEYLINE = 0;
+  HANDICAP_GROUP = 1;
+  TOTAL_GROUP = 2;
+  INDIVIDUAL_TOTAL_GROUP = 3;
+  STATISTIC_GROUP = 4;
+  ADDITIONAL_MARKETS_GROUP = 5;
+  GAME_WINNER_GROUP = 6;
   CORNERS_GROUP = 7;
-  /** Group for cards markets. Original enum name was changed to avoid collision with other enum's CARDS entry. */
   CARDS_GROUP = 8;
-  PLAYER_PROPS = 9;
+  PLAYER_PROPS_GROUP = 9;
 }
 
 enum EventType {
@@ -624,7 +624,7 @@ enum ErrorCode {
   /** Subscription expired. */
   SUBSCRIPTION_EXPIRED = 3;
   /** Requested feed is not included in the subscription. */
-  REQUESTED_FEED_IS_NOT_INCLUDED_IN_SUBSCRIPTION = 4;
+  FEED_NOT_IN_SUBSCRIPTION = 4;
   /**
    * Client is sending too many messages.
    */
@@ -634,7 +634,7 @@ enum ErrorCode {
    */
   SLOW_CONSUMER = 6;
   /**
-   * Client is not sending Acknowledge messages.
+   * Client is not sending Ack messages.
    */
-  NO_ACKNOWLEDGE_RECEIVED = 7;
+  ACK_NOT_RECEIVED = 7;
 }
