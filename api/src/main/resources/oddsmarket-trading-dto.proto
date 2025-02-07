@@ -4,30 +4,32 @@ package com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto;
 option java_outer_classname = "OddsmarketTradingDto";
 
 /**
- * Envelope for all messages.
+ * Server->Client message envelope.
  */
-message WsMessage {
-  oneof message {
-    DataMessage dataMessage = 1;
-    Acknowledge acknowledge = 2;
-    Ping ping = 3;
-    Pong pong = 4;
-    Heartbeat heartbeat = 5;
-    Error error = 6;
-  }
-}
-
-/**
- * Data message. Contains either full event data or delta event data.
- */
-message DataMessage {
+message ServerMessage {
+  /**
+   * Sequential number of the message within the same session.
+   */
   uint64 messageId = 1;
   oneof message {
-    DataInit dataInit = 2;
+    SessionInit dataInit = 2;
     EventFull eventFull = 3;
     EventDelta eventDelta = 4;
     EventDelete eventDelete = 5;
     InitialStateTransferred initialStateTransferred = 6;
+    Pong pong = 7;
+    Heartbeat heartbeat = 8;
+    Error error = 9;
+  }
+}
+
+/**
+ * Client->Server message envelope.
+ */
+message ClientMessage {
+  oneof message {
+    Acknowledge acknowledge = 1;
+    Ping ping = 2;
   }
 }
 
@@ -90,9 +92,11 @@ message Error {
 }
 
 /**
- * Initial data transfer messages.
+ * Initial session information message.
+ * Sent only if authentication is successful and feed access is granted.
+ * If any error occurs during initial user authentication or permissions verification, the Error message is sent to client.
  */
-message DataInit {
+message SessionInit {
   /**
    * Session ID. May be used to restore the connection in case of a disconnect.
    */
