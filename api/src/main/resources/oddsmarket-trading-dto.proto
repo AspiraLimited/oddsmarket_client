@@ -284,14 +284,13 @@ message Team {
  */
   uint32 regionId = 4;
   /**
-   * Logo file name.
-   * TODO: describe how to construct download URL
+   * Logo URL.
   */
-  string logoFileName = 5;
+  string logoUrl = 5;
   /**
    * Timestamp of the logo file last update, in milliseconds since epoch.
    */
-  uint64 logoUpdatedAt = 6;
+  uint64 logoLastUpdatedAt = 6;
 }
 
 /**
