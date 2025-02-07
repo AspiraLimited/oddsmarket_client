@@ -8,7 +8,8 @@ option java_outer_classname = "OddsmarketTradingDto";
  */
 message ServerMessage {
   /**
-   * Sequential number of the message within the same session.
+   * Incremental message number within the session.
+   * It's guaranteed that there are no gaps in the sequence of message numbers.
    */
   uint64 messageId = 1;
   oneof message {
