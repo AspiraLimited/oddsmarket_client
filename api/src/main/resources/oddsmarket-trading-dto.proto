@@ -202,6 +202,13 @@ message OutcomeData {
     * Period titles of the outcome, rendered in locales requested in feed parameters.
     */
   repeated LocalizedName periodTitles = 6;
+  /**
+   * Outcome ID at the IDs origin bookmaker, which was specified in rawIdOriginBookmakerId request parameter.
+    * If rawIdOriginBookmakerId is not specified OR fillRawOutcomeId=false (or empty), then rawOutcomeId is always empty.
+    * The field is used to match outcomes from this feed with outcomes identified by IDs of existing data supplier.
+    * rawOutcomeId is unique within the origin bookmaker's event.
+   */
+  string rawOutcomeId = 7;
 }
 
 /**
@@ -278,11 +285,17 @@ message EventMetadata {
     * May change in rare cases.
    */
   uint64 uniformEventId = 8;
+  /**
+    * Match ID of same event, taken from feed specified in rawIdOriginBookmakerId request parameter.
+    * If rawIdOriginBookmakerId is not specified, then rawEventId is empty.
+    * The field is used to match events from this feed with events identified by IDs of existing data supplier.
+   */
+  string rawEventId = 9;
 
   /**
    * Event type.
    */
-  EventType eventType = 9;
+  EventType eventType = 10;
 }
 
 /**
