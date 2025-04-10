@@ -3,14 +3,14 @@ package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.state
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.statekeeping.model.InMemoryStateStorage;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionErrorCode;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.WebsocketConnectionStatusCode;
 import lombok.Getter;
 
 public class TradingFeedStateKeepingListener implements TradingFeedListener {
     @Getter
     private InMemoryStateStorage inMemoryStateStorage = new InMemoryStateStorage();
     @Getter
-    private volatile TradingFeedConnectionErrorCode tradingFeedConnectionErrorCode;
+    private volatile WebsocketConnectionStatusCode websocketConnectionStatusCode;
 
     @Override
     public void onServerMessage(OddsmarketTradingDto.ServerMessage serverMessage) {
@@ -46,7 +46,7 @@ public class TradingFeedStateKeepingListener implements TradingFeedListener {
     }
 
     @Override
-    public void onConnectError(TradingFeedConnectionErrorCode tradingFeedConnectionErrorCode) {
-        this.tradingFeedConnectionErrorCode = tradingFeedConnectionErrorCode;
+    public void onConnectError(WebsocketConnectionStatusCode websocketConnectionStatusCode) {
+        this.websocketConnectionStatusCode = websocketConnectionStatusCode;
     }
 }
