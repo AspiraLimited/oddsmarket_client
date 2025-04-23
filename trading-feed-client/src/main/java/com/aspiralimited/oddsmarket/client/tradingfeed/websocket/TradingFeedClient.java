@@ -1,25 +1,18 @@
 package com.aspiralimited.oddsmarket.client.tradingfeed.websocket;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.WebSocketClient;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.impl.DefaultWebsocketClient;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.impl.UndefinedWebSocketClient;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingFeed;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.impl.WebsocketTradingFeed;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedState;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.CurrentTradingFeedState;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.WebsocketConnectionStatusCode;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.recovery.WebSocketSessionRecoveryStrategy;
 import com.neovisionaries.ws.client.WebSocketException;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class TradingFeedClient {
 
-    private final DefaultWebsocketClient primaryWebSocketClient;
-    private final DefaultWebsocketClient fallbackWebSocketClient;
-    private final UndefinedWebSocketClient undefinedWebSocketClient = new UndefinedWebSocketClient();
-
-    private final CurrentTradingFeedState currentTradingFeedState;
+    private final TradingFeedDispatcher tradingFeedDispatcher;
 
     private TradingFeedClient(String host,
                               String fallbackHost,
@@ -29,53 +22,22 @@ public class TradingFeedClient {
                               TradingFeedListener tradingFeedListener) throws IOException {
 
 
-        primaryWebSocketClient = new DefaultWebsocketClient(
+        TradingFeed primaryTradingFeed = new WebsocketTradingFeed(
                 host,
                 apiKey,
                 tradingFeedId,
-                tradingFeedNewSessionParams,
-                new TradingFeedListener() {
-                    @Override
-                    public void onServerMessage(OddsmarketTradingDto.ServerMessage serverMessage) {
-                        if (currentTradingFeedState.isPrimaryTradingFeed()) {
-                            tradingFeedListener.onServerMessage(serverMessage);
-                        }
-                    }
-
-                    @Override
-                    public void onConnectError(WebsocketConnectionStatusCode websocketConnectionStatusCode) {
-                        tradingFeedListener.onConnectError(websocketConnectionStatusCode);
-                    }
-                }
+                tradingFeedNewSessionParams
         );
-        fallbackWebSocketClient = new DefaultWebsocketClient(
+        TradingFeed fallbackTradingFeed = new WebsocketTradingFeed(
                 fallbackHost,
                 apiKey,
                 tradingFeedId,
-                tradingFeedNewSessionParams,
-                new TradingFeedListener() {
-                    @Override
-                    public void onServerMessage(OddsmarketTradingDto.ServerMessage serverMessage) {
-                        if (currentTradingFeedState.isFallbackTradingFeed()) {
-                            tradingFeedListener.onServerMessage(serverMessage);
-                        }
-                    }
-
-                    @Override
-                    public void onConnectError(WebsocketConnectionStatusCode websocketConnectionStatusCode) {
-                        tradingFeedListener.onConnectError(websocketConnectionStatusCode);
-                    }
-                }
-
+                tradingFeedNewSessionParams
         );
-        currentTradingFeedState = new CurrentTradingFeedState(TradingFeedState.HEALTHY);
-        WebSocketSessionRecoveryStrategy webSocketSessionRecoveryStrategy = new WebSocketSessionRecoveryStrategy(
-                currentTradingFeedState,
-                primaryWebSocketClient,
-                fallbackWebSocketClient
+        tradingFeedDispatcher = new TradingFeedDispatcher(
+                List.of(primaryTradingFeed, fallbackTradingFeed),
+                tradingFeedListener
         );
-        primaryWebSocketClient.setWebSocketDisconnectListener(webSocketSessionRecoveryStrategy::executePrimarySessionRecovery);
-        fallbackWebSocketClient.setWebSocketDisconnectListener(webSocketSessionRecoveryStrategy::executeFallbackSessionRecovery);
     }
 
 
@@ -83,7 +45,7 @@ public class TradingFeedClient {
                                                              String fallbackHost,
                                                              String apiKey,
                                                              short tradingFeedId,
-                                                             TradingFeedListener tradingFeedListener) throws IOException, WebSocketException, InterruptedException {
+                                                             TradingFeedListener tradingFeedListener) throws IOException, WebSocketException, InterruptedException, ExecutionException {
 
         return TradingFeedClient.authenticateAndSubscribe(host, fallbackHost, apiKey, tradingFeedId, tradingFeedListener, null);
     }
@@ -94,7 +56,7 @@ public class TradingFeedClient {
                                                              String apiKey,
                                                              short tradingFeedId,
                                                              TradingFeedListener tradingFeedListener,
-                                                             TradingFeedNewSessionParams tradingFeedNewSessionParams) throws IOException, WebSocketException, InterruptedException {
+                                                             TradingFeedNewSessionParams tradingFeedNewSessionParams) throws IOException, WebSocketException, InterruptedException, ExecutionException {
         TradingFeedClient client = new TradingFeedClient(
                 host,
                 fallbackHost,
@@ -108,33 +70,32 @@ public class TradingFeedClient {
     }
 
 
-    public TradingFeedClient authenticateAndSubscribe() throws WebSocketException, IOException, InterruptedException {
-        primaryWebSocketClient.establishNewSession();
-        fallbackWebSocketClient.establishNewSession();
+    public TradingFeedClient authenticateAndSubscribe() throws WebSocketException, IOException, InterruptedException, ExecutionException {
+        tradingFeedDispatcher.establishNewSessionForAll();
         return this;
     }
 
     public boolean isAuthenticatedAndSubscribed() {
-        return getCurrentWebSocketClient().isAuthenticatedAndSubscribed();
+        TradingFeed tradingFeed = tradingFeedDispatcher.getActiveTradingFeed();
+        if (tradingFeed != null) {
+            return tradingFeed.isAuthenticatedAndSubscribed();
+        } else {
+            return false;
+        }
     }
 
     public TradingFeedClient disconnect() {
-        primaryWebSocketClient.disconnect();
-        fallbackWebSocketClient.disconnect();
+        tradingFeedDispatcher.disconnectAll();
         return this;
     }
 
     public void send(OddsmarketTradingDto.ClientMessage message) {
-        getCurrentWebSocketClient().send(message);
+        tradingFeedDispatcher.getActiveTradingFeed().send(message);
     }
 
-    private WebSocketClient getCurrentWebSocketClient() {
-        if (currentTradingFeedState.isPrimaryTradingFeed()) {
-            return primaryWebSocketClient;
-        } else if (currentTradingFeedState.isFallbackTradingFeed()) {
-            return fallbackWebSocketClient;
-        } else {
-            return undefinedWebSocketClient;
-        }
+    public String getCurrentSessionId() {
+        TradingFeed tradingFeed = tradingFeedDispatcher.getActiveTradingFeed();
+        return tradingFeed != null ? tradingFeed.getSessionId() : null;
     }
+
 }

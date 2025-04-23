@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public enum WebsocketConnectionStatusCode {
+public enum TradingFeedConnectionStatusCode {
     SUCCESS(null),
     TIMEOUT(null),
     BAD_REQUEST(4000),
@@ -16,17 +16,17 @@ public enum WebsocketConnectionStatusCode {
     UNDEFINED(null);
 
     public final Integer errorCode;
-    public static final Map<Integer, WebsocketConnectionStatusCode> tradingFeedConnectionErrorCodeByErrorCode = new HashMap<>();
+    public static final Map<Integer, TradingFeedConnectionStatusCode> tradingFeedConnectionErrorCodeByErrorCode = new HashMap<>();
 
     static {
-        for (WebsocketConnectionStatusCode value : WebsocketConnectionStatusCode.values()) {
+        for (TradingFeedConnectionStatusCode value : TradingFeedConnectionStatusCode.values()) {
             if (value.errorCode != null) {
                 tradingFeedConnectionErrorCodeByErrorCode.put(value.errorCode, value);
             }
         }
     }
 
-    public static WebsocketConnectionStatusCode detectTradingFeedConnectionErrorCodeByErrorCode(int errorCode) {
+    public static TradingFeedConnectionStatusCode detectTradingFeedConnectionErrorCodeByErrorCode(int errorCode) {
         return tradingFeedConnectionErrorCodeByErrorCode.getOrDefault(errorCode, UNDEFINED);
     }
 
