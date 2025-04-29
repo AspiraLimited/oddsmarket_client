@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.statekeeping.model;
+package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import lombok.Getter;
@@ -51,5 +51,10 @@ public class InMemoryStateStorage {
 
     public void addHeartbeat(OddsmarketTradingDto.Heartbeat heartbeat) {
         heartbeats.add(heartbeat);
+    }
+
+    public void clearAll() {
+        heartbeats.clear();
+        eventByEventId.clear();
     }
 }

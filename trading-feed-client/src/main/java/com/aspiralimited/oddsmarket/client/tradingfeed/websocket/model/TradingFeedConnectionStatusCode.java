@@ -8,6 +8,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum TradingFeedConnectionStatusCode {
     SUCCESS(null),
+    CONNECTION_FAILED(null),
     TIMEOUT(null),
     BAD_REQUEST(4000),
     AUTHENTICATION_FAILED(4001),

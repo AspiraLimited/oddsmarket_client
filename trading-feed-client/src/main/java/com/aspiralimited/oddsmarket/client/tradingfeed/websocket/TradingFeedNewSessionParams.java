@@ -34,6 +34,8 @@ public class TradingFeedNewSessionParams {
      */
     private Integer resumeBufferLimitSeconds;
     private Boolean json;
+    private Integer resumeRetryInterval;
+    private Integer newSessionRetryInterval;
 
     public String toQueryString() {
         String result = "";

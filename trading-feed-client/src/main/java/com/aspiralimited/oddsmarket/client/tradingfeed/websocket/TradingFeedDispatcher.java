@@ -65,11 +65,14 @@ public class TradingFeedDispatcher implements TradingFeedListener {
     }
 
     public TradingFeed getActiveTradingFeed() {
+        if (activeFeedIndex == NO_ACTIVE_FEED_INDEX) {
+            reevaluateActiveTradingFeed();
+        }
         TradingFeed activeFeed = feeds.get(activeFeedIndex);
         if (activeFeed.isHealthy()) {
             return activeFeed;
         }
-        return reevaluateActiveTradingFeed();
+        return null;
     }
 
     public TradingFeed reevaluateActiveTradingFeed() {

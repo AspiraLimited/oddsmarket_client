@@ -1,8 +1,8 @@
-package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.statekeeping;
+package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.statekeeping.model.InMemoryStateStorage;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model.InMemoryStateStorage;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import lombok.Getter;
 
@@ -48,5 +48,9 @@ public class TradingFeedStateKeepingListener implements TradingFeedListener {
     @Override
     public void onConnectError(TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode) {
         this.tradingFeedConnectionStatusCode = tradingFeedConnectionStatusCode;
+    }
+
+    public void clearStorage() {
+        inMemoryStateStorage.clearAll();
     }
 }
