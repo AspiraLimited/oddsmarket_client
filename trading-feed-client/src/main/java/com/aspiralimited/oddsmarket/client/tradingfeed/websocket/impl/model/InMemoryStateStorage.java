@@ -1,4 +1,4 @@
-package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model;
+package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.impl.model;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import lombok.Getter;

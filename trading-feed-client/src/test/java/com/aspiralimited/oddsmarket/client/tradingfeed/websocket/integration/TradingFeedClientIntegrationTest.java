@@ -2,7 +2,7 @@ package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.integration;
 
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedClient;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedNewSessionParams;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.TradingFeedStateKeepingListener;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.impl.TradingFeedStateKeepingListener;
 import com.neovisionaries.ws.client.WebSocketException;
 
 import org.awaitility.Awaitility;

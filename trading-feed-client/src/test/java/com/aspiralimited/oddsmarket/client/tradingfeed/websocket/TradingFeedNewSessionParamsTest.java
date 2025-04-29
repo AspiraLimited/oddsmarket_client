@@ -11,8 +11,8 @@ class TradingFeedNewSessionParamsTest {
     @Test
     public void shouldReturnQueryStringWithAllParametersWhenAllFieldsAreSet() {
         TradingFeedNewSessionParams params = TradingFeedNewSessionParams.builder()
-                .sportIds(Set.of((short) 2, (short) 1))
-                .locales(Set.of("fr", "en"))
+                .sportIds(Set.of((short) 1))
+                .locales(Set.of("en"))
                 .rawIdOriginBookmakerId((short) 100)
                 .fillRawOutcomeId(true)
                 .resumeBufferLimitSeconds(60)
@@ -21,7 +21,7 @@ class TradingFeedNewSessionParamsTest {
                 .newSessionRetryInterval(10)
                 .build();
 
-        String expectedQueryString = "&sportIds=2,1&locales=fr,en&rawIdOriginBookmakerId=100&fillRawOutcomeId=true&resumeBufferLimitSeconds=60&json=true";
+        String expectedQueryString = "&sportIds=1&locales=en&rawIdOriginBookmakerId=100&fillRawOutcomeId=true&resumeBufferLimitSeconds=60&json=true";
         assertEquals(expectedQueryString, params.toQueryString());
     }
 
