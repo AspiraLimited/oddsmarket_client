@@ -5,6 +5,7 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingF
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import com.neovisionaries.ws.client.WebSocketException;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.concurrent.ExecutionException;
 public class TradingFeedDispatcher implements TradingFeedListener {
 
     private final List<TradingFeed> feeds;
-    private static final int NO_ACTIVE_FEED_INDEX = -1;
+    public static final int NO_ACTIVE_FEED_INDEX = -1;
+    @Getter
     private volatile int activeFeedIndex = NO_ACTIVE_FEED_INDEX;
     private final TradingFeedListener tradingFeedListener;
 

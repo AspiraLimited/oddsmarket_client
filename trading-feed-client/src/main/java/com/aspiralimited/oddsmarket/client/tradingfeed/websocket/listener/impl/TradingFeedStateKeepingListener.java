@@ -1,8 +1,8 @@
-package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.impl;
+package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.impl.model.InMemoryStateStorage;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model.InMemoryStateStorage;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import lombok.Getter;
 

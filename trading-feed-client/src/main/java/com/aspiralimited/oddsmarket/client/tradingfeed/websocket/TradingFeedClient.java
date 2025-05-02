@@ -98,4 +98,9 @@ public class TradingFeedClient {
         return tradingFeed != null ? tradingFeed.getSessionId() : null;
     }
 
+    public int getActiveFeedIndex() {
+        return tradingFeedDispatcher.getActiveFeedIndex();
+    }
+
+
 }
