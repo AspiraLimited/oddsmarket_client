@@ -11,7 +11,7 @@ import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.PlayerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.ResponseContainer;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportDto;
-import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportPeriodsDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.period.SportPeriodsDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

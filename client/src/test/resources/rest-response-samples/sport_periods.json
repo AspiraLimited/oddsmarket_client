@@ -4,6 +4,18 @@
       "sportId": 4,
       "periods": [
         {
+          "periodIdentifier": -200,
+          "name": "To Win Outright"
+        },
+        {
+          "periodIdentifier": -100,
+          "name": "To Qualify"
+        },
+        {
+          "periodIdentifier": 0,
+          "name": "Regular time"
+        },
+        {
           "periodIdentifier": 1,
           "name": "1st Half",
           "nextPeriodIdentifier": 2
@@ -17,6 +29,14 @@
     {
       "sportId": 41,
       "periods": [
+        {
+          "periodIdentifier": -1,
+          "name": "Full time with overtimes"
+        },
+        {
+          "periodIdentifier": 0,
+          "name": "Regular time"
+        },
         {
           "periodIdentifier": 1,
           "name": "1st Quarter",
