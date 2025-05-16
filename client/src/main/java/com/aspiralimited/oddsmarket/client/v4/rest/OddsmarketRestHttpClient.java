@@ -11,6 +11,7 @@ import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.PlayerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.ResponseContainer;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportPeriodsDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -102,6 +103,13 @@ public class OddsmarketRestHttpClient {
                 }
         )
                 .thenApply(x -> x.response);
+    }
+
+    public CompletableFuture<SportPeriodsDto> getPeriods(List<Short> sportIds) {
+        String queryParamsSection = "?" + sportIds.stream().map(sportId -> "sportId=" + sportId).collect(Collectors.joining("&"));
+
+        return getGenericJsonEndpoint(baseUrlMst + ApiVersion.LATEST_VERSION_URL_PREFIX + "/periods" + queryParamsSection, new TypeReference<>() {
+        });
     }
 
     private String collectionToCommaSeparatedString(Collection<Long> longs) {

@@ -1,14 +1,15 @@
 package com.aspiralimited.oddsmarket.client;
 
-import com.aspiralimited.oddsmarket.api.v4.rest.dto.CountryDto;
-import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.BookmakerDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.CountryDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.InternalEventDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.LeagueDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketAndBetTypeDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.MarketDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.PlayerDto;
 import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportDto;
+import com.aspiralimited.oddsmarket.api.v4.rest.dto.SportPeriodsDto;
+import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import lombok.SneakyThrows;
@@ -121,6 +122,39 @@ class OddsmarketRestHttpClientTest {
 
         List<PlayerDto> actual = oddsmarketRestHttpClient.getPlayers(List.of(3654837L)).get();
         Assertions.assertEquals(1, actual.size());
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldParseSportPeriodsResponse() {
+        SportPeriodsDto expected = new SportPeriodsDto(
+                List.of(
+                        new SportPeriodsDto.SportEntry(
+                                (short) 4,
+                                List.of(
+                                        new SportPeriodsDto.PeriodEntry((short) 1, "1st Half", (short) 2, null),
+                                        new SportPeriodsDto.PeriodEntry((short) 2, "2nd Half", null, null)
+                                )
+                        ),
+                        new SportPeriodsDto.SportEntry(
+                                (short) 41,
+                                List.of(
+                                        new SportPeriodsDto.PeriodEntry((short) 1, "1st Quarter", (short) 2, (short) 10),
+                                        new SportPeriodsDto.PeriodEntry((short) 2, "2nd Quarter", (short) 3, (short) 10),
+                                        new SportPeriodsDto.PeriodEntry((short) 3, "3rd Quarter", (short) 4, (short) 20),
+                                        new SportPeriodsDto.PeriodEntry((short) 4, "4th Quarter", null, (short) 20),
+                                        new SportPeriodsDto.PeriodEntry((short) 10, "1st Half", (short) 20, null),
+                                        new SportPeriodsDto.PeriodEntry((short) 20, "2nd Half", null, null)
+                                )
+                        )
+                )
+        );
+
+        makeWiremockStub("/v4/periods?sportId=4&sportId=41", "/rest-response-samples/sport_periods.json");
+
+        SportPeriodsDto periods = oddsmarketRestHttpClient.getPeriods(List.of((short) 4, (short) 41)).get();
+
+        Assertions.assertEquals(expected, periods);
     }
 
     @SneakyThrows
