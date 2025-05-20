@@ -7,7 +7,7 @@
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
     <artifactId>client</artifactId>
-    <version>4.7.3</version>
+    <version>4.7.4</version>
 
 
     <properties>
