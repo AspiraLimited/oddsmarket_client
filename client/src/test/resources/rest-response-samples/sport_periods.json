@@ -1,0 +1,75 @@
+{
+  "sports": [
+    {
+      "sportId": 4,
+      "periods": [
+        {
+          "periodIdentifier": -200,
+          "name": "To Win Outright"
+        },
+        {
+          "periodIdentifier": -100,
+          "name": "To Qualify"
+        },
+        {
+          "periodIdentifier": 0,
+          "name": "Regular time"
+        },
+        {
+          "periodIdentifier": 1,
+          "name": "1st Half",
+          "nextPeriodIdentifier": 2
+        },
+        {
+          "periodIdentifier": 2,
+          "name": "2nd Half"
+        }
+      ]
+    },
+    {
+      "sportId": 41,
+      "periods": [
+        {
+          "periodIdentifier": -1,
+          "name": "Full time with overtimes"
+        },
+        {
+          "periodIdentifier": 0,
+          "name": "Regular time"
+        },
+        {
+          "periodIdentifier": 1,
+          "name": "1st Quarter",
+          "nextPeriodIdentifier": 2,
+          "upperLevelPeriodIdentifier": 10
+        },
+        {
+          "periodIdentifier": 2,
+          "name": "2nd Quarter",
+          "nextPeriodIdentifier": 3,
+          "upperLevelPeriodIdentifier": 10
+        },
+        {
+          "periodIdentifier": 3,
+          "name": "3rd Quarter",
+          "nextPeriodIdentifier": 4,
+          "upperLevelPeriodIdentifier": 20
+        },
+        {
+          "periodIdentifier": 4,
+          "name": "4th Quarter",
+          "upperLevelPeriodIdentifier": 20
+        },
+        {
+          "periodIdentifier": 10,
+          "name": "1st Half",
+          "nextPeriodIdentifier": 20
+        },
+        {
+          "periodIdentifier": 20,
+          "name": "2nd Half"
+        }
+      ]
+    }
+  ]
+}
