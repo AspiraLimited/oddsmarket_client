@@ -156,6 +156,11 @@ public class DiffPrinter {
             }
 
             @Override
+            public void initialStateTransferred() {
+                printToConsole("Initial state transferred");
+            }
+
+            @Override
             public void onDisconnected(boolean closedByServer) {
                 printToConsole("Connection lost");
                 System.exit(0);
