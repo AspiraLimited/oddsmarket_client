@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
-    <artifactId>api</artifactId>>
+    <artifactId>api</artifactId>
     <version>4.5.4</version>
 
     <properties>
