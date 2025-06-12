@@ -7,6 +7,7 @@ import com.aspiralimited.oddsmarket.client.v4.websocket.handlers.PongTimeoutList
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
+import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import org.json.JSONObject;
@@ -38,7 +39,9 @@ public class OddsmarketClient implements PongTimeoutListener {
 
     // TODO timeouts
     private OddsmarketClient(String websocketUrl) throws IOException {
-        this.ws = new WebSocketFactory().createSocket(websocketUrl);
+        this.ws = new WebSocketFactory()
+                .createSocket(websocketUrl)
+                .addExtension(WebSocketExtension.PERMESSAGE_DEFLATE);
 
         ws.addListener(new WebSocketAdapter() {
 

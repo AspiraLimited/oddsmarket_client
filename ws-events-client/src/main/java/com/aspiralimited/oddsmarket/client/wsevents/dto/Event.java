@@ -19,4 +19,5 @@ public class Event {
     int leagueId;
     String leagueName;
     long startedAt;
+    long uniformEventId;
 }
