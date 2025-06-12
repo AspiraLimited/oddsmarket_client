@@ -6,7 +6,7 @@
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
     <artifactId>api</artifactId>
-    <version>4.5.4</version>
+    <version>4.6.0</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
