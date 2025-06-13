@@ -7,13 +7,20 @@
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
     <artifactId>ws-events-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Aspira Public Artifactory</name>
+            <url>https://maven.pkg.github.com/AspiraLimited/oddsmarket_client</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
