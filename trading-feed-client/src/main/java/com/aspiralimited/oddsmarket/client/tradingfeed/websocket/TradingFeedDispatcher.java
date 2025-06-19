@@ -3,11 +3,14 @@ package com.aspiralimited.oddsmarket.client.tradingfeed.websocket;
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingFeed;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionResult;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import com.neovisionaries.ws.client.WebSocketException;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -61,7 +64,10 @@ public class TradingFeedDispatcher implements TradingFeedListener {
 
     public void establishNewSessionForAll() throws WebSocketException, IOException, InterruptedException, ExecutionException {
         for (TradingFeed feed : feeds) {
-            feed.establishNewSession().get();
+            TradingFeedConnectionResult tradingFeedConnectionResult = feed.establishNewSession().get();
+            if (tradingFeedConnectionResult.statusCode != TradingFeedConnectionStatusCode.SUCCESS) {
+                throw new ConnectException(tradingFeedConnectionResult.message);
+            }
             reevaluateActiveTradingFeed();
         }
     }

@@ -6,6 +6,7 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedDisp
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedNewSessionParams;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingFeed;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionResult;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedState;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -60,16 +61,16 @@ public class WebsocketTradingFeed implements TradingFeed {
     }
 
     @Override
-    public CompletableFuture<TradingFeedConnectionStatusCode> establishNewSession() throws IOException, InterruptedException, WebSocketException {
+    public CompletableFuture<TradingFeedConnectionResult> establishNewSession() throws IOException, InterruptedException, WebSocketException {
         String websocketUrl = constructNewSessionUrl(host, apiKey, tradingFeedId, tradingFeedNewSessionParams);
 
-        CompletableFuture<TradingFeedConnectionStatusCode> resultFuture = new CompletableFuture<>();
+        CompletableFuture<TradingFeedConnectionResult> resultFuture = new CompletableFuture<>();
         currentSessionWebSocket = new WebSocketFactory().createSocket(websocketUrl);
         currentSessionWebSocket.addListener(new WebSocketAdapter() {
             @Override
             public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
                 currentTradingFeedState = TradingFeedState.HEALTHY;
-                resultFuture.complete(TradingFeedConnectionStatusCode.SUCCESS);
+                resultFuture.complete(TradingFeedConnectionResult.success());
             }
 
             @Override
@@ -98,7 +99,7 @@ public class WebsocketTradingFeed implements TradingFeed {
                 currentTradingFeedState = TradingFeedState.UNHEALTHY;
                 int statusCode = frame.getCloseCode();
                 TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode = TradingFeedConnectionStatusCode.detectTradingFeedConnectionErrorCodeByErrorCode(statusCode);
-                resultFuture.complete(tradingFeedConnectionStatusCode);
+                resultFuture.complete(TradingFeedConnectionResult.error(tradingFeedConnectionStatusCode, frame.getCloseReason()));
                 if (tradingFeedListener != null) {
                     tradingFeedListener.onConnectError(tradingFeedConnectionStatusCode);
                 }
@@ -107,7 +108,7 @@ public class WebsocketTradingFeed implements TradingFeed {
         try {
             currentSessionWebSocket.connect();
         } catch (Exception e) {
-            resultFuture.complete(TradingFeedConnectionStatusCode.CONNECTION_FAILED); // <-- или что-то подходящее
+            resultFuture.complete(TradingFeedConnectionResult.error(TradingFeedConnectionStatusCode.CONNECTION_FAILED, e.getMessage()));
         }
         return resultFuture;
     }
@@ -131,7 +132,7 @@ public class WebsocketTradingFeed implements TradingFeed {
         }
         TradingFeedConnectionStatusCode newSessionStatusCode = null;
         while (newSessionStatusCode == null || !newSessionStatusCode.isSuccess()) {
-            newSessionStatusCode = establishNewSession().get(newSessionRetryInterval, TimeUnit.MILLISECONDS);
+            newSessionStatusCode = establishNewSession().get(newSessionRetryInterval, TimeUnit.MILLISECONDS).statusCode;
         }
         tradingFeedDispatcher.reevaluateActiveTradingFeed();
     }
