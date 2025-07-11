@@ -1,6 +1,7 @@
 package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingFeedReconnectable;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model.InMemoryStateStorage;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
@@ -8,7 +9,7 @@ import lombok.Getter;
 
 public class TradingFeedStateKeepingListener implements TradingFeedListener {
     @Getter
-    private InMemoryStateStorage inMemoryStateStorage = new InMemoryStateStorage();
+    protected InMemoryStateStorage inMemoryStateStorage = new InMemoryStateStorage();
     @Getter
     private volatile TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode;
 
@@ -32,15 +33,11 @@ public class TradingFeedStateKeepingListener implements TradingFeedListener {
 
                 break;
             case HEARTBEAT:
-                OddsmarketTradingDto.Heartbeat heartbeat = serverMessage.getHeartbeat();
-                inMemoryStateStorage.addHeartbeat(heartbeat);
                 break;
             case ERRORMESSAGE:
                 OddsmarketTradingDto.ErrorMessage errorMessage = serverMessage.getErrorMessage();
-
                 break;
             case PAYLOAD_NOT_SET:
-
                 break;
         }
     }
@@ -48,6 +45,11 @@ public class TradingFeedStateKeepingListener implements TradingFeedListener {
     @Override
     public void onConnectError(TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode) {
         this.tradingFeedConnectionStatusCode = tradingFeedConnectionStatusCode;
+    }
+
+    @Override
+    public void onDisconnected(TradingFeedReconnectable tradingFeedReconnectable) {
+
     }
 
     public void clearStorage() {

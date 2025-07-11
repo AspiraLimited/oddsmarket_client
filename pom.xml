@@ -15,6 +15,7 @@
         <module>ws-events-client</module>
         <module>demo-app-events</module>
         <module>trading-feed-client</module>
+        <module>demo-app-tradingfeedreader</module>
     </modules>
     <properties>
         <java.version>11</java.version>

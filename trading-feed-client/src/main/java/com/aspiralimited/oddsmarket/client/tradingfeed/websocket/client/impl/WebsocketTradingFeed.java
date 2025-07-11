@@ -21,9 +21,7 @@ import java.util.concurrent.*;
 public class WebsocketTradingFeed implements TradingFeed {
     private final static String NEW_SESSION_URI = "/trading/new_ws_session";
     private final static String RESUME_SESSION_URI = "/trading/resume_ws_session";
-    private Integer resumeBufferLimitSeconds = 60;
-    private int resumeRetryInterval = 1000;
-    private int newSessionRetryInterval = 3000;
+
     private volatile TradingFeedState currentTradingFeedState = TradingFeedState.UNHEALTHY;
     private volatile String sessionId;
     private final String host;
@@ -42,17 +40,7 @@ public class WebsocketTradingFeed implements TradingFeed {
         this.apiKey = apiKey;
         this.tradingFeedId = tradingFeedId;
         this.tradingFeedNewSessionParams = tradingFeedNewSessionParams;
-        if (tradingFeedNewSessionParams != null) {
-            if (tradingFeedNewSessionParams.getResumeRetryInterval() != null) {
-                resumeRetryInterval = tradingFeedNewSessionParams.getResumeRetryInterval();
-            }
-            if (tradingFeedNewSessionParams.getNewSessionRetryInterval() != null) {
-                newSessionRetryInterval = tradingFeedNewSessionParams.getNewSessionRetryInterval();
-            }
-            if (tradingFeedNewSessionParams.getResumeBufferLimitSeconds() != null) {
-                resumeBufferLimitSeconds = tradingFeedNewSessionParams.getResumeBufferLimitSeconds();
-            }
-        }
+
     }
 
     @Override
@@ -76,8 +64,10 @@ public class WebsocketTradingFeed implements TradingFeed {
             @Override
             public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws InterruptedException, IOException, WebSocketException, ExecutionException, TimeoutException {
                 currentTradingFeedState = TradingFeedState.UNHEALTHY;
-                if (sessionId != null) {
-                    executeSessionRecovery();
+                if (isResumableSession()) {
+                    if (tradingFeedListener != null) {
+                        tradingFeedListener.onDisconnected(WebsocketTradingFeed.this);
+                    }
                 }
             }
 
@@ -113,37 +103,18 @@ public class WebsocketTradingFeed implements TradingFeed {
         return resultFuture;
     }
 
-    public void executeSessionRecovery() throws InterruptedException, IOException, WebSocketException, ExecutionException, TimeoutException {
-        long disconnectTimestamp = System.currentTimeMillis();
-        TradingFeedConnectionStatusCode resumeSessionStatusCode = resumeSession().get(resumeRetryInterval, TimeUnit.MILLISECONDS);
-        if (resumeSessionStatusCode.isSuccess()) {
-            return;
-        }
-        tradingFeedDispatcher.reevaluateActiveTradingFeed();
-        while (!resumeSessionStatusCode.isSuccess() && !resumeSessionStatusCode.is4xxxErrorCode() && System.currentTimeMillis() - disconnectTimestamp < resumeBufferLimitSeconds * 1000) {
-            resumeSessionStatusCode = resumeSession().get(resumeRetryInterval, TimeUnit.MILLISECONDS);
-            if (resumeSessionStatusCode == TradingFeedConnectionStatusCode.CONNECTION_FAILED) {
-                Thread.sleep(resumeRetryInterval);
-            }
-        }
-        if (resumeSessionStatusCode.isSuccess()) {
-            tradingFeedDispatcher.reevaluateActiveTradingFeed();
-            return;
-        }
-        TradingFeedConnectionStatusCode newSessionStatusCode = null;
-        while (newSessionStatusCode == null || !newSessionStatusCode.isSuccess()) {
-            newSessionStatusCode = establishNewSession().get(newSessionRetryInterval, TimeUnit.MILLISECONDS).statusCode;
-        }
-        tradingFeedDispatcher.reevaluateActiveTradingFeed();
-    }
 
     private static String constructNewSessionUrl(String host, String apiKey,
                                                  short tradingFeedId, TradingFeedNewSessionParams tradingFeedNewSessionParams) {
         return host + NEW_SESSION_URI + "?apiKey=" + apiKey + "&tradingFeedId=" + tradingFeedId + (tradingFeedNewSessionParams != null ? tradingFeedNewSessionParams.toQueryString() : "");
     }
 
+    private boolean isResumableSession() {
+        return sessionId != null && tradingFeedNewSessionParams.getResumeBufferLimitSeconds() != null && tradingFeedNewSessionParams.getResumeBufferLimitSeconds() > 0;
+    }
+
     @Override
-    public CompletableFuture<TradingFeedConnectionStatusCode> resumeSession() throws IOException, WebSocketException, InterruptedException {
+    public CompletableFuture<TradingFeedConnectionStatusCode> resumeSession() throws IOException {
         if (sessionId == null) {
             return CompletableFuture.completedFuture(TradingFeedConnectionStatusCode.BAD_REQUEST);
         }
@@ -161,7 +132,9 @@ public class WebsocketTradingFeed implements TradingFeed {
             @Override
             public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws IOException, InterruptedException, WebSocketException, ExecutionException, TimeoutException {
                 currentTradingFeedState = TradingFeedState.UNHEALTHY;
-                executeSessionRecovery();
+                if (tradingFeedListener != null) {
+                    tradingFeedListener.onDisconnected(WebsocketTradingFeed.this);
+                }
             }
 
             @Override

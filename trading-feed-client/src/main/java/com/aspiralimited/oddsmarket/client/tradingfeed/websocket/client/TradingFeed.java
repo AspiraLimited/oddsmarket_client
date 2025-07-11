@@ -10,17 +10,13 @@ import com.neovisionaries.ws.client.WebSocketException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
-public interface TradingFeed {
+public interface TradingFeed extends TradingFeedReconnectable {
 
     void setTradingFeedListener(TradingFeedListener tradingFeedListener);
 
     void setTradingFeedDispatcher(TradingFeedDispatcher tradingFeedDispatcher);
 
     String getSessionId();
-
-    CompletableFuture<TradingFeedConnectionResult> establishNewSession() throws IOException, InterruptedException, WebSocketException;
-
-    CompletableFuture<TradingFeedConnectionStatusCode> resumeSession() throws IOException, WebSocketException, InterruptedException;
 
     void send(OddsmarketTradingDto.ClientMessage message);
 

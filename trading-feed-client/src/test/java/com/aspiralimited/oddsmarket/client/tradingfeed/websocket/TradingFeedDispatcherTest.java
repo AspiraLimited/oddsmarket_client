@@ -20,7 +20,7 @@ class TradingFeedDispatcherTest {
         Mockito.when(feed2.isHealthy()).thenReturn(true);
 
         List<TradingFeed> feeds = Arrays.asList(feed1, feed2);
-        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null);
+        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null,null);
         dispatcher.reevaluateActiveTradingFeed();
 
         TradingFeed activeFeed = dispatcher.getActiveTradingFeed();
@@ -35,7 +35,7 @@ class TradingFeedDispatcherTest {
         Mockito.when(feed2.isHealthy()).thenReturn(true);
 
         List<TradingFeed> feeds = Arrays.asList(feed1, feed2);
-        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null);
+        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null,null);
         TradingFeed activeFeed = dispatcher.getActiveTradingFeed();
         assertEquals(feed2, activeFeed);
     }
@@ -47,7 +47,7 @@ class TradingFeedDispatcherTest {
         Mockito.when(feed1.isHealthy()).thenReturn(true);
 
         List<TradingFeed> feeds = Arrays.asList(feed1, feed2);
-        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null);
+        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null, null);
         dispatcher.reevaluateActiveTradingFeed();
 
         assertTrue(dispatcher.isTradingFeedActive(feed1));
@@ -61,7 +61,7 @@ class TradingFeedDispatcherTest {
         Mockito.when(feed2.isHealthy()).thenReturn(true);
 
         List<TradingFeed> feeds = Arrays.asList(feed1, feed2);
-        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null);
+        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null, null);
         dispatcher.reevaluateActiveTradingFeed();
 
         assertFalse(dispatcher.isTradingFeedActive(feed2));
@@ -73,7 +73,7 @@ class TradingFeedDispatcherTest {
         TradingFeed feed2 = Mockito.mock(TradingFeed.class);
 
         List<TradingFeed> feeds = Arrays.asList(feed1, feed2);
-        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null);
+        TradingFeedDispatcher dispatcher = new TradingFeedDispatcher(feeds, null, null);
 
         assertFalse(dispatcher.isTradingFeedActive(feed1));
         assertFalse(dispatcher.isTradingFeedActive(feed2));

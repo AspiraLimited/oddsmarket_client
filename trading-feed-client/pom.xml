@@ -7,14 +7,7 @@
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
     <artifactId>trading-feed-client</artifactId>
-    <version>1.0.5</version>
-
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
+    <version>1.0.8</version>
 
     <distributionManagement>
         <repository>

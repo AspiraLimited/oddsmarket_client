@@ -2,17 +2,21 @@ package com.aspiralimited.oddsmarket.client.tradingfeed.websocket;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingFeed;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingFeedReconnectable;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionResult;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import com.neovisionaries.ws.client.WebSocketException;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class TradingFeedDispatcher implements TradingFeedListener {
 
@@ -21,14 +25,28 @@ public class TradingFeedDispatcher implements TradingFeedListener {
     @Getter
     private volatile int activeFeedIndex = NO_ACTIVE_FEED_INDEX;
     private final TradingFeedListener tradingFeedListener;
+    private Integer resumeBufferLimitSeconds = 60;
+    private int resumeRetryInterval = 1000;
+    private int newSessionRetryInterval = 3000;
 
-    public TradingFeedDispatcher(List<TradingFeed> feeds, TradingFeedListener tradingFeedListener) {
+    public TradingFeedDispatcher(List<TradingFeed> feeds, TradingFeedListener tradingFeedListener, TradingFeedNewSessionParams tradingFeedNewSessionParams) {
         for (TradingFeed feed : feeds) {
             feed.setTradingFeedListener(this);
             feed.setTradingFeedDispatcher(this);
         }
         this.feeds = feeds;
         this.tradingFeedListener = tradingFeedListener;
+        if (tradingFeedNewSessionParams != null) {
+            if (tradingFeedNewSessionParams.getResumeRetryInterval() != null) {
+                resumeRetryInterval = tradingFeedNewSessionParams.getResumeRetryInterval();
+            }
+            if (tradingFeedNewSessionParams.getNewSessionRetryInterval() != null) {
+                newSessionRetryInterval = tradingFeedNewSessionParams.getNewSessionRetryInterval();
+            }
+            if (tradingFeedNewSessionParams.getResumeBufferLimitSeconds() != null) {
+                resumeBufferLimitSeconds = tradingFeedNewSessionParams.getResumeBufferLimitSeconds();
+            }
+        }
     }
 
     @Override
@@ -46,7 +64,9 @@ public class TradingFeedDispatcher implements TradingFeedListener {
         OddsmarketTradingDto.ClientMessage clientMessage = OddsmarketTradingDto.ClientMessage.newBuilder()
                 .setAck(ack)
                 .build();
-        getActiveTradingFeed().send(clientMessage);
+        for (TradingFeed feed : feeds) {
+            feed.send(clientMessage);
+        }
     }
 
     @Override
@@ -54,6 +74,12 @@ public class TradingFeedDispatcher implements TradingFeedListener {
         if (tradingFeedListener != null) {
             tradingFeedListener.onConnectError(tradingFeedConnectionStatusCode);
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public void onDisconnected(TradingFeedReconnectable tradingFeedReconnectable) {
+        executeSessionRecovery(tradingFeedReconnectable);
     }
 
     public void disconnectAll() {
@@ -99,5 +125,29 @@ public class TradingFeedDispatcher implements TradingFeedListener {
             return false;
         }
         return feeds.get(activeFeedIndex) == tradingFeed;
+    }
+
+    public void executeSessionRecovery(TradingFeedReconnectable tradingFeedReconnectable) throws InterruptedException, IOException, WebSocketException, ExecutionException, TimeoutException {
+        long disconnectTimestamp = System.currentTimeMillis();
+        TradingFeedConnectionStatusCode resumeSessionStatusCode = tradingFeedReconnectable.resumeSession().get(resumeRetryInterval, TimeUnit.MILLISECONDS);
+        if (resumeSessionStatusCode.isSuccess()) {
+            return;
+        }
+        reevaluateActiveTradingFeed();
+        while (!resumeSessionStatusCode.isSuccess() && !resumeSessionStatusCode.is4xxxErrorCode() && System.currentTimeMillis() - disconnectTimestamp < resumeBufferLimitSeconds * 1000) {
+            resumeSessionStatusCode = tradingFeedReconnectable.resumeSession().get(resumeRetryInterval, TimeUnit.MILLISECONDS);
+            if (resumeSessionStatusCode == TradingFeedConnectionStatusCode.CONNECTION_FAILED) {
+                Thread.sleep(resumeRetryInterval);
+            }
+        }
+        if (resumeSessionStatusCode.isSuccess()) {
+            reevaluateActiveTradingFeed();
+            return;
+        }
+        TradingFeedConnectionStatusCode newSessionStatusCode = null;
+        while (newSessionStatusCode == null || !newSessionStatusCode.isSuccess()) {
+            newSessionStatusCode = tradingFeedReconnectable.establishNewSession().get(newSessionRetryInterval, TimeUnit.MILLISECONDS).statusCode;
+        }
+        reevaluateActiveTradingFeed();
     }
 }

@@ -59,4 +59,8 @@ public class TradingFeedNewSessionParams {
         }
         return result;
     }
+
+    public boolean isResumableSession() {
+        return resumeBufferLimitSeconds != null && resumeBufferLimitSeconds > 0;
+    }
 }

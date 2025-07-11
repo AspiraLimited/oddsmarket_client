@@ -7,6 +7,7 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.Tradin
 import com.neovisionaries.ws.client.WebSocketException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -21,22 +22,28 @@ public class TradingFeedClient {
                               TradingFeedNewSessionParams tradingFeedNewSessionParams,
                               TradingFeedListener tradingFeedListener) throws IOException {
 
-
+        List<TradingFeed> tradingFeeds = new ArrayList<>();
         TradingFeed primaryTradingFeed = new WebsocketTradingFeed(
                 host,
                 apiKey,
                 tradingFeedId,
                 tradingFeedNewSessionParams
         );
-        TradingFeed fallbackTradingFeed = new WebsocketTradingFeed(
-                fallbackHost,
-                apiKey,
-                tradingFeedId,
-                tradingFeedNewSessionParams
-        );
+        tradingFeeds.add(primaryTradingFeed);
+        if (fallbackHost != null && tradingFeedNewSessionParams != null && tradingFeedNewSessionParams.isResumableSession()) {
+            TradingFeed fallbackTradingFeed = new WebsocketTradingFeed(
+                    fallbackHost,
+                    apiKey,
+                    tradingFeedId,
+                    tradingFeedNewSessionParams
+            );
+            tradingFeeds.add(fallbackTradingFeed);
+        }
+
         tradingFeedDispatcher = new TradingFeedDispatcher(
-                List.of(primaryTradingFeed, fallbackTradingFeed),
-                tradingFeedListener
+                tradingFeeds,
+                tradingFeedListener,
+                tradingFeedNewSessionParams
         );
     }
 
@@ -48,6 +55,14 @@ public class TradingFeedClient {
                                                              TradingFeedListener tradingFeedListener) throws IOException, WebSocketException, InterruptedException, ExecutionException {
 
         return TradingFeedClient.authenticateAndSubscribe(host, fallbackHost, apiKey, tradingFeedId, tradingFeedListener, null);
+    }
+
+    public static TradingFeedClient authenticateAndSubscribe(String host,
+                                                             String apiKey,
+                                                             short tradingFeedId,
+                                                             TradingFeedListener tradingFeedListener) throws IOException, WebSocketException, InterruptedException, ExecutionException {
+
+        return TradingFeedClient.authenticateAndSubscribe(host, null, apiKey, tradingFeedId, tradingFeedListener, null);
     }
 
 
