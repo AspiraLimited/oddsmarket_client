@@ -9,10 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public class InMemoryStateStorage {
-    private final Map<Long, Event> eventByEventId = new HashMap<>();
+    private final Map<Long, Event> eventByEventId = new ConcurrentHashMap<>();
 
     public void addEvent(OddsmarketTradingDto.EventSnapshot eventSnapshot) {
         eventByEventId.put(eventSnapshot.getEventId(), protobufEventToEvent(eventSnapshot));
@@ -23,6 +24,7 @@ public class InMemoryStateStorage {
         return new Event(
                 eventSnapshot.getEventId(),
                 (short) eventMetadata.getSportId(),
+                eventMetadata.getRawEventId(),
                 eventMetadata.getPlannedStartTimestamp(),
                 extractEventName(eventMetadata),
                 protobufMarketsToOutcomeMap(eventSnapshot.getMarketsList()),
@@ -78,8 +80,14 @@ public class InMemoryStateStorage {
     }
 
     public OutcomeData protobufOutcomeDataToOutcomeData(OddsmarketTradingDto.OutcomeData protobufOutcomeData) {
+        String title = null;
+        if (protobufOutcomeData.getOutcomeTitlesCount() > 0) {
+            title = protobufOutcomeData.getOutcomeTitles(0).getName();
+        }
         return new OutcomeData(
-                protobufOutcomeData.getOdds()
+                title,
+                protobufOutcomeData.getOdds(),
+                protobufOutcomeData.getRawOutcomeId()
         );
     }
 
@@ -129,6 +137,7 @@ public class InMemoryStateStorage {
     public static class Event {
         public final long id;
         public final short sportId;
+        public final String rawEventId;
         public long plannedStartTimestamp;
         public String name;
         public final Map<OutcomeKey, OutcomeData> outcomeMap;
@@ -179,7 +188,9 @@ public class InMemoryStateStorage {
 
     @AllArgsConstructor
     public static class OutcomeData {
-        float koef;
+        public String title;
+        public float koef;
+        public String rawOutcomeId;
 
         @Override
         public String toString() {

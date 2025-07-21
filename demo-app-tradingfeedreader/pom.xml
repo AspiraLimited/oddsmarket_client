@@ -24,8 +24,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -37,27 +37,7 @@
         <dependency>
             <groupId>com.aspiralimited.oddsmarket</groupId>
             <artifactId>trading-feed-client</artifactId>
-            <version>1.0.8</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aspiralimited.static-config</groupId>
-            <artifactId>bookmakers</artifactId>
-            <version>1.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aspiralimited.static-config</groupId>
-            <artifactId>outcomes</artifactId>
-            <version>1.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aspiralimited.static-config</groupId>
-            <artifactId>periods</artifactId>
-            <version>1.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aspiralimited.static-config</groupId>
-            <artifactId>sports</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.0.9</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

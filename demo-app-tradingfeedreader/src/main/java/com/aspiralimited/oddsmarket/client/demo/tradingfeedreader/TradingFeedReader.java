@@ -35,14 +35,12 @@ public class TradingFeedReader {
             }
             String feedWebsocketUrl = (feedDomain.startsWith("localhost") ? "ws://" : "wss://") + feedDomain;
 
-            //OddsmarketClient client = OddsmarketClient.connect(feedWebsocketUrl, apiKey);
             OddsmarketRestHttpClient oddsmarketRestHttpClient = new OddsmarketRestHttpClient(
                     "https://api-mst.oddsmarket.org",
                     (feedDomain.startsWith("localhost") ? "http://" : "https://") + feedDomain,
                     5000L
             );
-            DictionariesService dictionariesService = new DictionariesService(oddsmarketRestHttpClient);
-            DiffPrinter listener = new DiffPrinter(dictionariesService);
+            DiffPrinter listener = new DiffPrinter(oddsmarketRestHttpClient);
             listener.listenFeedAndPrintDiffs(feedWebsocketUrl, apiKey, bookmakerId, sportIds);
         } catch (Exception e) {
             e.printStackTrace();

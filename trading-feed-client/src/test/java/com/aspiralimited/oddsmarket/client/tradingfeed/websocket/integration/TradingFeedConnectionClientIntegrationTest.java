@@ -1,8 +1,8 @@
 package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.integration;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedClient;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedNewSessionParams;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedMulticonnectionClient;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedSubscriptionConfig;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.TradingFeedStateKeepingListener;
 import com.neovisionaries.ws.client.WebSocketException;
 
@@ -18,19 +18,19 @@ import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TradingFeedClientIntegrationTest {
+public class TradingFeedConnectionClientIntegrationTest {
 
     private static final Duration DEFAULT_AWAIT_TIMEOUT = Duration.ofSeconds(5);
     private static final int PRIMARY_SERVER_PORT = 9090;
     private static final int FALLBACK_SERVER_PORT = 9091;
     private static TestTradingFeedWebsocketServer primaryServer = new TestTradingFeedWebsocketServer();
     private static TestTradingFeedWebsocketServer fallbackServer = new TestTradingFeedWebsocketServer();
-    private static TradingFeedClient tradingFeedClient;
+    private static TradingFeedMulticonnectionClient tradingFeedMulticonnectionClient;
     private static TradingFeedStateKeepingListener tradingFeedStateKeepingListener;
     private static AtomicInteger heartbeatCounter = new AtomicInteger();
 
 
-    public TradingFeedClientIntegrationTest() throws WebSocketException, IOException, ExecutionException, InterruptedException {
+    public TradingFeedConnectionClientIntegrationTest() throws WebSocketException, IOException, ExecutionException, InterruptedException {
     }
 
     @BeforeAll
@@ -46,21 +46,24 @@ public class TradingFeedClientIntegrationTest {
                 }
             }
         };
-        tradingFeedClient = constructTradingFeedClient(tradingFeedStateKeepingListener);
+        tradingFeedMulticonnectionClient = constructTradingFeedClient(tradingFeedStateKeepingListener);
+        tradingFeedMulticonnectionClient.connect();
 
     }
 
-    private static TradingFeedClient constructTradingFeedClient(TradingFeedStateKeepingListener tradingFeedStateKeepingListener) throws WebSocketException, IOException, ExecutionException, InterruptedException {
-        return TradingFeedClient.authenticateAndSubscribe(
-                "ws://localhost:" + PRIMARY_SERVER_PORT,
-                "ws://localhost:" + FALLBACK_SERVER_PORT,
-                "TEST_API_KEY",
-                (short) 1,
-                tradingFeedStateKeepingListener,
-                TradingFeedNewSessionParams.builder()
-                        .resumeBufferLimitSeconds(15)
-                        .build()
-        );
+    private static TradingFeedMulticonnectionClient constructTradingFeedClient(TradingFeedStateKeepingListener tradingFeedStateKeepingListener) throws WebSocketException, IOException, ExecutionException, InterruptedException {
+        return TradingFeedMulticonnectionClient.builder()
+                .primaryHost("ws://localhost:" + PRIMARY_SERVER_PORT)
+                .fallbackHost("ws://localhost:" + FALLBACK_SERVER_PORT)
+                .tradingFeedSubscriptionConfig(TradingFeedSubscriptionConfig.builder()
+                        .apiKey("TEST_API_KEY")
+                        .tradingFeedId((short) 1)
+                        .build())
+                .tradingFeedListener(tradingFeedStateKeepingListener)
+                .autoReconnect(true)
+                .resumeBufferLimitSeconds(60)
+                .build();
+
     }
 
     @Test
@@ -71,20 +74,20 @@ public class TradingFeedClientIntegrationTest {
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
             Assertions.assertEquals(1, heartbeatCounter.get());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.start(PRIMARY_SERVER_PORT);
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
             Assertions.assertEquals(2, heartbeatCounter.get());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
     }
 
@@ -96,16 +99,16 @@ public class TradingFeedClientIntegrationTest {
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
             Assertions.assertEquals(1, heartbeatCounter.get());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
             Assertions.assertEquals(2, heartbeatCounter.get());
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.start(PRIMARY_SERVER_PORT);
     }
@@ -117,25 +120,25 @@ public class TradingFeedClientIntegrationTest {
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
             Assertions.assertEquals(1, heartbeatCounter.get());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
             Assertions.assertEquals(2, heartbeatCounter.get());
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.start(PRIMARY_SERVER_PORT);
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
             Assertions.assertEquals(3, heartbeatCounter.get());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
     }
 
@@ -147,7 +150,7 @@ public class TradingFeedClientIntegrationTest {
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
             Assertions.assertEquals(1, heartbeatCounter.get());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
         Thread.sleep(16000);
@@ -167,7 +170,7 @@ public class TradingFeedClientIntegrationTest {
 
     @AfterAll
     static void afterAll() throws Exception {
-        tradingFeedClient.disconnect();
+        tradingFeedMulticonnectionClient.disconnect();
         primaryServer.stop();
         fallbackServer.stop();
     }

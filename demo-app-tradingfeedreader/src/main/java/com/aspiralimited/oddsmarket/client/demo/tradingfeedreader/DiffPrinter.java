@@ -1,15 +1,15 @@
 package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader;
 
-import com.aspiralimited.config.statical.Period;
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedClient;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingFeedReconnectable;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedMulticonnectionClient;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedSubscriptionConfig;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.TradingFeedStateKeepingListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model.InMemoryStateStorage;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
-import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.outcomenametranslator.OutcomeNameTranslator;
-import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.outcomenametranslator.ReverseBetSpecCalculator;
+import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.text.DateFormat;
@@ -17,28 +17,17 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static java.lang.Thread.sleep;
 
+@RequiredArgsConstructor
 public class DiffPrinter {
-    private final OutcomeNameTranslator outcomeNameTranslator;
+
+    private final OddsmarketRestHttpClient oddsmarketRestHttpClient;
 
     static private final DateFormat matchStartTimeFormat = new SimpleDateFormat("MMM d HH:mm", Locale.ENGLISH);
-
-    public DiffPrinter(DictionariesService dictionariesService) {
-        ReverseBetSpecCalculator reverseBetSpecCalculator = new ReverseBetSpecCalculator(
-                dictionariesService.getMarketAndBetTypeDtoById(),
-                dictionariesService.getBetTypeDtoById()
-        );
-        outcomeNameTranslator = new OutcomeNameTranslator(
-                dictionariesService.getMarketAndBetTypeDtoById(),
-                ResourceBundle.getBundle(OutcomeNameTranslator.RESOURCE_BUNDLE_NAME),
-                reverseBetSpecCalculator
-        );
-
-    }
 
     @SneakyThrows
     public void listenFeedAndPrintDiffs(String feedWebsocketUrl, String apiKey, short bookmakerId, Set<Integer> sportIds) {
@@ -91,7 +80,7 @@ public class DiffPrinter {
                                         );
                                         OddsmarketTradingDto.OutcomeData protobufOutcomeData = outcomeSnapshot.getOutcomeData();
                                         InMemoryStateStorage.OutcomeData outcomeData = inMemoryStateStorage.protobufOutcomeDataToOutcomeData(protobufOutcomeData);
-                                        String outcomeName = generateOutcomeName(outcomeKey, sportId);
+                                        String outcomeName = generateOutcomeName(sportId, outcomeKey, outcomeData);
                                         if (cachedEvent.hasOutcome(outcomeKey)) {
                                             if (protobufOutcomeData.getOdds() > 0) {
                                                 printToConsole("    [UPD] " + outcomeName + ": " + outcomeData);
@@ -156,19 +145,21 @@ public class DiffPrinter {
                 super.onConnectError(tradingFeedConnectionStatusCode);
             }
 
-            @Override
-            public void onDisconnected(TradingFeedReconnectable tradingFeedReconnectable) {
-                super.onDisconnected(tradingFeedReconnectable);
-                printToConsole("Connection lost");
-                System.exit(0);
-            }
-
             private String constructEventName(long eventId) {
                 InMemoryStateStorage.Event event = inMemoryStateStorage.getEventByEventId().get(eventId);
                 return DiffPrinter.this.constructEventName(event.getName(), event.getPlannedStartTimestamp());
             }
         };
-        TradingFeedClient.authenticateAndSubscribe(feedWebsocketUrl, apiKey, bookmakerId, tradingFeedListener);
+        TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig = TradingFeedSubscriptionConfig.builder()
+                .apiKey(apiKey)
+                .tradingFeedId(bookmakerId)
+                .build();
+        TradingFeedClient.builder()
+                .host(feedWebsocketUrl)
+                .tradingFeedSubscriptionConfig(tradingFeedSubscriptionConfig)
+                .tradingFeedListener(tradingFeedListener)
+                .build()
+                .connect();
         sleep(1_000_000_000);
     }
 
@@ -181,21 +172,16 @@ public class DiffPrinter {
     }
 
     private String constructEventName(String name, long startedAt) {
-        return name + " [" + longToDateTimeWithMinutePrecisionWitoutYear(startedAt * 1000) + "]";
+        return name + " [" + longToDateTimeWithMinutePrecisionWitoutYear(startedAt) + "]";
     }
 
     static public String longToDateTimeWithMinutePrecisionWitoutYear(long datetime) {
         return matchStartTimeFormat.format(new Date(datetime));
     }
 
-    private String generateOutcomeName(InMemoryStateStorage.OutcomeKey outcomeKey, short sportId) {
-        String periodName = Period.periodName(outcomeKey.periodIdentifier, sportId, true);
-        return outcomeNameTranslator.translate(
-                outcomeKey.marketAndBetType,
-                outcomeKey.marketAndBetTypeParam,
-                false,
-                false
-        ).getEffectiveName() + " [" + periodName + "]";
+    private String generateOutcomeName(short sportId, InMemoryStateStorage.OutcomeKey outcomeKey, InMemoryStateStorage.OutcomeData outcomeData) throws ExecutionException, InterruptedException {
+        String periodName = oddsmarketRestHttpClient.getPeriodName(outcomeKey.periodIdentifier, sportId).get();
+        return outcomeData.title + " [" + periodName + "]";
     }
 
     private static void printToConsole(String msg) {

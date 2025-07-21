@@ -1,7 +1,6 @@
 package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.client.TradingFeedReconnectable;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model.InMemoryStateStorage;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
@@ -47,10 +46,6 @@ public class TradingFeedStateKeepingListener implements TradingFeedListener {
         this.tradingFeedConnectionStatusCode = tradingFeedConnectionStatusCode;
     }
 
-    @Override
-    public void onDisconnected(TradingFeedReconnectable tradingFeedReconnectable) {
-
-    }
 
     public void clearStorage() {
         inMemoryStateStorage.clearAll();
