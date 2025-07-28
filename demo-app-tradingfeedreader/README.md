@@ -61,12 +61,12 @@ Initial state transferring
 [NEW] Event name3 [Jul 21 18:35] id=410150850, sportId=13, plannedStartTimestamp=1753112100000, name='null', outcomeMap={}
 Initial state transferred
 [ODDS] Event name1 [Aug 15 03:30]
-    [UPD] TU(1.0) for Team1 [2nd Half]: koef= 1.047
-    [UPD] TO(1.0) for Team1 [2nd Half]: koef= 7.9
-    [UPD] Team2 to win by exactly 3 goals - no [Regular time]: koef= 1.016
+    [UPD] TU(1.0) for Team1 [2nd Half]: odds= 1.047
+    [UPD] TO(1.0) for Team1 [2nd Half]: odds= 7.9
+    [UPD] Team2 to win by exactly 3 goals - no [Regular time]: odds= 1.016
 [ODDS] Event name2 [Jul 26 19:00]
-    [UPD] TO(1.75) for Team1 [1st Half]: koef= 11.25
-    [UPD] TU(1.75) for Team1 [1st Half]: koef= 1.008
+    [UPD] TO(1.75) for Team1 [1st Half]: odds= 11.25
+    [UPD] TU(1.75) for Team1 [1st Half]: odds= 1.008
 ...
 ```
 

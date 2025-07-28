@@ -5,14 +5,13 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.TradingFee
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import com.neovisionaries.ws.client.WebSocketException;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-
+@RequiredArgsConstructor
 public class DefaultSessionRecoveryStrategy implements SessionRecoveryStrategy {
 
     private final boolean autoReconnect;
@@ -21,11 +20,6 @@ public class DefaultSessionRecoveryStrategy implements SessionRecoveryStrategy {
     private int resumeRetryInterval = 1000;
     private int newSessionRetryInterval = 3000;
 
-    public DefaultSessionRecoveryStrategy(boolean autoReconnect, Integer resumeBufferLimitSeconds, Integer maxReconnectAttempts) {
-        this.autoReconnect = autoReconnect;
-        this.resumeBufferLimitSeconds = resumeBufferLimitSeconds;
-        this.maxReconnectAttempts = maxReconnectAttempts;
-    }
 
     @Override
     public void recover(TradingFeedConnection connection) throws IOException, WebSocketException, InterruptedException, ExecutionException, TimeoutException {

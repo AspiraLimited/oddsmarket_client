@@ -1,5 +1,6 @@
 package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.impl;
 
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.ConnectionSelectionStrategy;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedState;
 
 import java.util.Map;
@@ -10,6 +11,11 @@ public class ConnectionHealthManager {
 
     private final AtomicInteger activeConnectionId = new AtomicInteger(0);
     private final Map<Integer, TradingFeedState> connectionStates = new ConcurrentHashMap<>();
+    private final ConnectionSelectionStrategy selectionStrategy;
+
+    public ConnectionHealthManager(ConnectionSelectionStrategy selectionStrategy) {
+        this.selectionStrategy = selectionStrategy;
+    }
 
     public void updateConnectionState(int connectionId, TradingFeedState state) {
         connectionStates.put(connectionId, state);
@@ -21,13 +27,9 @@ public class ConnectionHealthManager {
     }
 
     private synchronized void recalculateActiveConnection() {
-        connectionStates.entrySet().stream()
-                .filter(entry -> entry.getValue() == TradingFeedState.HEALTHY)
-                .min(Map.Entry.comparingByKey())
-                .ifPresentOrElse(
-                        entry -> activeConnectionId.set(entry.getKey()),
-                        () -> {
-                        }
-                );
+        int selected = selectionStrategy.selectActiveConnection(connectionStates);
+        if (selected != -1) {
+            activeConnectionId.set(selected);
+        }
     }
 }

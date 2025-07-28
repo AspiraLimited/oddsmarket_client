@@ -3,6 +3,8 @@ package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.integration;
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedMulticonnectionClient;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedSubscriptionConfig;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.SessionRecoveryStrategy;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.impl.DefaultSessionRecoveryStrategy;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.TradingFeedStateKeepingListener;
 import com.neovisionaries.ws.client.WebSocketException;
 
@@ -60,8 +62,6 @@ public class TradingFeedConnectionClientIntegrationTest {
                         .tradingFeedId((short) 1)
                         .build())
                 .tradingFeedListener(tradingFeedStateKeepingListener)
-                .autoReconnect(true)
-                .resumeBufferLimitSeconds(60)
                 .build();
 
     }

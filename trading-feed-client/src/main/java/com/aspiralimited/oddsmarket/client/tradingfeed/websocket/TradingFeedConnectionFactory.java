@@ -7,6 +7,8 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.impl.Messa
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.impl.WebsocketTradingFeedConnection;
 import lombok.RequiredArgsConstructor;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @RequiredArgsConstructor
 public class TradingFeedConnectionFactory {
 
@@ -14,11 +16,11 @@ public class TradingFeedConnectionFactory {
     private final MessageProcessor messageProcessor;
     private final ConnectionHealthManager connectionHealthManager;
     private final SessionRecoveryStrategy sessionRecoveryStrategy;
-    private int connectionIdCounter;
+    private final AtomicInteger connectionIdCounter = new AtomicInteger();
 
     public TradingFeedConnection constructTradingFeedConnection(String host) {
         return new WebsocketTradingFeedConnection(
-                ++connectionIdCounter,
+                connectionIdCounter.incrementAndGet(),
                 host,
                 tradingFeedSubscriptionConfig,
                 messageProcessor,

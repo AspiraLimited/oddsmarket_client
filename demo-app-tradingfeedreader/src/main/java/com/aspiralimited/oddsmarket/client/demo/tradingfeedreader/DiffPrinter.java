@@ -2,7 +2,6 @@ package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedClient;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedMulticonnectionClient;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedSubscriptionConfig;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.TradingFeedStateKeepingListener;
@@ -16,7 +15,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -28,6 +29,8 @@ public class DiffPrinter {
     private final OddsmarketRestHttpClient oddsmarketRestHttpClient;
 
     static private final DateFormat matchStartTimeFormat = new SimpleDateFormat("MMM d HH:mm", Locale.ENGLISH);
+    private final Map<String, String> periodNameByPeriodIdentifierAndSportId = new HashMap<>();
+
 
     @SneakyThrows
     public void listenFeedAndPrintDiffs(String feedWebsocketUrl, String apiKey, short bookmakerId, Set<Integer> sportIds) {
@@ -180,7 +183,17 @@ public class DiffPrinter {
     }
 
     private String generateOutcomeName(short sportId, InMemoryStateStorage.OutcomeKey outcomeKey, InMemoryStateStorage.OutcomeData outcomeData) throws ExecutionException, InterruptedException {
-        String periodName = oddsmarketRestHttpClient.getPeriodName(outcomeKey.periodIdentifier, sportId).get();
+        String periodIdentifierAndSportId = outcomeKey.periodIdentifier + "_" + sportId;
+        String periodName = periodNameByPeriodIdentifierAndSportId.computeIfAbsent(periodIdentifierAndSportId, key -> {
+            try {
+                return oddsmarketRestHttpClient.getPeriodName(outcomeKey.periodIdentifier, sportId).get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Interrupted while getting period name", e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException("Failed to get period name", e);
+            }
+        });
         return outcomeData.title + " [" + periodName + "]";
     }
 

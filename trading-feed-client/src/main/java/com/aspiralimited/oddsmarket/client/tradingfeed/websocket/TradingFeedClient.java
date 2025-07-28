@@ -1,5 +1,8 @@
 package com.aspiralimited.oddsmarket.client.tradingfeed.websocket;
 
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.ConnectionSelectionStrategy;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.SessionRecoveryStrategy;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.impl.DefaultSessionRecoveryStrategy;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.TradingFeedListener;
 
 import lombok.Builder;
@@ -14,12 +17,10 @@ public class TradingFeedClient extends AbstractTradingFeedClient {
             @NonNull String host,
             @NonNull TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig,
             @NonNull TradingFeedListener tradingFeedListener,
-            boolean autoReconnect,
-            int maxReconnectAttempts,
-            Integer resumeBufferLimitSeconds
+            SessionRecoveryStrategy sessionRecoveryStrategy,
+            ConnectionSelectionStrategy connectionSelectionStrategy
     ) {
-        super(List.of(host), tradingFeedSubscriptionConfig, tradingFeedListener,
-                autoReconnect, maxReconnectAttempts, resumeBufferLimitSeconds);
+        super(List.of(host), tradingFeedSubscriptionConfig, tradingFeedListener, sessionRecoveryStrategy, connectionSelectionStrategy);
     }
 
 }
