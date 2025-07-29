@@ -5,5 +5,7 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFe
 
 public interface TradingFeedListener {
     void onServerMessage(OddsmarketTradingDto.ServerMessage serverMessage);
+
     void onConnectError(TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode);
+
 }

@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 
 @Builder
 @Data
-public class TradingFeedNewSessionParams {
+public class TradingFeedSubscriptionConfig {
+    private String apiKey;
+    private Short tradingFeedId;
     /**
      * Comma-separated list of sport IDs that the subscriber wants to receive.
      * If left empty, the feed is not filtered by sport.
@@ -27,18 +29,17 @@ public class TradingFeedNewSessionParams {
      * Set to true to populate the rawOutcomeId field
      */
     private Boolean fillRawOutcomeId;
-    /**
-     * Time window (in seconds) during which the server stores messages for resumption.
-     * If not specified or non-positive, then resume is not supported for this session.
-     * Maximum: 60 seconds for live feeds, 240 seconds for prematch feeds.
-     */
-    private Integer resumeBufferLimitSeconds;
-    private Boolean json;
-    private Integer resumeRetryInterval;
-    private Integer newSessionRetryInterval;
 
     public String toQueryString() {
         String result = "";
+        if (apiKey == null) {
+            throw new IllegalStateException("apiKey must be set");
+        }
+        result = result + "apiKey=" + apiKey;
+        if (tradingFeedId == null) {
+            throw new IllegalStateException("tradingFeedId must be set");
+        }
+        result = result + "&tradingFeedId=" + tradingFeedId;
         if (sportIds != null) {
             result = result + "&sportIds=" + sportIds.stream().map(String::valueOf).collect(Collectors.joining(","));
         }
@@ -50,12 +51,6 @@ public class TradingFeedNewSessionParams {
         }
         if (fillRawOutcomeId != null) {
             result = result + "&fillRawOutcomeId=" + fillRawOutcomeId;
-        }
-        if (resumeBufferLimitSeconds != null) {
-            result = result + "&resumeBufferLimitSeconds=" + resumeBufferLimitSeconds;
-        }
-        if (json != null) {
-            result = result + "&json=" + json;
         }
         return result;
     }

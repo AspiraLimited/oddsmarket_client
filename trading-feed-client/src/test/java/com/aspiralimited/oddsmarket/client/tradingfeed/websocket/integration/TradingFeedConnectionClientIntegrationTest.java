@@ -1,7 +1,10 @@
 package com.aspiralimited.oddsmarket.client.tradingfeed.websocket.integration;
 
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedClient;
-import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedNewSessionParams;
+import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedMulticonnectionClient;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedSubscriptionConfig;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.SessionRecoveryStrategy;
+import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.impl.DefaultSessionRecoveryStrategy;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.TradingFeedStateKeepingListener;
 import com.neovisionaries.ws.client.WebSocketException;
 
@@ -15,84 +18,97 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class TradingFeedClientIntegrationTest {
+public class TradingFeedConnectionClientIntegrationTest {
 
     private static final Duration DEFAULT_AWAIT_TIMEOUT = Duration.ofSeconds(5);
     private static final int PRIMARY_SERVER_PORT = 9090;
     private static final int FALLBACK_SERVER_PORT = 9091;
     private static TestTradingFeedWebsocketServer primaryServer = new TestTradingFeedWebsocketServer();
     private static TestTradingFeedWebsocketServer fallbackServer = new TestTradingFeedWebsocketServer();
-    private static TradingFeedClient tradingFeedClient;
+    private static TradingFeedMulticonnectionClient tradingFeedMulticonnectionClient;
     private static TradingFeedStateKeepingListener tradingFeedStateKeepingListener;
+    private static AtomicInteger heartbeatCounter = new AtomicInteger();
 
 
-    public TradingFeedClientIntegrationTest() throws WebSocketException, IOException, ExecutionException, InterruptedException {
+    public TradingFeedConnectionClientIntegrationTest() throws WebSocketException, IOException, ExecutionException, InterruptedException {
     }
 
     @BeforeAll
     static void beforeAll() throws Exception {
         primaryServer.start(PRIMARY_SERVER_PORT);
         fallbackServer.start(FALLBACK_SERVER_PORT);
-        tradingFeedStateKeepingListener = new TradingFeedStateKeepingListener();
-        tradingFeedClient = constructTradingFeedClient(tradingFeedStateKeepingListener);
+        tradingFeedStateKeepingListener = new TradingFeedStateKeepingListener() {
+            @Override
+            public void onServerMessage(OddsmarketTradingDto.ServerMessage serverMessage) {
+                super.onServerMessage(serverMessage);
+                if (serverMessage.getPayloadCase() == OddsmarketTradingDto.ServerMessage.PayloadCase.HEARTBEAT) {
+                    heartbeatCounter.incrementAndGet();
+                }
+            }
+        };
+        tradingFeedMulticonnectionClient = constructTradingFeedClient(tradingFeedStateKeepingListener);
+        tradingFeedMulticonnectionClient.connect();
 
     }
 
-    private static TradingFeedClient constructTradingFeedClient(TradingFeedStateKeepingListener tradingFeedStateKeepingListener) throws WebSocketException, IOException, ExecutionException, InterruptedException {
-        return TradingFeedClient.authenticateAndSubscribe(
-                "ws://localhost:" + PRIMARY_SERVER_PORT,
-                "ws://localhost:" + FALLBACK_SERVER_PORT,
-                "TEST_API_KEY",
-                (short) 1,
-                tradingFeedStateKeepingListener,
-                TradingFeedNewSessionParams.builder()
-                        .resumeBufferLimitSeconds(15)
-                        .build()
-        );
+    private static TradingFeedMulticonnectionClient constructTradingFeedClient(TradingFeedStateKeepingListener tradingFeedStateKeepingListener) throws WebSocketException, IOException, ExecutionException, InterruptedException {
+        return TradingFeedMulticonnectionClient.builder()
+                .primaryHost("ws://localhost:" + PRIMARY_SERVER_PORT)
+                .fallbackHost("ws://localhost:" + FALLBACK_SERVER_PORT)
+                .tradingFeedSubscriptionConfig(TradingFeedSubscriptionConfig.builder()
+                        .apiKey("TEST_API_KEY")
+                        .tradingFeedId((short) 1)
+                        .build())
+                .tradingFeedListener(tradingFeedStateKeepingListener)
+                .build();
+
     }
 
     @Test
     void shouldResumeSessionWhenConnectionDrops() throws Exception {
         tradingFeedStateKeepingListener.clearStorage();
+        heartbeatCounter.set(0);
         primaryServer.sendHeartbeatMessageToClient();
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, heartbeatCounter.get());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.start(PRIMARY_SERVER_PORT);
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(2, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, heartbeatCounter.get());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
     }
 
     @Test
     void shouldSwitchToTheFallbackInstanceWhenConnectionDropsAndReconnectFails() throws Exception {
         tradingFeedStateKeepingListener.clearStorage();
+        heartbeatCounter.set(0);
         primaryServer.sendHeartbeatMessageToClient();
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, heartbeatCounter.get());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(2, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, heartbeatCounter.get());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.start(PRIMARY_SERVER_PORT);
     }
@@ -103,43 +119,44 @@ public class TradingFeedClientIntegrationTest {
         primaryServer.sendHeartbeatMessageToClient();
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, heartbeatCounter.get());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(2, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
-            Assertions.assertEquals(1, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(2, heartbeatCounter.get());
+            Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.start(PRIMARY_SERVER_PORT);
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(3, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(3, heartbeatCounter.get());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
     }
 
     @Test
     void shouldEstablishNewSessionWhenSwitchedToTheFallbackInstanceAndLostSessionIsFinallyLost() throws Exception {
         tradingFeedStateKeepingListener.clearStorage();
+        heartbeatCounter.set(0);
         primaryServer.sendHeartbeatMessageToClient();
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
-            Assertions.assertEquals(0, tradingFeedClient.getActiveFeedIndex());
+            Assertions.assertEquals(1, heartbeatCounter.get());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
         Thread.sleep(16000);
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(2, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
+            Assertions.assertEquals(2, heartbeatCounter.get());
         });
         primaryServer.start(PRIMARY_SERVER_PORT);
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
@@ -147,13 +164,13 @@ public class TradingFeedClientIntegrationTest {
         });
         primaryServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(3, tradingFeedStateKeepingListener.getInMemoryStateStorage().getHeartbeats().size());
+            Assertions.assertEquals(3, heartbeatCounter.get());
         });
     }
 
     @AfterAll
     static void afterAll() throws Exception {
-        tradingFeedClient.disconnect();
+        tradingFeedMulticonnectionClient.disconnect();
         primaryServer.stop();
         fallbackServer.stop();
     }

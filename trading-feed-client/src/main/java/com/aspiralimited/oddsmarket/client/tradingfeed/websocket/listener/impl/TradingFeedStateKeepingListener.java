@@ -8,7 +8,7 @@ import lombok.Getter;
 
 public class TradingFeedStateKeepingListener implements TradingFeedListener {
     @Getter
-    private InMemoryStateStorage inMemoryStateStorage = new InMemoryStateStorage();
+    protected InMemoryStateStorage inMemoryStateStorage = new InMemoryStateStorage();
     @Getter
     private volatile TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode;
 
@@ -32,15 +32,11 @@ public class TradingFeedStateKeepingListener implements TradingFeedListener {
 
                 break;
             case HEARTBEAT:
-                OddsmarketTradingDto.Heartbeat heartbeat = serverMessage.getHeartbeat();
-                inMemoryStateStorage.addHeartbeat(heartbeat);
                 break;
             case ERRORMESSAGE:
                 OddsmarketTradingDto.ErrorMessage errorMessage = serverMessage.getErrorMessage();
-
                 break;
             case PAYLOAD_NOT_SET:
-
                 break;
         }
     }
@@ -49,6 +45,7 @@ public class TradingFeedStateKeepingListener implements TradingFeedListener {
     public void onConnectError(TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode) {
         this.tradingFeedConnectionStatusCode = tradingFeedConnectionStatusCode;
     }
+
 
     public void clearStorage() {
         inMemoryStateStorage.clearAll();
