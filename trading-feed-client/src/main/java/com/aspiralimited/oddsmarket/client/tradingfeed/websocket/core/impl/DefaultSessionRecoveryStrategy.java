@@ -4,6 +4,7 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.SessionRec
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.core.TradingFeedConnection;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import com.neovisionaries.ws.client.WebSocketException;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -15,8 +16,9 @@ import java.util.concurrent.TimeoutException;
 public class DefaultSessionRecoveryStrategy implements SessionRecoveryStrategy {
 
     private final boolean autoReconnect;
-    private final Integer resumeBufferLimitSeconds;
-    private final Integer maxReconnectAttempts;
+    @Getter
+    private final int resumeBufferLimitSeconds;
+    private final int maxReconnectAttempts;
     private int resumeRetryInterval = 1000;
     private int newSessionRetryInterval = 3000;
 

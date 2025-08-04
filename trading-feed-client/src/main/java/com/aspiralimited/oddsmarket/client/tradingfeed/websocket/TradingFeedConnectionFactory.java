@@ -16,6 +16,7 @@ public class TradingFeedConnectionFactory {
     private final MessageProcessor messageProcessor;
     private final ConnectionHealthManager connectionHealthManager;
     private final SessionRecoveryStrategy sessionRecoveryStrategy;
+    private final boolean json;
     private final AtomicInteger connectionIdCounter = new AtomicInteger();
 
     public TradingFeedConnection constructTradingFeedConnection(String host) {
@@ -25,7 +26,8 @@ public class TradingFeedConnectionFactory {
                 tradingFeedSubscriptionConfig,
                 messageProcessor,
                 connectionHealthManager,
-                sessionRecoveryStrategy
+                sessionRecoveryStrategy,
+                json
         );
     }
 }

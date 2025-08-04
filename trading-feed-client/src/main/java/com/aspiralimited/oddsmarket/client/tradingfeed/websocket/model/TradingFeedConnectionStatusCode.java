@@ -15,7 +15,7 @@ public enum TradingFeedConnectionStatusCode {
     SUBSCRIPTION_FAILED(4003),
     SESSION_NOT_FOUND(4004),
     UNDEFINED(null),
-    JSON_ACCESS_TIMEOUT(4004);
+    JSON_ACCESS_TIMEOUT(4005);
 
     public final Integer errorCode;
     public static final Map<Integer, TradingFeedConnectionStatusCode> tradingFeedConnectionErrorCodeByErrorCode = new HashMap<>();

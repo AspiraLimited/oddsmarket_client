@@ -18,9 +18,10 @@ public class TradingFeedClient extends AbstractTradingFeedClient {
             @NonNull TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig,
             @NonNull TradingFeedListener tradingFeedListener,
             SessionRecoveryStrategy sessionRecoveryStrategy,
-            ConnectionSelectionStrategy connectionSelectionStrategy
+            ConnectionSelectionStrategy connectionSelectionStrategy,
+            boolean json
     ) {
-        super(List.of(host), tradingFeedSubscriptionConfig, tradingFeedListener, sessionRecoveryStrategy, connectionSelectionStrategy);
+        super(List.of(host), tradingFeedSubscriptionConfig, tradingFeedListener, sessionRecoveryStrategy, connectionSelectionStrategy, json);
     }
 
 }

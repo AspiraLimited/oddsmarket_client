@@ -23,21 +23,20 @@ public abstract class AbstractTradingFeedClient {
                                      TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig,
                                      TradingFeedListener tradingFeedListener,
                                      SessionRecoveryStrategy sessionRecoveryStrategy,
-                                     ConnectionSelectionStrategy connectionSelectionStrategy
+                                     ConnectionSelectionStrategy connectionSelectionStrategy,
+                                     boolean json
     ) {
         if (connectionSelectionStrategy == null) {
             connectionSelectionStrategy = new LowestIdHealthyConnectionStrategy();
         }
         connectionHealthManager = new ConnectionHealthManager(connectionSelectionStrategy);
         MessageProcessor messageProcessor = new MessageProcessor(tradingFeedListener, connectionHealthManager);
-        if (sessionRecoveryStrategy == null) {
-            sessionRecoveryStrategy = new DefaultSessionRecoveryStrategy(true, 60, 10);
-        }
         TradingFeedConnectionFactory tradingFeedConnectionFactory = new TradingFeedConnectionFactory(
                 tradingFeedSubscriptionConfig,
                 messageProcessor,
                 connectionHealthManager,
-                sessionRecoveryStrategy
+                sessionRecoveryStrategy,
+                json
         );
         tradingFeedConnectionManager = new TradingFeedConnectionManager(
                 hosts,
@@ -59,8 +58,8 @@ public abstract class AbstractTradingFeedClient {
         }
     }
 
-    public void disconnect() {
-        tradingFeedConnectionManager.disconnectAll();
+    public void disconnect(boolean force) {
+        tradingFeedConnectionManager.disconnectAll(force);
     }
 
     public void send(OddsmarketTradingDto.ClientMessage message) {

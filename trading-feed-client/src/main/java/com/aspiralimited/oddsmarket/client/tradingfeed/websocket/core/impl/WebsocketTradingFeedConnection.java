@@ -39,6 +39,8 @@ public class WebsocketTradingFeedConnection extends WebSocketAdapter implements 
     @Setter
     @Getter
     private volatile boolean active;
+    private final boolean json;
+    private volatile boolean forceDisconnect;
 
 
     @Override
@@ -64,8 +66,15 @@ public class WebsocketTradingFeedConnection extends WebSocketAdapter implements 
     }
 
 
-    private static String constructNewSessionUrl(String host, TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig) {
-        return host + NEW_SESSION_URI + "?" + tradingFeedSubscriptionConfig.toQueryString();
+    private String constructNewSessionUrl(String host, TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig) {
+        String result = host + NEW_SESSION_URI + "?" + tradingFeedSubscriptionConfig.toQueryString();
+        if (json) {
+            result = result + "&json=true";
+        }
+        if (sessionRecoveryStrategy != null) {
+            result = result + "&resumeBufferLimitSeconds=" + sessionRecoveryStrategy.getResumeBufferLimitSeconds();
+        }
+        return result;
     }
 
     private void sendAck(long messageId) {
@@ -80,14 +89,20 @@ public class WebsocketTradingFeedConnection extends WebSocketAdapter implements 
 
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
-        connectionHealthManager.updateConnectionState(connectionId, TradingFeedState.HEALTHY);
+        if (connectionHealthManager != null) {
+            connectionHealthManager.updateConnectionState(connectionId, TradingFeedState.HEALTHY);
+        }
         resultFuture.complete(TradingFeedConnectionResult.success());
     }
 
     @Override
     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws InterruptedException, IOException, WebSocketException, ExecutionException, TimeoutException {
-        connectionHealthManager.updateConnectionState(connectionId, TradingFeedState.UNHEALTHY);
-        sessionRecoveryStrategy.recover(WebsocketTradingFeedConnection.this);
+        if (connectionHealthManager != null) {
+            connectionHealthManager.updateConnectionState(connectionId, TradingFeedState.UNHEALTHY);
+        }
+        if (sessionRecoveryStrategy != null && !forceDisconnect) {
+            sessionRecoveryStrategy.recover(WebsocketTradingFeedConnection.this);
+        }
     }
 
     @Override
@@ -104,11 +119,14 @@ public class WebsocketTradingFeedConnection extends WebSocketAdapter implements 
 
     @Override
     public void onCloseFrame(WebSocket websocket, WebSocketFrame frame) {
-        connectionHealthManager.updateConnectionState(connectionId, TradingFeedState.UNHEALTHY);
         int statusCode = frame.getCloseCode();
         TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode = TradingFeedConnectionStatusCode.detectTradingFeedConnectionErrorCodeByErrorCode(statusCode);
-        resultFuture.complete(TradingFeedConnectionResult.error(tradingFeedConnectionStatusCode, frame.getCloseReason()));
         messageProcessor.processError(connectionId, tradingFeedConnectionStatusCode);
+        if (connectionHealthManager != null) {
+            connectionHealthManager.updateConnectionState(connectionId, TradingFeedState.UNHEALTHY);
+        }
+        resultFuture.complete(TradingFeedConnectionResult.error(tradingFeedConnectionStatusCode, frame.getCloseReason()));
+
     }
 
 
@@ -140,7 +158,8 @@ public class WebsocketTradingFeedConnection extends WebSocketAdapter implements 
     }
 
     @Override
-    public void disconnect() {
+    public void disconnect(boolean force) {
+        this.forceDisconnect = force;
         currentSessionWebSocket.sendClose();
         currentSessionWebSocket.disconnect();
     }

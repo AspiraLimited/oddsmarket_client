@@ -17,14 +17,16 @@ public class TradingFeedMulticonnectionClient extends AbstractTradingFeedClient 
             @NonNull TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig,
             @NonNull TradingFeedListener tradingFeedListener,
             SessionRecoveryStrategy sessionRecoveryStrategy,
-            ConnectionSelectionStrategy connectionSelectionStrategy
+            ConnectionSelectionStrategy connectionSelectionStrategy,
+            boolean json
     ) {
         super(
                 List.of(primaryHost, fallbackHost),
                 tradingFeedSubscriptionConfig,
                 tradingFeedListener,
                 sessionRecoveryStrategy,
-                connectionSelectionStrategy
+                connectionSelectionStrategy,
+                json
         );
     }
 

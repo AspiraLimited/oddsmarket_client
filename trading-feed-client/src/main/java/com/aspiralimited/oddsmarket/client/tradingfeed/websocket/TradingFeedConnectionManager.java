@@ -27,9 +27,9 @@ public class TradingFeedConnectionManager {
         }
     }
 
-    public void disconnectAll() {
+    public void disconnectAll(boolean force) {
         for (TradingFeedConnection feed : tradingFeedConnections) {
-            feed.disconnect();
+            feed.disconnect(force);
         }
     }
 

@@ -8,4 +8,6 @@ import java.util.concurrent.TimeoutException;
 
 public interface SessionRecoveryStrategy {
     void recover(TradingFeedConnection connection) throws IOException, WebSocketException, InterruptedException, ExecutionException, TimeoutException;
+
+    int getResumeBufferLimitSeconds();
 }

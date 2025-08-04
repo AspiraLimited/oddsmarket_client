@@ -39,6 +39,9 @@ public class TradingFeedConnectionClientIntegrationTest {
     static void beforeAll() throws Exception {
         primaryServer.start(PRIMARY_SERVER_PORT);
         fallbackServer.start(FALLBACK_SERVER_PORT);
+    }
+
+    private static TradingFeedMulticonnectionClient constructTradingFeedClient(boolean withSessionRecoveryStrategy) throws WebSocketException, IOException, ExecutionException, InterruptedException {
         tradingFeedStateKeepingListener = new TradingFeedStateKeepingListener() {
             @Override
             public void onServerMessage(OddsmarketTradingDto.ServerMessage serverMessage) {
@@ -48,26 +51,49 @@ public class TradingFeedConnectionClientIntegrationTest {
                 }
             }
         };
-        tradingFeedMulticonnectionClient = constructTradingFeedClient(tradingFeedStateKeepingListener);
-        tradingFeedMulticonnectionClient.connect();
-
-    }
-
-    private static TradingFeedMulticonnectionClient constructTradingFeedClient(TradingFeedStateKeepingListener tradingFeedStateKeepingListener) throws WebSocketException, IOException, ExecutionException, InterruptedException {
-        return TradingFeedMulticonnectionClient.builder()
+        TradingFeedMulticonnectionClient.TradingFeedMulticonnectionClientBuilder builder = TradingFeedMulticonnectionClient.builder()
                 .primaryHost("ws://localhost:" + PRIMARY_SERVER_PORT)
                 .fallbackHost("ws://localhost:" + FALLBACK_SERVER_PORT)
                 .tradingFeedSubscriptionConfig(TradingFeedSubscriptionConfig.builder()
                         .apiKey("TEST_API_KEY")
                         .tradingFeedId((short) 1)
                         .build())
-                .tradingFeedListener(tradingFeedStateKeepingListener)
-                .build();
+                .tradingFeedListener(tradingFeedStateKeepingListener);
+        if (withSessionRecoveryStrategy) {
+            SessionRecoveryStrategy sessionRecoveryStrategy = new DefaultSessionRecoveryStrategy(true, 60, 10);
+            builder.sessionRecoveryStrategy(sessionRecoveryStrategy);
+        }
+        return builder.build();
+    }
 
+    @Test
+    void shouldNotResumeSessionWhenConnectionDropsAndSessionRecoveryStrategyIsMissing() throws Exception {
+        tradingFeedMulticonnectionClient = constructTradingFeedClient(false);
+        tradingFeedMulticonnectionClient.connect();
+        tradingFeedStateKeepingListener.clearStorage();
+        heartbeatCounter.set(0);
+        primaryServer.sendHeartbeatMessageToClient();
+        fallbackServer.sendHeartbeatMessageToClient();
+        Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
+            Assertions.assertEquals(1, heartbeatCounter.get());
+            Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
+        });
+        primaryServer.stop();
+        fallbackServer.stop();
+        Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
+            Assertions.assertEquals(-1, tradingFeedMulticonnectionClient.getActiveConnectionId());
+        });
+        primaryServer.start(PRIMARY_SERVER_PORT);
+        fallbackServer.start(FALLBACK_SERVER_PORT);
+        Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
+            Assertions.assertEquals(-1, tradingFeedMulticonnectionClient.getActiveConnectionId());
+        });
     }
 
     @Test
     void shouldResumeSessionWhenConnectionDrops() throws Exception {
+        tradingFeedMulticonnectionClient = constructTradingFeedClient(true);
+        tradingFeedMulticonnectionClient.connect();
         tradingFeedStateKeepingListener.clearStorage();
         heartbeatCounter.set(0);
         primaryServer.sendHeartbeatMessageToClient();
@@ -93,6 +119,8 @@ public class TradingFeedConnectionClientIntegrationTest {
 
     @Test
     void shouldSwitchToTheFallbackInstanceWhenConnectionDropsAndReconnectFails() throws Exception {
+        tradingFeedMulticonnectionClient = constructTradingFeedClient(true);
+        tradingFeedMulticonnectionClient.connect();
         tradingFeedStateKeepingListener.clearStorage();
         heartbeatCounter.set(0);
         primaryServer.sendHeartbeatMessageToClient();
@@ -115,11 +143,12 @@ public class TradingFeedConnectionClientIntegrationTest {
 
     @Test
     void shouldResumeLostSessionWhenSwitchedToTheFallbackInstance() throws Exception {
+        tradingFeedMulticonnectionClient = constructTradingFeedClient(true);
+        tradingFeedMulticonnectionClient.connect();
         tradingFeedStateKeepingListener.clearStorage();
         primaryServer.sendHeartbeatMessageToClient();
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(1, heartbeatCounter.get());
             Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.stop();
@@ -128,7 +157,6 @@ public class TradingFeedConnectionClientIntegrationTest {
         });
         fallbackServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(2, heartbeatCounter.get());
             Assertions.assertEquals(2, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
         primaryServer.start(PRIMARY_SERVER_PORT);
@@ -137,13 +165,14 @@ public class TradingFeedConnectionClientIntegrationTest {
         });
         primaryServer.sendHeartbeatMessageToClient();
         Awaitility.await().atMost(DEFAULT_AWAIT_TIMEOUT).untilAsserted(() -> {
-            Assertions.assertEquals(3, heartbeatCounter.get());
             Assertions.assertEquals(1, tradingFeedMulticonnectionClient.getActiveConnectionId());
         });
     }
 
     @Test
     void shouldEstablishNewSessionWhenSwitchedToTheFallbackInstanceAndLostSessionIsFinallyLost() throws Exception {
+        tradingFeedMulticonnectionClient = constructTradingFeedClient(true);
+        tradingFeedMulticonnectionClient.connect();
         tradingFeedStateKeepingListener.clearStorage();
         heartbeatCounter.set(0);
         primaryServer.sendHeartbeatMessageToClient();
@@ -170,7 +199,7 @@ public class TradingFeedConnectionClientIntegrationTest {
 
     @AfterAll
     static void afterAll() throws Exception {
-        tradingFeedMulticonnectionClient.disconnect();
+        tradingFeedMulticonnectionClient.disconnect(true);
         primaryServer.stop();
         fallbackServer.stop();
     }

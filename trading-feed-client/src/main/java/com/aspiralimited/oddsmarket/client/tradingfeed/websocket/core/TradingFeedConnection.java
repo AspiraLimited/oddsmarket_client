@@ -22,5 +22,5 @@ public interface TradingFeedConnection {
 
     boolean isConnected();
 
-    void disconnect();
+    void disconnect(boolean force);
 }

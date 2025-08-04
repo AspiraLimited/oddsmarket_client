@@ -28,8 +28,6 @@ public class ConnectionHealthManager {
 
     private synchronized void recalculateActiveConnection() {
         int selected = selectionStrategy.selectActiveConnection(connectionStates);
-        if (selected != -1) {
-            activeConnectionId.set(selected);
-        }
+        activeConnectionId.set(selected);
     }
 }
