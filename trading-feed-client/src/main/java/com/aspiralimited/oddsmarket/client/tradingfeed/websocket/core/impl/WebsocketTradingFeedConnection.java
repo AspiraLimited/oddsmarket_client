@@ -56,6 +56,7 @@ public class WebsocketTradingFeedConnection extends WebSocketAdapter implements 
         );
         resultFuture = new CompletableFuture<>();
         currentSessionWebSocket = new WebSocketFactory().createSocket(websocketUrl);
+        currentSessionWebSocket.addExtension("permessage-deflate");
         currentSessionWebSocket.addListener(this);
         try {
             currentSessionWebSocket.connect();
@@ -137,6 +138,7 @@ public class WebsocketTradingFeedConnection extends WebSocketAdapter implements 
         }
         String websocketUrl = constructResumeSessionUrl(lastConsumedMessageId);
         currentSessionWebSocket = new WebSocketFactory().createSocket(websocketUrl);
+        currentSessionWebSocket.addExtension("permessage-deflate");
         resultFuture = new CompletableFuture<>();
         currentSessionWebSocket.addListener(this);
         try {
