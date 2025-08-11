@@ -47,7 +47,7 @@ public class DiffPrinter {
                 try {
                     switch (serverMessage.getPayloadCase()) {
                         case SESSIONSTART:
-                            printToConsole("Initial state transferring");
+                            printToConsole(new Date() + ": Initial state transferring");
                             break;
                         case EVENTSNAPSHOT:
                             OddsmarketTradingDto.EventSnapshot eventSnapshot = serverMessage.getEventSnapshot();
@@ -113,7 +113,7 @@ public class DiffPrinter {
                             break;
                         case INITIALSYNCCOMPLETE:
                             initialStateTransferred = true;
-                            printToConsole("Initial state transferred");
+                            printToConsole(new Date() + "Initial state transferred");
                             break;
                         case HEARTBEAT:
                             break;
@@ -146,6 +146,7 @@ public class DiffPrinter {
             @Override
             public void onConnectError(TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode) {
                 super.onConnectError(tradingFeedConnectionStatusCode);
+                System.err.println("Error during connection: " + tradingFeedConnectionStatusCode);
             }
 
             private String constructEventName(long eventId) {
