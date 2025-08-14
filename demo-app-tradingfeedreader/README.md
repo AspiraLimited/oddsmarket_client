@@ -2,13 +2,11 @@
 
 **TradingFeedReader** is a Java command-line application which consumes data from Oddsmarket websocket feed and 
 prints received updates into STDOUT in human-readable format.
-The application contains usage examples of `client` module and is intended to be used by [oddsmarket](https://oddsmarket.org/) customers as 
+The application contains usage examples of `trading-feed-client` module and is intended to be used by [oddsmarket](https://oddsmarket.org/) customers as 
 reference implementation of:
 * websocket feed consumption
 * updating bookmaker events in an in-memory data structure
 * updating outcomes state in an in-memory data structure
-* composing human-readable outcome names
-* composing human-readable period names
 
 
 ## Building and running
