@@ -635,24 +635,10 @@ enum ScoreType {
 enum ErrorCode {
   /** Server is terminating. */
   SERVER_TERMINATING = 0;
-  /** Authentication failed. */
-  AUTHENTICATION_FAILED = 1;
-  /** Client's IP address is not whitelisted. */
-  IP_NOT_WHITELISTED = 2;
   /** Subscription expired. */
   SUBSCRIPTION_EXPIRED = 3;
-  /** Requested feed is not included in the subscription. */
-  FEED_NOT_IN_SUBSCRIPTION = 4;
   /**
    * Client is sending too many messages.
    */
   TOO_MANY_REQUESTS = 5;
-  /**
-   * Client is not consuming messages fast enough to catch up with the feed.
-   */
-  SLOW_CONSUMER = 6;
-  /**
-   * Client is not sending Ack messages.
-   */
-  ACK_NOT_RECEIVED = 7;
 }

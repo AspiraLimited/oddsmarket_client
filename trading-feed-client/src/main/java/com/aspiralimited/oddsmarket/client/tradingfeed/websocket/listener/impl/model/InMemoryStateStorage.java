@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +26,8 @@ public class InMemoryStateStorage {
                 eventMetadata.getRawEventId(),
                 eventMetadata.getPlannedStartTimestamp(),
                 extractEventName(eventMetadata),
-                protobufMarketsToOutcomeMap(eventSnapshot.getMarketsList()),
+                extractLeagueName(eventMetadata),
+                protobufMarketsToMarkets(eventSnapshot.getMarketsList()),
                 protobufLiveEventInfoToLiveEventInfo(eventSnapshot.getLiveEventInfo())
         );
     }
@@ -36,6 +36,21 @@ public class InMemoryStateStorage {
         String result = null;
         if (eventMetadata.getNamesCount() > 0) {
             result = eventMetadata.getNames(0).getName();
+        }
+        return result;
+    }
+
+    private String extractLeagueName(OddsmarketTradingDto.EventMetadata eventMetadata) {
+        String result = null;
+        if (eventMetadata.hasLeague()) {
+            OddsmarketTradingDto.League league = eventMetadata.getLeague();
+            if (league.getNamesCount() > 0) {
+                result = league.getNames(0).getName();
+            } else {
+                result = "NO LEAGUE NAME";
+            }
+        } else {
+            result = "NO LEAGUE";
         }
         return result;
     }
@@ -57,13 +72,20 @@ public class InMemoryStateStorage {
         return null;
     }
 
-    private Map<OutcomeKey, OutcomeData> protobufMarketsToOutcomeMap(List<OddsmarketTradingDto.MarketSnapshot> marketSnapshots) {
-        Map<OutcomeKey, OutcomeData> result = new HashMap<>();
+    private Map<MarketKey, Map<OutcomeKey, OutcomeData>> protobufMarketsToMarkets(List<OddsmarketTradingDto.MarketSnapshot> marketSnapshots) {
+        Map<MarketKey, Map<OutcomeKey, OutcomeData>> result = new HashMap<>();
         for (OddsmarketTradingDto.MarketSnapshot marketSnapshot : marketSnapshots) {
+            OddsmarketTradingDto.MarketKey protobufMarketKey = marketSnapshot.getMarketKey();
+            MarketKey marketKey = new MarketKey(
+                    (short) protobufMarketKey.getMarketId(),
+                    protobufMarketKey.getMarketParam(),
+                    (short) protobufMarketKey.getPeriodIdentifier()
+            );
+            Map<OutcomeKey, OutcomeData> outcomeDataByOutcomeKey = result.computeIfAbsent(marketKey, k -> new HashMap<>());
             for (OddsmarketTradingDto.OutcomeSnapshot outcomeSnapshot : marketSnapshot.getOutcomesList()) {
                 OutcomeKey outcomeKey = protobufOutcomeKeyToOutcomeKey(outcomeSnapshot.getOutcomeKey());
                 OutcomeData outcomeData = protobufOutcomeDataToOutcomeData(outcomeSnapshot.getOutcomeData());
-                result.put(outcomeKey, outcomeData);
+                outcomeDataByOutcomeKey.put(outcomeKey, outcomeData);
             }
         }
         return result;
@@ -113,8 +135,8 @@ public class InMemoryStateStorage {
             }
         }
         if (eventPatch.getUpdatedMarketsCount() > 0) {
-            Map<OutcomeKey, OutcomeData> updatedOutcomeMap = protobufMarketsToOutcomeMap(eventPatch.getUpdatedMarketsList());
-            currentEvent.outcomeMap.putAll(updatedOutcomeMap);
+            Map<MarketKey, Map<OutcomeKey, OutcomeData>> updatedMarkets = protobufMarketsToMarkets(eventPatch.getUpdatedMarketsList());
+            currentEvent.outcomesByMarket.putAll(updatedMarkets);
         }
     }
 
@@ -140,11 +162,12 @@ public class InMemoryStateStorage {
         public final String rawEventId;
         public long plannedStartTimestamp;
         public String name;
-        public final Map<OutcomeKey, OutcomeData> outcomeMap;
+        public String leagueName;
+        public final Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarket;
         public final LiveEventInfo liveEventInfo;
 
-        public boolean hasOutcome(OutcomeKey outcomeKey) {
-            return outcomeMap.containsKey(outcomeKey);
+        public boolean hasMarket(MarketKey marketKey) {
+            return outcomesByMarket.containsKey(marketKey);
         }
 
         @Override
@@ -153,7 +176,7 @@ public class InMemoryStateStorage {
                     ", sportId=" + sportId +
                     ", plannedStartTimestamp=" + plannedStartTimestamp +
                     ", name='" + name + '\'' +
-                    ", outcomeMap=" + outcomeMap;
+                    ", outcomeMap=" + outcomesByMarket;
         }
     }
 
@@ -165,6 +188,15 @@ public class InMemoryStateStorage {
         public String toString() {
             return "score='" + score + '\'';
         }
+    }
+
+    @EqualsAndHashCode
+    @RequiredArgsConstructor
+    public static class MarketKey {
+        public final short marketId;
+        public final float marketParam;
+        public final short periodIdentifier;
+
     }
 
     @EqualsAndHashCode
