@@ -296,7 +296,7 @@ message Team {
   uint32 regionId = 4;
   /**
    * Team has logo available, which can be downloaded from following endpoint:
-   * TODO: add link to the endpoint documentation.
+   * https://github.com/AspiraLimited/oddsmarket_client/wiki/Teams-(API-v4)#endpoint---download-team-logo-image
    */
   bool logoAvailable = 5;
 }
