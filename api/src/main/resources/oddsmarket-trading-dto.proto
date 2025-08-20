@@ -173,10 +173,6 @@ message OutcomeData {
    */
   string shortOutcomeTitle = 5;
   /**
-    * Period titles of the outcome, rendered in locales requested in feed parameters.
-    */
-  repeated LocalizedName periodTitles = 6;
-  /**
    * Outcome ID at the IDs origin bookmaker, which was specified in rawIdOriginBookmakerId request parameter.
     * If rawIdOriginBookmakerId is not specified OR fillRawOutcomeId=false (or empty), then rawOutcomeId is always empty.
     * The field is used to match outcomes from this feed with outcomes identified by IDs of existing data supplier.
@@ -432,10 +428,6 @@ message MarketInfo {
    * Score type that is used for settling bets on the market.
    */
   ScoreType settlingScoreType = 5;
-  /**
-  * Period titles of the market, rendered in locales requested in feed parameters.
-  */
-  repeated LocalizedName periodTitles = 8;
 }
 
 /**
