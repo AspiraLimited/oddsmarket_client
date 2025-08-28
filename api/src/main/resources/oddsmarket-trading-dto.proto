@@ -190,13 +190,15 @@ message EventPatch {
    */
   uint64 eventId = 1;
   /**
-   * Updated event attributes, if any.
+   * Updated event attributes (if any of attributes have changed).
    * If updatedEventMetadata is not present, then the eventMetadata is not modified.
+   * If updatedEventMetadata is present, it contains all fields - including not modified ones.
    */
   EventMetadata updatedEventMetadata = 2;
   /**
-   * Updated live event attributes, if any.
+   * Updated live event attributes (if any of attributes have changed).
    * If updatedLiveEventInfo is not present, then the liveEventInfo is not modified.
+   * If updatedLiveEventInfo is present, it contains all fields - including not modified ones.
    */
   LiveEventInfo updatedLiveEventInfo = 3;
   /**
