@@ -23,6 +23,9 @@ public class InMemoryStateStorage {
         return new Event(
                 eventSnapshot.getEventId(),
                 (short) eventMetadata.getSportId(),
+                eventMetadata.getHome().getId(),
+                eventMetadata.getAway().getId(),
+                eventMetadata.getLeague().getId(),
                 eventMetadata.getRawEventId(),
                 eventMetadata.getPlannedStartTimestamp(),
                 extractEventName(eventMetadata),
@@ -159,12 +162,42 @@ public class InMemoryStateStorage {
     public static class Event {
         public final long id;
         public final short sportId;
+        public final long homeId;
+        public final long awayId;
+        public final long leagueId;
         public final String rawEventId;
         public long plannedStartTimestamp;
         public String name;
         public String leagueName;
         public final Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarket;
         public final LiveEventInfo liveEventInfo;
+
+        public Event copy() {
+            Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarketCopy = new HashMap<>();
+            for (Map.Entry<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarketEntry : outcomesByMarketCopy.entrySet()) {
+                Map<OutcomeKey, OutcomeData> outcomesCopy = new HashMap<>();
+                for (Map.Entry<OutcomeKey, OutcomeData> outcomeKeyOutcomeDataEntry : outcomesByMarketEntry.getValue().entrySet()) {
+                    OutcomeKey outcomeKey = outcomeKeyOutcomeDataEntry.getKey();
+                    OutcomeData outcomeData = outcomeKeyOutcomeDataEntry.getValue();
+                    outcomesCopy.put(outcomeKey.copy(), outcomeData.copy());
+                }
+                MarketKey marketKey = outcomesByMarketEntry.getKey();
+                outcomesByMarketCopy.put(marketKey.copy(), outcomesCopy);
+            }
+            return new Event(
+                    id,
+                    sportId,
+                    homeId,
+                    awayId,
+                    leagueId,
+                    rawEventId,
+                    plannedStartTimestamp,
+                    name,
+                    leagueName,
+                    outcomesByMarketCopy,
+                    liveEventInfo.copy()
+                    );
+        }
 
         public boolean hasMarket(MarketKey marketKey) {
             return outcomesByMarket.containsKey(marketKey);
@@ -178,6 +211,8 @@ public class InMemoryStateStorage {
                     ", name='" + name + '\'' +
                     ", outcomeMap=" + outcomesByMarket;
         }
+
+
     }
 
     @AllArgsConstructor
@@ -188,6 +223,12 @@ public class InMemoryStateStorage {
         public String toString() {
             return "score='" + score + '\'';
         }
+
+        public LiveEventInfo copy() {
+            return new LiveEventInfo(
+                    score
+            );
+        }
     }
 
     @EqualsAndHashCode
@@ -196,6 +237,14 @@ public class InMemoryStateStorage {
         public final short marketId;
         public final float marketParam;
         public final short periodIdentifier;
+
+        public MarketKey copy() {
+            return new MarketKey(
+                    marketId,
+                    marketParam,
+                    periodIdentifier
+            );
+        }
 
     }
 
@@ -216,6 +265,16 @@ public class InMemoryStateStorage {
                     "," + playerId1 +
                     "," + playerId2;
         }
+
+        public OutcomeKey copy() {
+            return new OutcomeKey(
+                    marketAndBetType,
+                    marketAndBetTypeParam,
+                    periodIdentifier,
+                    playerId1,
+                    playerId2
+            );
+        }
     }
 
     @AllArgsConstructor
@@ -227,6 +286,14 @@ public class InMemoryStateStorage {
         @Override
         public String toString() {
             return "koef= " + koef;
+        }
+
+        public OutcomeData copy() {
+            return new OutcomeData(
+                    title,
+                    koef,
+                    rawOutcomeId
+            );
         }
     }
 }

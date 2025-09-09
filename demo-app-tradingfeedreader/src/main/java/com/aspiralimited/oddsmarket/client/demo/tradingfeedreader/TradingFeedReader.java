@@ -6,6 +6,7 @@ import com.aspiralimited.oddsmarket.client.v4.rest.OddsmarketRestHttpClient;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TradingFeedReader {
@@ -28,10 +29,18 @@ public class TradingFeedReader {
                 throw new IllegalArgumentException("API key must be specified in command-line parameters");
             }
             short bookmakerId = Short.parseShort(args[2]);
-            Set<Integer> sportIds = Collections.emptySet();
+            Set<Short> sportIds = null;
+            Set<String> locales = null;
+            Pattern sportIdsPattern = Pattern.compile("^\\d+,\\d+$");
             if (args.length >= 4) {
-                String sportIdsStr = args[3];
-                sportIds = Arrays.stream(sportIdsStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet());
+                String str = args[3];
+                if (sportIdsPattern.matcher(str).matches()) {
+                    sportIds = Arrays.stream(str.split(",")).map(Short::parseShort).collect(Collectors.toSet());
+                } else {
+                    locales = Arrays.stream(str.split(",")).collect(Collectors.toSet());
+                }
+
+
             }
             String feedWebsocketUrl = (feedDomain.startsWith("localhost") ? "ws://" : "wss://") + feedDomain;
 
@@ -41,7 +50,7 @@ public class TradingFeedReader {
                     5000L
             );
             DiffPrinter listener = new DiffPrinter(oddsmarketRestHttpClient);
-            listener.listenFeedAndPrintDiffs(feedWebsocketUrl, apiKey, bookmakerId, sportIds);
+            listener.listenFeedAndPrintDiffs(feedWebsocketUrl, apiKey, bookmakerId, sportIds, locales);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

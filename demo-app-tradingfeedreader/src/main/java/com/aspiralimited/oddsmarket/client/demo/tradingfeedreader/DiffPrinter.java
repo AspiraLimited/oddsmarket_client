@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
@@ -30,14 +29,12 @@ public class DiffPrinter {
     private final OddsmarketRestHttpClient oddsmarketRestHttpClient;
 
     static private final DateFormat matchStartTimeFormat = new SimpleDateFormat("MMM d HH:mm", Locale.ENGLISH);
-    private final Map<String, String> periodNameByPeriodIdentifierAndSportId = new HashMap<>();
 
     @SneakyThrows
-    public void listenFeedAndPrintDiffs(String feedWebsocketUrl, String apiKey, short bookmakerId, Set<Integer> sportIds) {
+    public void listenFeedAndPrintDiffs(String feedWebsocketUrl, String apiKey, short bookmakerId, Set<Short> sportIds, Set<String> locales) {
 
         TradingFeedListener tradingFeedListener = new TradingFeedStateKeepingListener() {
             long lastStatsPrintedAt = System.currentTimeMillis();
-            volatile boolean initialStateTransferred = false;
 
             @Override
             public void onServerMessage(OddsmarketTradingDto.ServerMessage serverMessage) {
@@ -56,45 +53,48 @@ public class DiffPrinter {
                             printToConsole("[NEW] " + constructEventName(eventId) + " " + eventSnapshotToString(eventSnapshot));
                             break;
                         case EVENTPATCH:
-                            if (initialStateTransferred) {
-                                OddsmarketTradingDto.EventPatch eventPatch = serverMessage.getEventPatch();
-                                long eventPatchEventId = eventPatch.getEventId();
-                                String eventName = constructEventName(eventPatchEventId);
-                                InMemoryStateStorage.Event cachedEvent = inMemoryStateStorage.getEventByEventId().get(eventPatchEventId);
-                                //short sportId = cachedEvent.sportId;
-                                if (eventPatch.hasUpdatedLiveEventInfo()) {
-                                    InMemoryStateStorage.LiveEventInfo liveEventInfo = inMemoryStateStorage.protobufLiveEventInfoToLiveEventInfo(eventPatch.getUpdatedLiveEventInfo());
-                                    if (liveEventInfo.score != null) {
-                                        printToConsole("[LIVE] " + eventName + ": " + liveEventInfo);
-                                    }
+                            OddsmarketTradingDto.EventPatch eventPatch = serverMessage.getEventPatch();
+                            long eventPatchEventId = eventPatch.getEventId();
+                            String eventName = constructEventName(eventPatchEventId);
+                            InMemoryStateStorage.Event cachedEvent = inMemoryStateStorage.getEventByEventId().get(eventPatchEventId);
+                            if (eventPatch.hasUpdatedLiveEventInfo()) {
+                                InMemoryStateStorage.LiveEventInfo liveEventInfo = inMemoryStateStorage.protobufLiveEventInfoToLiveEventInfo(eventPatch.getUpdatedLiveEventInfo());
+                                if (liveEventInfo.score != null) {
+                                    printToConsole("[LIVE] " + eventName + ": " + liveEventInfo);
                                 }
-                                if (eventPatch.hasUpdatedEventMetadata()) {
-                                    printToConsole("[UPD] " + eventName + ": " + eventPatch.getUpdatedEventMetadata());
-                                }
+                            }
+                            if (eventPatch.hasUpdatedEventMetadata()) {
+                                printToConsole("[UPD] " + eventName + ": " + eventPatch.getUpdatedEventMetadata());
+                            }
 
-                                printToConsole("[ODDS] " + eventName);
-                                for (OddsmarketTradingDto.MarketSnapshot marketSnapshot : eventPatch.getUpdatedMarketsList()) {
-                                    OddsmarketTradingDto.MarketKey protobufMarketKey = marketSnapshot.getMarketKey();
-                                    InMemoryStateStorage.MarketKey marketKey = new InMemoryStateStorage.MarketKey(
-                                            (short) protobufMarketKey.getMarketId(),
-                                            protobufMarketKey.getMarketParam(),
-                                            (short) protobufMarketKey.getPeriodIdentifier()
-                                    );
-                                    String market = marketSnapshotToString(marketSnapshot);
-                                    if (cachedEvent.hasMarket(marketKey)) {
-                                        if (!marketSnapshot.getOutcomesList().isEmpty()) {
-                                            printToConsole("    [UPD] " + market);
-                                        } else {
-                                            printToConsole("    [DEL] " + market);
-                                        }
+                            printToConsole("[ODDS] " + eventName);
+                            for (OddsmarketTradingDto.MarketSnapshot marketSnapshot : eventPatch.getUpdatedMarketsList()) {
+                                OddsmarketTradingDto.MarketKey protobufMarketKey = marketSnapshot.getMarketKey();
+                                InMemoryStateStorage.MarketKey marketKey = new InMemoryStateStorage.MarketKey(
+                                        (short) protobufMarketKey.getMarketId(),
+                                        protobufMarketKey.getMarketParam(),
+                                        (short) protobufMarketKey.getPeriodIdentifier()
+                                );
+                                String market = marketSnapshotToString(marketSnapshot);
+                                if (cachedEvent.hasMarket(marketKey)) {
+                                    if (!marketSnapshot.getOutcomesList().isEmpty()) {
+                                        printToConsole("    [UPD] " + market);
                                     } else {
-                                        if (!marketSnapshot.getOutcomesList().isEmpty()) {
-                                            printToConsole("    [NEW] " + market);
-                                        } else {
-                                            throw new IllegalStateException("Missing market is being deactivated. Market: " + market);
-                                        }
+                                        printToConsole("    [DEL] " + market);
+                                    }
+                                } else {
+                                    if (!marketSnapshot.getOutcomesList().isEmpty()) {
+                                        printToConsole("    [NEW] " + market);
+                                    } else {
+                                        throw new IllegalStateException("Missing market is being deactivated. Market: " + market);
                                     }
                                 }
+                            }
+                            InMemoryStateStorage.Event beforeUpdateEvent = cachedEvent.copy();
+                            super.onServerMessage(serverMessage);
+                            InMemoryStateStorage.Event afterUpdateEvent = cachedEvent;
+                            if(beforeUpdateEvent.equals(afterUpdateEvent)) {
+                                printErrorToConsole("Event unchanged after patch");
                             }
                             break;
                         case EVENTSREMOVED:
@@ -105,7 +105,6 @@ public class DiffPrinter {
 
                             break;
                         case INITIALSYNCCOMPLETE:
-                            initialStateTransferred = true;
                             printToConsole(new Date() + "Initial state transferred");
                             break;
                         case HEARTBEAT:
@@ -119,9 +118,6 @@ public class DiffPrinter {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-                if (serverMessage.getPayloadCase() == OddsmarketTradingDto.ServerMessage.PayloadCase.EVENTPATCH) {
-                    super.onServerMessage(serverMessage);
                 }
                 if (
                         serverMessage.getPayloadCase() == OddsmarketTradingDto.ServerMessage.PayloadCase.EVENTSNAPSHOT
@@ -154,6 +150,8 @@ public class DiffPrinter {
         TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig = TradingFeedSubscriptionConfig.builder()
                 .apiKey(apiKey)
                 .tradingFeedId(bookmakerId)
+                .sportIds(sportIds)
+                .locales(locales)
                 .build();
         TradingFeedClient.builder()
                 .host(feedWebsocketUrl)
@@ -186,29 +184,19 @@ public class DiffPrinter {
     }
 
     private String constructEventName(String name, long startedAt, String leagueName) {
-        return name + " [" + longToDateTimeWithMinutePrecisionWitoutYear(startedAt) + "] "+leagueName;
+        return name + " [" + longToDateTimeWithMinutePrecisionWitoutYear(startedAt) + "] " + leagueName;
     }
 
     static public String longToDateTimeWithMinutePrecisionWitoutYear(long datetime) {
         return matchStartTimeFormat.format(new Date(datetime));
     }
 
-    private String generateOutcomeName(short sportId, InMemoryStateStorage.OutcomeKey outcomeKey, InMemoryStateStorage.OutcomeData outcomeData) throws ExecutionException, InterruptedException {
-        String periodIdentifierAndSportId = outcomeKey.periodIdentifier + "_" + sportId;
-        String periodName = periodNameByPeriodIdentifierAndSportId.computeIfAbsent(periodIdentifierAndSportId, key -> {
-            try {
-                return oddsmarketRestHttpClient.getPeriodName(outcomeKey.periodIdentifier, sportId).get();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException("Interrupted while getting period name", e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException("Failed to get period name", e);
-            }
-        });
-        return outcomeData.title + " [" + periodName + "]";
-    }
 
     private static void printToConsole(String msg) {
         System.out.println(msg);
+    }
+
+    private static void printErrorToConsole(String msg) {
+        System.err.println(msg);
     }
 }
