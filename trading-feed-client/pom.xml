@@ -7,7 +7,7 @@
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
     <artifactId>trading-feed-client</artifactId>
-    <version>1.1.4</version>
+    <version>1.1.5</version>
 
     <distributionManagement>
         <repository>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.aspiralimited.oddsmarket</groupId>
             <artifactId>api</artifactId>
-            <version>4.6.2</version>
+            <version>4.6.3</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

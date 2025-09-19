@@ -29,6 +29,10 @@ public class TradingFeedSubscriptionConfig {
      * Set to true to populate the rawOutcomeId field
      */
     private Boolean fillRawOutcomeId;
+    /**
+     * Set to true to populate the directLink field for EventMetaData and OutcomeData
+     */
+    private Boolean fillDirectLink;
 
     public String toQueryString() {
         String result = "";
@@ -51,6 +55,9 @@ public class TradingFeedSubscriptionConfig {
         }
         if (fillRawOutcomeId != null) {
             result = result + "&fillRawOutcomeId=" + fillRawOutcomeId;
+        }
+        if (fillDirectLink != null) {
+            result = result + "&fillDirectLink=true";
         }
         return result;
     }

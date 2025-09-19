@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto;
 
 option java_outer_classname = "OddsmarketTradingDto";
@@ -7,29 +8,29 @@ option java_outer_classname = "OddsmarketTradingDto";
  * Server->Client message envelope.
  */
 message ServerMessage {
-  /**
-   * Incremental message number within the session.
-   * It's guaranteed that there are no gaps in the sequence of message numbers.
-   */
-  uint64 messageId = 1;
-  oneof payload {
-    SessionStart sessionStart = 2;
-    EventSnapshot eventSnapshot = 3;
-    EventPatch eventPatch = 4;
-    EventsRemoved eventsRemoved = 5;
-    InitialSyncComplete initialSyncComplete = 6;
-    Heartbeat heartbeat = 7;
-    ErrorMessage errorMessage = 8;
-  }
+    /**
+     * Incremental message number within the session.
+     * It's guaranteed that there are no gaps in the sequence of message numbers.
+     */
+    uint64 messageId = 1;
+    oneof payload {
+        SessionStart sessionStart = 2;
+        EventSnapshot eventSnapshot = 3;
+        EventPatch eventPatch = 4;
+        EventsRemoved eventsRemoved = 5;
+        InitialSyncComplete initialSyncComplete = 6;
+        Heartbeat heartbeat = 7;
+        ErrorMessage errorMessage = 8;
+    }
 }
 
 /**
  * Client->Server message envelope.
  */
 message ClientMessage {
-  oneof payload {
-    Ack ack = 1;
-  }
+    oneof payload {
+        Ack ack = 1;
+    }
 }
 
 /**
@@ -40,34 +41,34 @@ message ClientMessage {
  * 3. Client received at least one message from the server after the last Ack message.
  */
 message Ack {
-  /**
-   * The messageId of the last message from server that was successfully received and processed by the client.
-   */
-  uint64 messageId = 1;
+    /**
+     * The messageId of the last message from server that was successfully received and processed by the client.
+     */
+    uint64 messageId = 1;
 }
 
 /**
  * Heartbeat message. Sent by the server every N milliseconds and may be used for computing consumer lag.
  */
 message Heartbeat {
-  /**
-   * Server timestamp in milliseconds since epoch.
-   */
-  uint64 serverTimestamp = 1;
+    /**
+     * Server timestamp in milliseconds since epoch.
+     */
+    uint64 serverTimestamp = 1;
 }
 
 /**
  * Error message. Sent by the server in case of an error.
  */
 message ErrorMessage {
-  /**
-   * Error code.
-   */
-  ErrorCode code = 1;
-  /**
-   * Error details.
-   */
-  string details = 2;
+    /**
+     * Error code.
+     */
+    ErrorCode code = 1;
+    /**
+     * Error details.
+     */
+    string details = 2;
 }
 
 /**
@@ -76,10 +77,10 @@ message ErrorMessage {
  * If any error occurs during initial user authentication or permissions verification, the Error message is sent to client.
  */
 message SessionStart {
-  /**
-   * Session ID. May be used to restore the connection in case of a disconnect.
-   */
-  string sessionId = 1;
+    /**
+     * Session ID. May be used to restore the connection in case of a disconnect.
+     */
+    string sessionId = 1;
 }
 
 /**
@@ -94,130 +95,134 @@ message InitialSyncComplete {
  * Full initial state of an event (match).
  */
 message EventSnapshot {
-  /**
-   * Unique identifier of the event.
-   */
-  uint64 eventId = 1;
-  /**
-   * Attributes of the event.
-   */
-  EventMetadata eventMetadata = 2;
-  /**
-   * Attributes of the live event, if available.
-   */
-  LiveEventInfo liveEventInfo = 3;
-  /**
-   * Full list of markets associated with the event.
-   */
-  repeated MarketSnapshot markets = 4;
+    /**
+     * Unique identifier of the event.
+     */
+    uint64 eventId = 1;
+    /**
+     * Attributes of the event.
+     */
+    EventMetadata eventMetadata = 2;
+    /**
+     * Attributes of the live event, if available.
+     */
+    LiveEventInfo liveEventInfo = 3;
+    /**
+     * Full list of markets associated with the event.
+     */
+    repeated MarketSnapshot markets = 4;
 }
 
 /**
  * Full market information, including market key, attributes, and outcomes.
  */
 message MarketSnapshot {
-  /**
-   * Unique key identifying the market.
-   */
-  MarketKey marketKey = 1;
-  /**
-   * Attributes of the market.
-   */
-  MarketInfo marketInfo = 2;
-  /**
-   * List of full outcome details.
-   * If the list is empty, the market should be removed.
-   */
-  repeated OutcomeSnapshot outcomes = 3;
+    /**
+     * Unique key identifying the market.
+     */
+    MarketKey marketKey = 1;
+    /**
+     * Attributes of the market.
+     */
+    MarketInfo marketInfo = 2;
+    /**
+     * List of full outcome details.
+     * If the list is empty, the market should be removed.
+     */
+    repeated OutcomeSnapshot outcomes = 3;
 }
 
 /**
  * Full outcome information, including outcome key and outcome data.
  */
 message OutcomeSnapshot {
-  /**
-   * Unique key identifying the outcome.
-   */
-  OutcomeKey outcomeKey = 1;
-  /**
-   * Data related to the outcome.
-   */
-  OutcomeData outcomeData = 2;
+    /**
+     * Unique key identifying the outcome.
+     */
+    OutcomeKey outcomeKey = 1;
+    /**
+     * Data related to the outcome.
+     */
+    OutcomeData outcomeData = 2;
 }
 
 /**
  * Outcome data containing odds and maximum stake.
  */
 message OutcomeData {
-  /**
-   * Odds for the outcome.
-   */
-  float odds = 1;
-  /**
-   * Optional first player associated with the outcome.
-   */
-  Player player1 = 2;
-  /**
-   * Optional second player associated with the outcome.
-   */
-  Player player2 = 3;
-  /**
-   * Titles of the outcome, rendered in locales requested in feed parameters.
-   * Title includes parameter value if the outcome requires a parameter.
-   */
-  repeated LocalizedName outcomeTitles = 4;
-  /**
-   * Short title of the outcome.
-   * Only English abbreviated title is available.
-   * Short title includes parameter value if the outcome requires a parameter.
-   */
-  string shortOutcomeTitle = 5;
-  /**
-   * Outcome ID at the IDs origin bookmaker, which was specified in rawIdOriginBookmakerId request parameter.
-    * If rawIdOriginBookmakerId is not specified OR fillRawOutcomeId=false (or empty), then rawOutcomeId is always empty.
-    * The field is used to match outcomes from this feed with outcomes identified by IDs of existing data supplier.
-    * rawOutcomeId is unique within the origin bookmaker's event.
-   */
-  string rawOutcomeId = 7;
+    /**
+     * Odds for the outcome.
+     */
+    float odds = 1;
+    /**
+     * Optional first player associated with the outcome.
+     */
+    Player player1 = 2;
+    /**
+     * Optional second player associated with the outcome.
+     */
+    Player player2 = 3;
+    /**
+     * Titles of the outcome, rendered in locales requested in feed parameters.
+     * Title includes parameter value if the outcome requires a parameter.
+     */
+    repeated LocalizedName outcomeTitles = 4;
+    /**
+     * Short title of the outcome.
+     * Only English abbreviated title is available.
+     * Short title includes parameter value if the outcome requires a parameter.
+     */
+    string shortOutcomeTitle = 5;
+    /**
+     * Outcome ID at the IDs origin bookmaker, which was specified in rawIdOriginBookmakerId request parameter.
+      * If rawIdOriginBookmakerId is not specified OR fillRawOutcomeId=false (or empty), then rawOutcomeId is always empty.
+      * The field is used to match outcomes from this feed with outcomes identified by IDs of existing data supplier.
+      * rawOutcomeId is unique within the origin bookmaker's event.
+     */
+    string rawOutcomeId = 7;
+    /**
+      * If fillDirectLink=false (or empty), then directLink is always empty.
+       */
+    string directLink = 8;
 }
 
 /**
  * Patch (diff, delta) message for event updates, containing modifications to event attributes and markets.
  */
 message EventPatch {
-  /**
-   * Unique identifier of the event.
-   */
-  uint64 eventId = 1;
-  /**
-   * Updated event attributes (if any of attributes have changed).
-   * If updatedEventMetadata is not present, then the eventMetadata is not modified.
-   * If updatedEventMetadata is present, it contains all fields - including not modified ones.
-   */
-  EventMetadata updatedEventMetadata = 2;
-  /**
-   * Updated live event attributes (if any of attributes have changed).
-   * If updatedLiveEventInfo is not present, then the liveEventInfo is not modified.
-   * If updatedLiveEventInfo is present, it contains all fields - including not modified ones.
-   */
-  LiveEventInfo updatedLiveEventInfo = 3;
-  /**
-   * List of updated markets.
-   * Markets are identified by their MarketKey.
-   * New markets should be added to the list, and existing markets should be replaced.
-   * If new market state comes with empty list of outcomes, then the market should be removed.
-   */
-  repeated MarketSnapshot updatedMarkets = 4;
+    /**
+     * Unique identifier of the event.
+     */
+    uint64 eventId = 1;
+    /**
+     * Updated event attributes (if any of attributes have changed).
+     * If updatedEventMetadata is not present, then the eventMetadata is not modified.
+     * If updatedEventMetadata is present, it contains all fields - including not modified ones.
+     */
+    EventMetadata updatedEventMetadata = 2;
+    /**
+     * Updated live event attributes (if any of attributes have changed).
+     * If updatedLiveEventInfo is not present, then the liveEventInfo is not modified.
+     * If updatedLiveEventInfo is present, it contains all fields - including not modified ones.
+     */
+    LiveEventInfo updatedLiveEventInfo = 3;
+    /**
+     * List of updated markets.
+     * Markets are identified by their MarketKey.
+     * New markets should be added to the list, and existing markets should be replaced.
+     * If new market state comes with empty list of outcomes, then the market should be removed.
+     */
+    repeated MarketSnapshot updatedMarkets = 4;
 }
 
 /**
  * Patch message for events removal.
  */
 message EventsRemoved {
-  /**
-   * Unique identifiers of the events to be removed.
-   */
-  repeated uint64 eventIds = 1;
+    /**
+     * Unique identifiers of the events to be removed.
+     */
+    repeated uint64 eventIds = 1;
 }
 
 /**
@@ -228,99 +233,103 @@ message EventsRemoved {
  * Properties (attributes) of an event.
  */
 message EventMetadata {
-  /**
-   * Identifier of the sport.
-   */
-  uint32 sportId = 2;
-  /**
-   * Home team information.
-   */
-  Team home = 3;
-  /**
-   * Away team information.
-   */
-  Team away = 4;
-  /**
-   * League information.
-   */
-  League league = 5;
-  /**
-   * Name of the event (possibly in different locales)
-   */
-  repeated LocalizedName names = 6;
-  /**
-   * Planned start datetime in milliseconds since epoch.
-   */
-  uint64 plannedStartTimestamp = 7;
-  /**
-    * Match ID, which is equal for live and prematch events, and can be used to link live and prematch event records.
-    * May change in rare cases.
-   */
-  uint64 uniformEventId = 8;
-  /**
-    * Match ID of same event, taken from feed specified in rawIdOriginBookmakerId request parameter.
-    * If rawIdOriginBookmakerId is not specified, then rawEventId is empty.
-    * The field is used to match events from this feed with events identified by IDs of existing data supplier.
-   */
-  string rawEventId = 9;
+    /**
+     * Identifier of the sport.
+     */
+    uint32 sportId = 2;
+    /**
+     * Home team information.
+     */
+    Team home = 3;
+    /**
+     * Away team information.
+     */
+    Team away = 4;
+    /**
+     * League information.
+     */
+    League league = 5;
+    /**
+     * Name of the event (possibly in different locales)
+     */
+    repeated LocalizedName names = 6;
+    /**
+     * Planned start datetime in milliseconds since epoch.
+     */
+    uint64 plannedStartTimestamp = 7;
+    /**
+      * Match ID, which is equal for live and prematch events, and can be used to link live and prematch event records.
+      * May change in rare cases.
+     */
+    uint64 uniformEventId = 8;
+    /**
+      * Match ID of same event, taken from feed specified in rawIdOriginBookmakerId request parameter.
+      * If rawIdOriginBookmakerId is not specified, then rawEventId is empty.
+      * The field is used to match events from this feed with events identified by IDs of existing data supplier.
+     */
+    string rawEventId = 9;
 
-  /**
-   * Event type.
-   */
-  EventType eventType = 10;
+    /**
+     * Event type.
+     */
+    EventType eventType = 10;
+    /**
+     * If fillDirectLink=false (or empty), then directLink is always empty.
+     */
+    string directLink = 11;
 }
 
 /**
  * Team information including identifier and name.
  */
 message Team {
-  /**
-   * Unique identifier of the team.
-   */
-  uint64 id = 1;
-  /**
-   * Name of the team (possibly in different locales).
-   */
-  repeated LocalizedName names = 2;
-  /**
-   * Identifier of the sport.
-   */
-  uint32 sportId = 3;
-  /**
-   * Identifier of the region.
-   * The dictionary of regions endpoint documentation:
-   * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
-   */
-  uint32 regionId = 4;
-  /**
-   * Team has logo available, which can be downloaded from following endpoint:
-   * https://github.com/AspiraLimited/oddsmarket_client/wiki/Teams-(API-v4)#endpoint---download-team-logo-image
-   */
-  bool logoAvailable = 5;
+    /**
+     * Unique identifier of the team.
+     */
+    uint64 id = 1;
+    /**
+     * Name of the team (possibly in different locales).
+     */
+    repeated LocalizedName names = 2;
+    /**
+     * Identifier of the sport.
+     */
+    uint32 sportId = 3;
+    /**
+     * Identifier of the region.
+     * The dictionary of regions endpoint documentation:
+     * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
+     */
+    uint32 regionId = 4;
+    /**
+     * Team has logo available, which can be downloaded from following endpoint:
+     * https://github.com/AspiraLimited/oddsmarket_client/wiki/Teams-(API-v4)#endpoint---download-team-logo-image
+     */
+    bool logoAvailable = 5;
 }
 
 /**
  * League information including identifier, name, and region id.
  */
 message League {
-  /**
-   * Unique identifier of the league.
-   */
-  uint64 id = 1;
-  /**
-   * Name of the league (possibly in different locales).
-   */
-  repeated LocalizedName names = 2;
-  /**
-   * Identifier of the sport.
-   */
-  uint32 sportId = 3;
-  /**
-   * Identifier of the region.
-   * The dictionary of regions endpoint documentation:
-   * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
-   */
-  uint32 regionId = 4;
+    /**
+     * Unique identifier of the league.
+     */
+    uint64 id = 1;
+    /**
+     * Name of the league (possibly in different locales).
+     */
+    repeated LocalizedName names = 2;
+    /**
+     * Identifier of the sport.
+     */
+    uint32 sportId = 3;
+    /**
+     * Identifier of the region.
+     * The dictionary of regions endpoint documentation:
+     * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Countries-(API-v4)
+     */
+    uint32 regionId = 4;
 
 }
 
@@ -328,162 +337,162 @@ message League {
  * Localized name of an entity.
  */
 message LocalizedName {
-  /**
-    * ISO 639-1 language code.
-   */
-  string languageIso2Code = 1;
-  /**
-   * Name of the entity in the specified language.
-   */
-  string name = 2;
+    /**
+      * ISO 639-1 language code.
+     */
+    string languageIso2Code = 1;
+    /**
+     * Name of the entity in the specified language.
+     */
+    string name = 2;
 }
 
 /**
  * Unique key for an outcome, including market and bet type id, parameter, period identifier, and optional players.
  */
 message OutcomeKey {
-  /**
-   * Identifier for the "market and bet type". Bet type may also be referred as "selection".
-   * "Market and bet type" identifies valid pair of market and bet type (selection).
-   * The dictionary endpoint documentation:
-   * https://github.com/AspiraLimited/oddsmarket_client/wiki/MarketAndBetType-dictionary-(API-v4)
-   */
-  uint32 marketAndBetTypeId = 1;
-  /**
-   * Parameter for the market and bet type.
-   * More information is available in documentation:
-   * https://github.com/AspiraLimited/oddsmarket_client/wiki/MarketAndBetType-parameter-(API-v4)
-   */
-  float marketAndBetTypeParam = 2;
-  /**
-   * Period identifier.
-   * More info:
-   * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Period-Name-(API-v4)
-   */
-  int32 periodIdentifier = 3;
-  /**
-   * Optional first player ID associated with the outcome.
-   */
-  optional int32 playerId1 = 4;
-  /**
-   * Optional second player ID associated with the outcome.
-   */
-  optional int32 playerId2 = 5;
+    /**
+     * Identifier for the "market and bet type". Bet type may also be referred as "selection".
+     * "Market and bet type" identifies valid pair of market and bet type (selection).
+     * The dictionary endpoint documentation:
+     * https://github.com/AspiraLimited/oddsmarket_client/wiki/MarketAndBetType-dictionary-(API-v4)
+     */
+    uint32 marketAndBetTypeId = 1;
+    /**
+     * Parameter for the market and bet type.
+     * More information is available in documentation:
+     * https://github.com/AspiraLimited/oddsmarket_client/wiki/MarketAndBetType-parameter-(API-v4)
+     */
+    float marketAndBetTypeParam = 2;
+    /**
+     * Period identifier.
+     * More info:
+     * https://github.com/AspiraLimited/oddsmarket_client/wiki/Get-Period-Name-(API-v4)
+     */
+    int32 periodIdentifier = 3;
+    /**
+     * Optional first player ID associated with the outcome.
+     */
+    optional int32 playerId1 = 4;
+    /**
+     * Optional second player ID associated with the outcome.
+     */
+    optional int32 playerId2 = 5;
 }
 
 /**
  * Player information including identifier and name.
  */
 message Player {
-  /**
-   * Unique identifier of the player.
-   */
-  uint32 id = 1;
-  /**
-   * Name of the player (possibly in different locales)
-   */
-  repeated LocalizedName names = 2;
+    /**
+     * Unique identifier of the player.
+     */
+    uint32 id = 1;
+    /**
+     * Name of the player (possibly in different locales)
+     */
+    repeated LocalizedName names = 2;
 }
 
 /**
  * Unique key for a market, including market id, parameter, and period identifier.
  */
 message MarketKey {
-  /**
-   * Identifier of the market.
-   */
-  uint32 marketId = 1;
-  /**
-   * Parameter for the market.
-   */
-  float marketParam = 2;
-  /**
-   * Period identifier.
-   */
-  int32 periodIdentifier = 3;
+    /**
+     * Identifier of the market.
+     */
+    uint32 marketId = 1;
+    /**
+     * Parameter for the market.
+     */
+    float marketParam = 2;
+    /**
+     * Period identifier.
+     */
+    int32 periodIdentifier = 3;
 }
 
 /**
  * Attributes of a market.
  */
 message MarketInfo {
-  /**
-   * Titles of the market, rendered in locales requested in feed parameters.
-   * Title includes parameter value if the market requires a parameter.
-   */
-  repeated LocalizedName marketTitles = 1;
-  /**
-   * Short title of the market.
-   * Only English abbreviated title is available.
-   * Short title includes parameter value if the market requires a parameter.
-   */
-  string shortMarketTitle = 2;
-  /**
-   * Group to which the market belongs.
-   */
-  MarketGroup marketGroup = 3;
-  /**
-   * Indicates if the market requires a parameter.
-   */
-  bool requiresParameter = 4;
-  /**
-   * Score type that is used for settling bets on the market.
-   */
-  ScoreType settlingScoreType = 5;
+    /**
+     * Titles of the market, rendered in locales requested in feed parameters.
+     * Title includes parameter value if the market requires a parameter.
+     */
+    repeated LocalizedName marketTitles = 1;
+    /**
+     * Short title of the market.
+     * Only English abbreviated title is available.
+     * Short title includes parameter value if the market requires a parameter.
+     */
+    string shortMarketTitle = 2;
+    /**
+     * Group to which the market belongs.
+     */
+    MarketGroup marketGroup = 3;
+    /**
+     * Indicates if the market requires a parameter.
+     */
+    bool requiresParameter = 4;
+    /**
+     * Score type that is used for settling bets on the market.
+     */
+    ScoreType settlingScoreType = 5;
 }
 
 /**
  * Current state of a live match.
  */
 message LiveEventInfo {
-  /**
-   * Current period identifier (may be not available).
-   */
-  optional int32 currentPeriodIdentifier = 1;
-  /**
-   * Current second of the match (may be not available).
-   */
-  optional int32 currentSecond = 2;
-  /**
-   * Current live match status (may be not available).
-   */
-  LiveMatchStatus matchStatus = 3;
-  /**
-   * Current scores, broken down by period and score type.
-   */
-  repeated DetailedScore detailedScores = 4;
+    /**
+     * Current period identifier (may be not available).
+     */
+    optional int32 currentPeriodIdentifier = 1;
+    /**
+     * Current second of the match (may be not available).
+     */
+    optional int32 currentSecond = 2;
+    /**
+     * Current live match status (may be not available).
+     */
+    LiveMatchStatus matchStatus = 3;
+    /**
+     * Current scores, broken down by period and score type.
+     */
+    repeated DetailedScore detailedScores = 4;
 }
 
 /**
  * Detailed score information including score key and home/away scores.
  */
 message DetailedScore {
-  /**
-   * Key identifying the score.
-   */
-  ScoreKey scoreKey = 1;
-  /**
-   * Home team score.
-   */
-  int32 home = 3;
-  /**
-   * Away team score.
-   */
-  int32 away = 4;
+    /**
+     * Key identifying the score.
+     */
+    ScoreKey scoreKey = 1;
+    /**
+     * Home team score.
+     */
+    int32 home = 3;
+    /**
+     * Away team score.
+     */
+    int32 away = 4;
 }
 
 /**
  * Key for scores, including score type and period identifier.
  */
 message ScoreKey {
-  /**
-   * Score type.
-   */
-  ScoreType scoreType = 1;
-  /**
-   * Period identifier.
-   */
-  int32 periodIdentifier = 2;
+    /**
+     * Score type.
+     */
+    ScoreType scoreType = 1;
+    /**
+     * Period identifier.
+     */
+    int32 periodIdentifier = 2;
 }
 
 /**
@@ -496,143 +505,143 @@ message ScoreKey {
  * doesn't allow repeating enum constants across all enums in proto file).
  */
 enum MarketGroup {
-  ONE_X_TWO_AND_MONEYLINE = 0;
-  HANDICAP_GROUP = 1;
-  TOTAL_GROUP = 2;
-  INDIVIDUAL_TOTAL_GROUP = 3;
-  STATISTIC_GROUP = 4;
-  ADDITIONAL_MARKETS_GROUP = 5;
-  GAME_WINNER_GROUP = 6;
-  CORNERS_GROUP = 7;
-  CARDS_GROUP = 8;
-  PLAYER_PROPS_GROUP = 9;
+    ONE_X_TWO_AND_MONEYLINE = 0;
+    HANDICAP_GROUP = 1;
+    TOTAL_GROUP = 2;
+    INDIVIDUAL_TOTAL_GROUP = 3;
+    STATISTIC_GROUP = 4;
+    ADDITIONAL_MARKETS_GROUP = 5;
+    GAME_WINNER_GROUP = 6;
+    CORNERS_GROUP = 7;
+    CARDS_GROUP = 8;
+    PLAYER_PROPS_GROUP = 9;
 }
 
 enum EventType {
-  REGULAR = 0;
-  RACE = 1;
-  FIELDS = 2;
-  OUTRIGHT = 3;
+    REGULAR = 0;
+    RACE = 1;
+    FIELDS = 2;
+    OUTRIGHT = 3;
 }
 
 /**
  * Enumeration of live match statuses.
  */
 enum LiveMatchStatus {
-  /** Status not determined. */
-  UNKNOWN = 0;
-  /** The event has not started yet. */
-  NOT_STARTED = 1;
-  /** The event has been postponed. The organizer is determining whether to reschedule or cancel. */
-  POSTPONED = 3;
-  /** The event has been cancelled. */
-  CANCELLED = 5;
-  /** The event is live. */
-  LIVE = 10;
-  /** The event is paused for reasons other than a break. */
-  PAUSED = 11;
-  /** The event is on break. */
-  BREAK = 12;
-  /**
-   * The event is suspended; the organizer will decide later if it will be postponed, cancelled, or proceed as scheduled.
-   */
-  SUSPENDED = 13;
-  /**
-   * The event has been interrupted. If resumed within 48 hours, bets are settled with the final result; otherwise, bets are void.
-   */
-  INTERRUPTED = 15;
-  /** The event is finished. */
-  FINISHED = 20;
+    /** Status not determined. */
+    UNKNOWN = 0;
+    /** The event has not started yet. */
+    NOT_STARTED = 1;
+    /** The event has been postponed. The organizer is determining whether to reschedule or cancel. */
+    POSTPONED = 3;
+    /** The event has been cancelled. */
+    CANCELLED = 5;
+    /** The event is live. */
+    LIVE = 10;
+    /** The event is paused for reasons other than a break. */
+    PAUSED = 11;
+    /** The event is on break. */
+    BREAK = 12;
+    /**
+     * The event is suspended; the organizer will decide later if it will be postponed, cancelled, or proceed as scheduled.
+     */
+    SUSPENDED = 13;
+    /**
+     * The event has been interrupted. If resumed within 48 hours, bets are settled with the final result; otherwise, bets are void.
+     */
+    INTERRUPTED = 15;
+    /** The event is finished. */
+    FINISHED = 20;
 }
 
 /**
  * Enumeration of score types.
  */
 enum ScoreType {
-  UNKNOWN_SCORE_TYPE = 0;
-  /** Main score. */
-  MAIN = 1;
-  /** Score for corner kicks. */
-  CORNERS = 2;
-  /** Score for yellow cards. */
-  YELLOW_CARDS = 3;
-  /** Score for red cards. */
-  RED_CARDS = 4;
-  /**
-   * Count of penalties awarded during the match (periodIdentifier=0) or during overtime (periodIdentifier=-4).
-   * Penalties played at the end of the match to determine the winner are included in ScoreType=MAIN with periodIdentifier=-5.
-   */
-  PENALTY = 5;
-  /** Score for substitutions. */
-  SUBSTITUTION = 6;
-  /** Score for shots on goal. */
-  SHOTS_ON_GOAL = 7;
-  /** Score for fouls. */
-  FOULS = 8;
-  /** Score for offsides. */
-  OFFSIDE = 9;
-  /** Score for ball possession. */
-  BALL_POSSESSION = 10;
-  /** Score for cards. */
-  CARDS = 11;
-  /** Score for booking points (points for cards). */
-  BOOKING_POINTS = 12;
-  /** Score for aces. */
-  ACE = 13;
-  /** Score for double faults. */
-  DOUBLE_FAULT = 14;
-  /** Score for first serve percentage. */
-  FIRST_SERVE_PCT = 15;
-  /** Score for three-pointers. */
-  THREE_POINTS = 16;
-  /** Score for rebounds. */
-  REBOUNDS = 17;
-  /** Score for assists. */
-  ASSISTS = 18;
-  /** Score for kills. */
-  KILLS = 19;
-  /** Score for barons. */
-  BARONS = 20;
-  /** Score for inhibitors. */
-  INHIBITORS = 21;
-  /** Score for dragons. */
-  DRAGONS = 22;
-  /** Score for towers. */
-  TOWERS = 23;
-  /** Score for roshans. */
-  ROSHANS = 24;
-  /** Score for barracks. */
-  BARRACKS = 25;
-  /** Score for touchdowns. */
-  TOUCHDOWN = 26;
-  /** Score for field goals. */
-  FIELD_GOALS = 27;
-  /** Score for hits. */
-  HITS = 28;
-  /** Score for errors. */
-  ERRORS = 29;
-  /** Score for sixes. */
-  SIXES = 30;
-  /** Score for fours. */
-  FOURS = 31;
-  /** Throw-ins in football. */
-  THROW_INS = 32;
-  /** Cricket: used to determine the first bowler/batter. */
-  TOSS = 33;
-  /** Cricket: number of wickets lost by the team. */
-  WICKETS = 34;
+    UNKNOWN_SCORE_TYPE = 0;
+    /** Main score. */
+    MAIN = 1;
+    /** Score for corner kicks. */
+    CORNERS = 2;
+    /** Score for yellow cards. */
+    YELLOW_CARDS = 3;
+    /** Score for red cards. */
+    RED_CARDS = 4;
+    /**
+     * Count of penalties awarded during the match (periodIdentifier=0) or during overtime (periodIdentifier=-4).
+     * Penalties played at the end of the match to determine the winner are included in ScoreType=MAIN with periodIdentifier=-5.
+     */
+    PENALTY = 5;
+    /** Score for substitutions. */
+    SUBSTITUTION = 6;
+    /** Score for shots on goal. */
+    SHOTS_ON_GOAL = 7;
+    /** Score for fouls. */
+    FOULS = 8;
+    /** Score for offsides. */
+    OFFSIDE = 9;
+    /** Score for ball possession. */
+    BALL_POSSESSION = 10;
+    /** Score for cards. */
+    CARDS = 11;
+    /** Score for booking points (points for cards). */
+    BOOKING_POINTS = 12;
+    /** Score for aces. */
+    ACE = 13;
+    /** Score for double faults. */
+    DOUBLE_FAULT = 14;
+    /** Score for first serve percentage. */
+    FIRST_SERVE_PCT = 15;
+    /** Score for three-pointers. */
+    THREE_POINTS = 16;
+    /** Score for rebounds. */
+    REBOUNDS = 17;
+    /** Score for assists. */
+    ASSISTS = 18;
+    /** Score for kills. */
+    KILLS = 19;
+    /** Score for barons. */
+    BARONS = 20;
+    /** Score for inhibitors. */
+    INHIBITORS = 21;
+    /** Score for dragons. */
+    DRAGONS = 22;
+    /** Score for towers. */
+    TOWERS = 23;
+    /** Score for roshans. */
+    ROSHANS = 24;
+    /** Score for barracks. */
+    BARRACKS = 25;
+    /** Score for touchdowns. */
+    TOUCHDOWN = 26;
+    /** Score for field goals. */
+    FIELD_GOALS = 27;
+    /** Score for hits. */
+    HITS = 28;
+    /** Score for errors. */
+    ERRORS = 29;
+    /** Score for sixes. */
+    SIXES = 30;
+    /** Score for fours. */
+    FOURS = 31;
+    /** Throw-ins in football. */
+    THROW_INS = 32;
+    /** Cricket: used to determine the first bowler/batter. */
+    TOSS = 33;
+    /** Cricket: number of wickets lost by the team. */
+    WICKETS = 34;
 }
 
 /**
  * Enumeration of error codes.
  */
 enum ErrorCode {
-  /** Server is terminating. */
-  SERVER_TERMINATING = 0;
-  /** Subscription expired. */
-  SUBSCRIPTION_EXPIRED = 3;
-  /**
-   * Client is sending too many messages.
-   */
-  TOO_MANY_REQUESTS = 5;
+    /** Server is terminating. */
+    SERVER_TERMINATING = 0;
+    /** Subscription expired. */
+    SUBSCRIPTION_EXPIRED = 3;
+    /**
+     * Client is sending too many messages.
+     */
+    TOO_MANY_REQUESTS = 5;
 }

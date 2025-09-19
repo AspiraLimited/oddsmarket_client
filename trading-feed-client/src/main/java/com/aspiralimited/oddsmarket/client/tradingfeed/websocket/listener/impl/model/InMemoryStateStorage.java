@@ -31,7 +31,8 @@ public class InMemoryStateStorage {
                 extractEventName(eventMetadata),
                 extractLeagueName(eventMetadata),
                 protobufMarketsToMarkets(eventSnapshot.getMarketsList()),
-                protobufLiveEventInfoToLiveEventInfo(eventSnapshot.getLiveEventInfo())
+                protobufLiveEventInfoToLiveEventInfo(eventSnapshot.getLiveEventInfo()),
+                eventMetadata.getDirectLink()
         );
     }
 
@@ -112,7 +113,8 @@ public class InMemoryStateStorage {
         return new OutcomeData(
                 title,
                 protobufOutcomeData.getOdds(),
-                protobufOutcomeData.getRawOutcomeId()
+                protobufOutcomeData.getRawOutcomeId(),
+                protobufOutcomeData.getDirectLink()
         );
     }
 
@@ -171,6 +173,7 @@ public class InMemoryStateStorage {
         public String leagueName;
         public final Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarket;
         public final LiveEventInfo liveEventInfo;
+        public final String directLink;
 
         public Event copy() {
             Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarketCopy = new HashMap<>();
@@ -195,7 +198,8 @@ public class InMemoryStateStorage {
                     name,
                     leagueName,
                     outcomesByMarketCopy,
-                    liveEventInfo.copy()
+                    liveEventInfo.copy(),
+                    directLink
                     );
         }
 
@@ -282,6 +286,7 @@ public class InMemoryStateStorage {
         public String title;
         public float koef;
         public String rawOutcomeId;
+        public String directLink;
 
         @Override
         public String toString() {
@@ -292,7 +297,8 @@ public class InMemoryStateStorage {
             return new OutcomeData(
                     title,
                     koef,
-                    rawOutcomeId
+                    rawOutcomeId,
+                    directLink
             );
         }
     }
