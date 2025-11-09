@@ -93,7 +93,7 @@ public class DiffPrinter {
                             InMemoryStateStorage.Event beforeUpdateEvent = cachedEvent.copy();
                             super.onServerMessage(serverMessage);
                             InMemoryStateStorage.Event afterUpdateEvent = cachedEvent;
-                            if(beforeUpdateEvent.equals(afterUpdateEvent)) {
+                            if (beforeUpdateEvent.equals(afterUpdateEvent)) {
                                 printErrorToConsole("Event unchanged after patch");
                             }
                             break;
@@ -177,7 +177,11 @@ public class DiffPrinter {
                 .stream()
                 .map(outcomeSnapshot -> {
                     OddsmarketTradingDto.OutcomeData outcomeData = outcomeSnapshot.getOutcomeData();
-                    return outcomeData.getShortOutcomeTitle() + "(" + outcomeData.getOdds() + ")";
+                    if (outcomeSnapshot.getOutcomeData().hasMarketDepth()) {
+                        return outcomeData.getShortOutcomeTitle() + "(" + outcomeData.getOdds() + ",depth=" + outcomeData.getMarketDepth() + ")";
+                    } else {
+                        return outcomeData.getShortOutcomeTitle() + "(" + outcomeData.getOdds() + ")";
+                    }
                 })
                 .collect(Collectors.joining(", "))
                 + "}";

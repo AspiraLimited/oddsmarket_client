@@ -184,6 +184,8 @@ message OutcomeData {
       * If fillDirectLink=false (or empty), then directLink is always empty.
        */
     string directLink = 8;
+
+    optional float marketDepth = 9;
 }
 
 /**
