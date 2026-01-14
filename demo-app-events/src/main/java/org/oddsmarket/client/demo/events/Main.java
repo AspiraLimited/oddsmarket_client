@@ -5,9 +5,12 @@ import com.aspiralimited.oddsmarket.client.wsevents.OddsmarketEventsListener;
 import com.aspiralimited.oddsmarket.client.wsevents.OddsmarketHandler;
 import com.aspiralimited.oddsmarket.client.wsevents.dto.Event;
 import com.aspiralimited.oddsmarket.client.wsevents.dto.EventLiveInfo;
+import com.aspiralimited.oddsmarket.client.wsevents.dto.EventPlayer;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -77,6 +80,11 @@ public class Main {
         handler.addEventsListener(new OddsmarketEventsListener() {
 
             @Override
+            public void onInitialStateTransferred() {
+                log.info("Initial state transferred");
+            }
+
+            @Override
             public void onEvent(Event event) {
                 log.trace("Event received: {}", event);
             }
@@ -90,13 +98,18 @@ public class Main {
             public void onEventLiveInfo(EventLiveInfo eventLiveInfo) {
                 log.trace("Event live info: {}", eventLiveInfo);
             }
+
+            @Override
+            public void onEventPlayers(long eventId, List<EventPlayer> players, Set<Integer> removedPlayers) {
+                log.trace("Event players: eventId={}, players={}, removedPlayers={}", eventId, players, removedPlayers);
+            }
         });
 
         return handler;
     }
 
     private static void dumpStatistic(OddsmarketHandler handler) {
-        log.info("Statistic: [eventMapSize={}, eventLiveInfoMapSize={}]",
-                handler.getEventMap().size(), handler.getEventLiveInfoMap().size());
+        log.info("Statistic: [eventMapSize={}, eventLiveInfoMapSize={}, eventPlayersMapSize={}]",
+                handler.getEventMap().size(), handler.getEventLiveInfoMap().size(), handler.getEventPlayersMap().size());
     }
 }

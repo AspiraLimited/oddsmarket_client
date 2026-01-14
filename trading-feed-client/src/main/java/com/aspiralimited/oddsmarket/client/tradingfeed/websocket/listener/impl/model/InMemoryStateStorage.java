@@ -7,7 +7,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -32,7 +34,8 @@ public class InMemoryStateStorage {
                 extractLeagueName(eventMetadata),
                 protobufMarketsToMarkets(eventSnapshot.getMarketsList()),
                 protobufLiveEventInfoToLiveEventInfo(eventSnapshot.getLiveEventInfo()),
-                eventMetadata.getDirectLink()
+                eventMetadata.getDirectLink(),
+                protobufEventPlayersToEventPlayerData(eventSnapshot.getPlayersList())
         );
     }
 
@@ -118,6 +121,25 @@ public class InMemoryStateStorage {
         );
     }
 
+    private Map<Integer, EventPlayerData> protobufEventPlayersToEventPlayerData(List<OddsmarketTradingDto.EventPlayer> eventPlayers) {
+        Map<Integer, EventPlayerData> result = new HashMap<>();
+        for (OddsmarketTradingDto.EventPlayer eventPlayer : eventPlayers) {
+            if (eventPlayer.getActive()) {
+                result.put(eventPlayer.getPlayer().getId(), protobufEventPlayerToEventPlayerData(eventPlayer));
+
+            }
+        }
+        return result;
+    }
+
+    private EventPlayerData protobufEventPlayerToEventPlayerData(OddsmarketTradingDto.EventPlayer eventPlayer) {
+        String name = null;
+        if (eventPlayer.getPlayer().getNamesCount() > 0) {
+            name = eventPlayer.getPlayer().getNames(0).getName();
+        }
+        return new EventPlayerData(name, eventPlayer.hasHome() ? eventPlayer.getHome() : null);
+    }
+
     public Event getEvent(long eventId) {
         return eventByEventId.get(eventId);
     }
@@ -142,6 +164,13 @@ public class InMemoryStateStorage {
         if (eventPatch.getUpdatedMarketsCount() > 0) {
             Map<MarketKey, Map<OutcomeKey, OutcomeData>> updatedMarkets = protobufMarketsToMarkets(eventPatch.getUpdatedMarketsList());
             currentEvent.outcomesByMarket.putAll(updatedMarkets);
+        }
+        for (OddsmarketTradingDto.EventPlayer eventPlayer : eventPatch.getUpdatedPlayersList()) {
+            if (eventPlayer.getActive()) {
+                event.players.put(eventPlayer.getPlayer().getId(), protobufEventPlayerToEventPlayerData(eventPlayer));
+            } else {
+                event.players.remove(eventPlayer.getPlayer().getId());
+            }
         }
     }
 
@@ -174,6 +203,7 @@ public class InMemoryStateStorage {
         public final Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarket;
         public final LiveEventInfo liveEventInfo;
         public final String directLink;
+        public final Map<Integer, EventPlayerData> players;
 
         public Event copy() {
             Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarketCopy = new HashMap<>();
@@ -199,8 +229,9 @@ public class InMemoryStateStorage {
                     leagueName,
                     outcomesByMarketCopy,
                     liveEventInfo.copy(),
-                    directLink
-                    );
+                    directLink,
+                    players
+            );
         }
 
         public boolean hasMarket(MarketKey marketKey) {
@@ -300,6 +331,17 @@ public class InMemoryStateStorage {
                     rawOutcomeId,
                     directLink
             );
+        }
+    }
+
+    @AllArgsConstructor
+    public static class EventPlayerData {
+        public String name;
+        public Boolean isHome;
+
+        @Override
+        public String toString() {
+            return "name='" + name + "', isHome= " + isHome;
         }
     }
 }

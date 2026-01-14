@@ -7,7 +7,7 @@
 
     <groupId>com.aspiralimited.oddsmarket</groupId>
     <artifactId>client</artifactId>
-    <version>4.7.6</version>
+    <version>4.8.0</version>
 
 
     <properties>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.aspiralimited.oddsmarket</groupId>
             <artifactId>api</artifactId>
-            <version>4.6.4</version>
+            <version>4.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

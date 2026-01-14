@@ -21,5 +21,9 @@ public class FieldsMessage implements WebSocketMessage {
         List<String> event;
 
         List<String> eventLiveInfo;
+
+        List<String> eventPlayers;
+
+        List<String> eventPlayer;
     }
 }

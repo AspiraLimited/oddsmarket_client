@@ -5,7 +5,9 @@ import com.aspiralimited.oddsmarket.client.wsevents.message.PingWebSocketMessage
 import com.aspiralimited.oddsmarket.client.wsevents.message.PongWebSocketMessage;
 import com.aspiralimited.oddsmarket.client.wsevents.message.WebSocketMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -48,7 +50,8 @@ public class OddsmarketClient {
     private static final String CLOSE_REASON_PONG_TIMEOUT = "Pong timeout";
 
     @Getter
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private final List<OddsmarketWebSocketListener> webSocketListeners = new CopyOnWriteArrayList<>();
 
     private final Options options;
@@ -180,7 +183,13 @@ public class OddsmarketClient {
 
         @Override
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
-            WebSocketMessage message = objectMapper.readValue(text, WebSocketMessage.class);
+            WebSocketMessage message;
+            try {
+                message = objectMapper.readValue(text, WebSocketMessage.class);
+            } catch (InvalidTypeIdException e) {
+                log.debug("Skipping unknown message type: {}", text);
+                return;
+            }
             PingPongHandler pingPongHandler = pingPongHandlerMap.get(websocket);
             if (pingPongHandler != null) {
                 pingPongHandler.onWebSocketMessage(message);

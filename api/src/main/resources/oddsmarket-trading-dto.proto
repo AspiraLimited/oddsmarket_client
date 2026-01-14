@@ -111,6 +111,10 @@ message EventSnapshot {
      * Full list of markets associated with the event.
      */
     repeated MarketSnapshot markets = 4;
+    /**
+     * List of players participating in the event.
+     */
+    repeated EventPlayer players = 5;
 }
 
 /**
@@ -215,6 +219,12 @@ message EventPatch {
      * If new market state comes with empty list of outcomes, then the market should be removed.
      */
     repeated MarketSnapshot updatedMarkets = 4;
+    /**
+     * List of updated players participating in the event.
+     * New players should be added to the list, and existing players should be replaced.
+     * If a player is marked as non-active (active=false), then the player should be removed from the event.
+     */
+    repeated EventPlayer updatedPlayers = 5;
 }
 
 /**
@@ -394,6 +404,25 @@ message Player {
      * Name of the player (possibly in different locales)
      */
     repeated LocalizedName names = 2;
+}
+
+/**
+ * Event player information.
+ */
+message EventPlayer {
+    /**
+     * Player information.
+     */
+    Player player = 1;
+    /**
+     * Non-active players should be removed from the event.
+     */
+    bool active = 2;
+    /**
+     * Indicates if the player is on home or away team.
+     * true - home team, false - away team, undefined - unknown.
+     */
+    optional bool home = 3;
 }
 
 /**
