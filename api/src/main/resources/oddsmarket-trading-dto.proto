@@ -661,6 +661,106 @@ enum ScoreType {
     TOSS = 33;
     /** Cricket: number of wickets lost by the team. */
     WICKETS = 34;
+    /** Qualified to next round. */
+    TO_QUALIFY = 35;
+    /** All shots made. */
+    SHOTS_ALL = 36;
+    /** Goalkeeper saves count. */
+    SAVES = 37;
+    /** Completed passes count. */
+    PASSES_COMPLETED = 38;
+    /** Blocked shots count. */
+    BLOCK_SHOTS = 39;
+    /** Turnovers count. */
+    TURNOVERS = 40;
+    /** Number of blocks made. */
+    BLOCKS = 41;
+    /** Number of steals made. */
+    STEALS = 42;
+    /** Map or game duration (minutes). */
+    DURATION = 43;
+    /** Tries scored. */
+    TRIES = 44;
+    /** Singles hit count (1B). */
+    HITS_SINGLE = 45;
+    /** Doubles hit count (2B). */
+    HITS_DOUBLE = 46;
+    /** Triples hit count (3B). */
+    HITS_TRIPLE = 47;
+    /** Home runs scored (HR). */
+    HOMERUN = 48;
+    /** Total bases count (TB). */
+    TOTAL_BASES = 49;
+    /** Stolen bases count (SB). */
+    STOLEN_BASES = 50;
+    /** Walks count. */
+    WALKS = 51;
+    /** Walks allowed count. */
+    WALKS_ALLOWED = 52;
+    /** Strikeouts count (SO). */
+    STRIKEOUTS = 53;
+    /** Strikeouts pitched count (K). */
+    STRIKEOUTS_PITCHED = 54;
+    /** Earned runs count (ER). */
+    EARNED_RUNS = 55;
+    /** Hits allowed count. */
+    HITS_ALLOWED = 56;
+    /** Outs count. */
+    OUTS = 57;
+    /** RBIs (Runs batted in) count. */
+    RBI = 58;
+    /** Hits, runs, RBIs total. */
+    HITS_RUNS_RBI = 59;
+    /** Passing touchdowns count. */
+    PASSING_TD = 60;
+    /** Rushing touchdowns count. */
+    RUSHING_TD = 61;
+    /** Receiving touchdowns count. */
+    RECEIVING_TD = 62;
+    /** Passing yards gained. */
+    PASSING_YARDS = 63;
+    /** Rushing yards gained. */
+    RUSHING_YARDS = 64;
+    /** Receiving yards gained. */
+    RECEIVING_YARDS = 65;
+    /** Receptions count (catches). */
+    RECEPTIONS = 66;
+    /** Passing attempts count. */
+    PASSING_ATTEMPTS = 67;
+    /** Completed passes count. */
+    PASSING_COMPLETIONS = 68;
+    /** Rushing attempts count. */
+    RUSHING_ATTEMPTS = 69;
+    /** Interceptions thrown count. */
+    INTERCEPTIONS_THROWN = 70;
+    /** Defensive interceptions count. */
+    INTERCEPTIONS_DEFENSIVE = 71;
+    /** Receiving + rushing yards total. */
+    RECEIVING_RUSHING_YARDS = 72;
+    /** Rushing + passing yards total. */
+    RUSHING_PASSING_YARDS = 73;
+    /** Yards from completed passes. */
+    PASSING_COMPLETION_YARDS = 74;
+    /** Yards gained per reception. */
+    RECEPTION_YARDS = 75;
+    /** Tackles count. */
+    TACKLES = 76;
+    /** Defensive assists count. */
+    DEFENSIVE_ASSISTS = 77;
+    /** Tackles + assists count. */
+    TACKLES_ASSISTS = 78;
+    /** Kicking points count (FG + PAT). */
+    KICKING = 79;
+    /** Quarterback sacks count. */
+    SACKS = 80;
+    /** Touchdown yards distance. */
+    TOUCHDOWN_YARDS = 81;
+    /** Field goal yards distance. */
+    FIELD_GOALS_YARDS = 82;
+    /** Punts count. */
+    PUNTS = 83;
+    /** Downs achieved count. */
+    DOWNS = 84;
 }
 
 /**
