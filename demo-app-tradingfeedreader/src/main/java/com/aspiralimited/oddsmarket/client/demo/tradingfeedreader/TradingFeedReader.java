@@ -37,7 +37,7 @@ public class TradingFeedReader {
                 if (sportIdsPattern.matcher(str).matches()) {
                     sportIds = Arrays.stream(str.split(",")).map(Short::parseShort).collect(Collectors.toSet());
                 } else {
-                    locales = Arrays.stream(str.split(",")).collect(Collectors.toSet());
+                    sportIds = Arrays.stream(str.split(",")).map(Short::parseShort).collect(Collectors.toSet());
                 }
 
 
