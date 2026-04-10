@@ -10,10 +10,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_OPTION;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_OPTION;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INTERACTIVE_FLAG;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INTERACTIVE_MODE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LOCALES_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.OPTION_PREFIX;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.POSITIONAL_SPORT_IDS_REGEX;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RAW_ID_ORIGIN_BOOKMAKER_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RAW_ID_ORIGIN_BOOKMAKER_ID_OPTION;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SAVE_MESSAGES_TO_FOLDER_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SAVE_MESSAGES_TO_FOLDER_OPTION;
+
 public class TradingFeedReaderCliParser {
 
     public boolean isInteractiveMode(String[] args) {
-        return args.length == 1 && ("--interactive".equalsIgnoreCase(args[0]) || "interactive".equalsIgnoreCase(args[0]));
+        return args.length == 1 && (INTERACTIVE_FLAG.equalsIgnoreCase(args[0]) || INTERACTIVE_MODE.equalsIgnoreCase(args[0]));
     }
 
     public TradingFeedReaderConfiguration parse(String[] args) {
@@ -34,24 +48,24 @@ public class TradingFeedReaderCliParser {
 
         Map<String, String> options = parseOptions(args, nextIndex);
 
-        Path saveMessagesToFolder = options.containsKey("savemessagestofolder")
-                ? Paths.get(requireNonEmpty(options.get("savemessagestofolder"), "saveMessagesToFolder path must not be empty"))
+        Path saveMessagesToFolder = options.containsKey(SAVE_MESSAGES_TO_FOLDER_OPTION)
+                ? Paths.get(requireNonEmpty(options.get(SAVE_MESSAGES_TO_FOLDER_OPTION), "saveMessagesToFolder path must not be empty"))
                 : null;
 
-        Set<String> locales = options.containsKey("locales")
-                ? parseStringSet(options.get("locales"))
+        Set<String> locales = options.containsKey(LOCALES_KEY)
+                ? parseStringSet(options.get(LOCALES_KEY))
                 : null;
 
-        Short rawIdOriginBookmakerId = options.containsKey("rawidoriginbookmakerid")
-                ? Short.parseShort(requireNonEmpty(options.get("rawidoriginbookmakerid"), "rawIdOriginBookmakerId must not be empty"))
+        Short rawIdOriginBookmakerId = options.containsKey(RAW_ID_ORIGIN_BOOKMAKER_ID_OPTION)
+                ? Short.parseShort(requireNonEmpty(options.get(RAW_ID_ORIGIN_BOOKMAKER_ID_OPTION), "rawIdOriginBookmakerId must not be empty"))
                 : null;
 
-        Boolean fillRawOutcomeId = options.containsKey("fillrawoutcomeid")
-                ? parseBooleanOption("fillRawOutcomeId", options.get("fillrawoutcomeid"))
+        Boolean fillRawOutcomeId = options.containsKey(FILL_RAW_OUTCOME_ID_OPTION)
+                ? parseBooleanOption(FILL_RAW_OUTCOME_ID_KEY, options.get(FILL_RAW_OUTCOME_ID_OPTION))
                 : null;
 
-        Boolean fillDirectLink = options.containsKey("filldirectlink")
-                ? parseBooleanOption("fillDirectLink", options.get("filldirectlink"))
+        Boolean fillDirectLink = options.containsKey(FILL_DIRECT_LINK_OPTION)
+                ? parseBooleanOption(FILL_DIRECT_LINK_KEY, options.get(FILL_DIRECT_LINK_OPTION))
                 : null;
 
         return new TradingFeedReaderConfiguration(
@@ -71,8 +85,8 @@ public class TradingFeedReaderCliParser {
         Map<String, String> options = new LinkedHashMap<>();
         for (int i = startIndex; i < args.length; i++) {
             String argument = args[i];
-            if (argument.startsWith("--")) {
-                argument = argument.substring(2);
+            if (argument.startsWith(OPTION_PREFIX)) {
+                argument = argument.substring(OPTION_PREFIX.length());
             }
             int separatorIndex = argument.indexOf('=');
             if (separatorIndex >= 0) {
@@ -91,7 +105,7 @@ public class TradingFeedReaderCliParser {
     }
 
     private boolean isPositionalSportIds(String value) {
-        return !value.startsWith("--") && !value.contains("=") && value.matches("^\\d+(,\\d+)*$");
+        return !value.startsWith(OPTION_PREFIX) && !value.contains("=") && value.matches(POSITIONAL_SPORT_IDS_REGEX);
     }
 
     private Set<Short> parseShortSet(String value) {

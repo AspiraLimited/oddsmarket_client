@@ -32,19 +32,43 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.ACTIVE_EVENTS_COUNT_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.ACTIVE_EVENTS_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.ARRIVAL_TIMESTAMP_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.CONTENT_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.ERROR_MESSAGE_TYPE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.EVENTS_REMOVED_MESSAGE_TYPE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.EVENT_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.EVENT_PATCH_MESSAGE_TYPE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.EVENT_SNAPSHOT_MESSAGE_TYPE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FEED_DOMAIN_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.HEARTBEAT_MESSAGE_TYPE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INITIAL_SYNC_COMPLETE_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INITIAL_SYNC_COMPLETE_MESSAGE_TYPE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LAST_MESSAGE_ARRIVAL_TIMESTAMP_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LAST_PROCESSED_MESSAGE_ID_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LOCALES_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_FOLDER_NAME;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_TOTAL_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGE_TYPE_COUNTERS_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.NAME_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.PAYLOAD_NOT_SET_MESSAGE_TYPE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RAW_ID_ORIGIN_BOOKMAKER_ID_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SAVE_MESSAGES_TO_FOLDER_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SEEN_EVENTS_COUNT_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SEEN_EVENTS_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SESSION_FOLDER_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SESSION_FOLDER_NAME;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SESSION_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SESSION_START_MESSAGE_TYPE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SPORT_IDS_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SUBSCRIPTION_INFO_FILENAME;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SUBSCRIPTION_STATS_FILENAME;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.TEMP_FILE_SUFFIX;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.TRADING_FEED_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.UPDATED_AT_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.WEBSOCKET_URL_KEY;
 
 public class TradingFeedSessionRecorder implements Closeable {
@@ -104,9 +128,9 @@ public class TradingFeedSessionRecorder implements Closeable {
         String arrivalTimestampIso = ISO_INSTANT.format(arrivalTimestamp);
 
         ObjectNode envelope = objectMapper.createObjectNode();
-        envelope.put("arrivalTimestamp", arrivalTimestampIso);
+        envelope.put(ARRIVAL_TIMESTAMP_KEY, arrivalTimestampIso);
         JsonNode contentNode = objectMapper.readTree(protobufPrinter.print(serverMessage));
-        envelope.set("content", contentNode);
+        envelope.set(CONTENT_KEY, contentNode);
 
         Path messageFile = messagesFolder.resolve(buildMessageFileName(singleEventId, messageId, messageType));
         writeJsonAtomically(messageFile, envelope);
@@ -199,25 +223,25 @@ public class TradingFeedSessionRecorder implements Closeable {
 
     private ObjectNode buildSubscriptionStatsNode() {
         ObjectNode root = objectMapper.createObjectNode();
-        root.put("updatedAt", ISO_INSTANT.format(Instant.now()));
-        root.put("messagesTotal", messagesTotal);
-        root.put("lastProcessedMessageId", lastProcessedMessageId);
+        root.put(UPDATED_AT_KEY, ISO_INSTANT.format(Instant.now()));
+        root.put(MESSAGES_TOTAL_KEY, messagesTotal);
+        root.put(LAST_PROCESSED_MESSAGE_ID_KEY, lastProcessedMessageId);
         if (lastMessageArrivalTimestamp != null) {
-            root.put("lastMessageArrivalTimestamp", lastMessageArrivalTimestamp);
+            root.put(LAST_MESSAGE_ARRIVAL_TIMESTAMP_KEY, lastMessageArrivalTimestamp);
         } else {
-            root.putNull("lastMessageArrivalTimestamp");
+            root.putNull(LAST_MESSAGE_ARRIVAL_TIMESTAMP_KEY);
         }
         if (sessionId != null) {
-            root.put("sessionId", sessionId);
+            root.put(SESSION_ID_KEY, sessionId);
         } else {
-            root.putNull("sessionId");
+            root.putNull(SESSION_ID_KEY);
         }
-        root.put("initialSyncComplete", initialSyncComplete);
-        root.put("activeEventsCount", activeEventNames.size());
-        root.put("seenEventsCount", seenEventNames.size());
-        root.set("messageTypeCounters", objectMapper.valueToTree(messageTypeCounters));
-        root.set("activeEvents", objectMapper.valueToTree(toEventSummaries(activeEventNames)));
-        root.set("seenEvents", objectMapper.valueToTree(toEventSummaries(seenEventNames)));
+        root.put(INITIAL_SYNC_COMPLETE_KEY, initialSyncComplete);
+        root.put(ACTIVE_EVENTS_COUNT_KEY, activeEventNames.size());
+        root.put(SEEN_EVENTS_COUNT_KEY, seenEventNames.size());
+        root.set(MESSAGE_TYPE_COUNTERS_KEY, objectMapper.valueToTree(messageTypeCounters));
+        root.set(ACTIVE_EVENTS_KEY, objectMapper.valueToTree(toEventSummaries(activeEventNames)));
+        root.set(SEEN_EVENTS_KEY, objectMapper.valueToTree(toEventSummaries(seenEventNames)));
         return root;
     }
 
@@ -225,8 +249,8 @@ public class TradingFeedSessionRecorder implements Closeable {
         List<Map<String, Object>> result = new ArrayList<>();
         for (Map.Entry<Long, String> entry : eventNames.entrySet()) {
             Map<String, Object> eventSummary = new LinkedHashMap<>();
-            eventSummary.put("eventId", entry.getKey());
-            eventSummary.put("name", entry.getValue());
+            eventSummary.put(EVENT_ID_KEY, entry.getKey());
+            eventSummary.put(NAME_KEY, entry.getValue());
             result.add(eventSummary);
         }
         return result;
@@ -256,22 +280,22 @@ public class TradingFeedSessionRecorder implements Closeable {
     private String messageType(OddsmarketTradingDto.ServerMessage serverMessage) {
         switch (serverMessage.getPayloadCase()) {
             case SESSIONSTART:
-                return "sessionStart";
+                return SESSION_START_MESSAGE_TYPE;
             case EVENTSNAPSHOT:
-                return "eventSnapshot";
+                return EVENT_SNAPSHOT_MESSAGE_TYPE;
             case EVENTPATCH:
-                return "eventPatch";
+                return EVENT_PATCH_MESSAGE_TYPE;
             case EVENTSREMOVED:
-                return "eventsRemoved";
+                return EVENTS_REMOVED_MESSAGE_TYPE;
             case INITIALSYNCCOMPLETE:
-                return "initialSyncComplete";
+                return INITIAL_SYNC_COMPLETE_MESSAGE_TYPE;
             case HEARTBEAT:
-                return "heartbeat";
+                return HEARTBEAT_MESSAGE_TYPE;
             case ERRORMESSAGE:
-                return "errorMessage";
+                return ERROR_MESSAGE_TYPE;
             case PAYLOAD_NOT_SET:
             default:
-                return "payloadNotSet";
+                return PAYLOAD_NOT_SET_MESSAGE_TYPE;
         }
     }
 
@@ -332,7 +356,7 @@ public class TradingFeedSessionRecorder implements Closeable {
 
     private void writeJsonAtomically(Path targetFile, JsonNode content) throws IOException {
         Files.createDirectories(targetFile.getParent());
-        Path tempFile = targetFile.resolveSibling(targetFile.getFileName() + ".tmp");
+        Path tempFile = targetFile.resolveSibling(targetFile.getFileName() + TEMP_FILE_SUFFIX);
         Files.writeString(tempFile, objectMapper.writeValueAsString(content), StandardCharsets.UTF_8);
         try {
             Files.move(tempFile, targetFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
