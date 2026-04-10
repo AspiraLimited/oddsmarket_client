@@ -24,6 +24,7 @@ public class InteractiveTradingFeedReaderPrompter {
         if (saveMessages) {
             saveMessagesToFolder = Paths.get(promptRequired(scanner, "Folder path for saveMessagesToFolder: "));
         }
+        boolean groupMessagesByEvent = Boolean.parseBoolean(promptBoolean(scanner, "Group saved message files by event ID in the filename? (y/n): "));
 
         Set<String> locales = parseStringSet(promptOptional(scanner, "Locales (comma-separated ISO codes, optional): "));
         Short rawIdOriginBookmakerId = parseShort(promptOptional(scanner, "rawIdOriginBookmakerId (optional): "));
@@ -36,6 +37,7 @@ public class InteractiveTradingFeedReaderPrompter {
                 bookmakerId,
                 sportIds,
                 saveMessagesToFolder,
+                groupMessagesByEvent,
                 locales,
                 rawIdOriginBookmakerId,
                 fillRawOutcomeId,

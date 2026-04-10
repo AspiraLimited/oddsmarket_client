@@ -14,6 +14,7 @@ public class TradingFeedReaderConfiguration {
     private final short tradingFeedId;
     private final Set<Short> sportIds;
     private final Path saveMessagesToFolder;
+    private final boolean groupMessagesByEvent;
     private final Set<String> locales;
     private final Short rawIdOriginBookmakerId;
     private final Boolean fillRawOutcomeId;

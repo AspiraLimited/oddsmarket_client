@@ -44,6 +44,7 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FEED_DOMAIN_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.GROUP_MESSAGES_BY_EVENT_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.HEARTBEAT_MESSAGE_TYPE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INITIAL_SYNC_COMPLETE_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INITIAL_SYNC_COMPLETE_MESSAGE_TYPE;
@@ -195,6 +196,7 @@ public class TradingFeedSessionRecorder implements Closeable {
         root.put(WEBSOCKET_URL_KEY, toFeedWebsocketUrl(configuration.getFeedDomain()));
         root.put(TRADING_FEED_ID_KEY, configuration.getTradingFeedId());
         root.put(SAVE_MESSAGES_TO_FOLDER_KEY, configuration.getSaveMessagesToFolder().toAbsolutePath().toString());
+        root.put(GROUP_MESSAGES_BY_EVENT_KEY, configuration.isGroupMessagesByEvent());
         root.put(SESSION_FOLDER_KEY, sessionFolder.toAbsolutePath().toString());
 
         root.set(SPORT_IDS_KEY, objectMapper.valueToTree(sortedShortValues(configuration.getSportIds())));
@@ -258,8 +260,11 @@ public class TradingFeedSessionRecorder implements Closeable {
 
     private String buildMessageFileName(Long eventId, long messageId, String messageType) {
         String normalizedType = messageType.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase(Locale.ROOT);
-        if (eventId != null) {
+        if (configuration.isGroupMessagesByEvent() && eventId != null) {
             return eventId + "_" + messageId + "_" + normalizedType + ".json";
+        }
+        if (eventId != null) {
+            return messageId + "_" + eventId + "_" + normalizedType + ".json";
         }
         return messageId + "_" + normalizedType + ".json";
     }

@@ -16,6 +16,7 @@ public final class Constants {
     public static final String WEBSOCKET_URL_KEY = "websocketUrl";
     public static final String TRADING_FEED_ID_KEY = "tradingFeedId";
     public static final String SAVE_MESSAGES_TO_FOLDER_KEY = "saveMessagesToFolder";
+    public static final String GROUP_MESSAGES_BY_EVENT_KEY = "groupMessagesByEvent";
     public static final String SESSION_FOLDER_KEY = "sessionFolder";
     public static final String SPORT_IDS_KEY = "sportIds";
     public static final String LOCALES_KEY = "locales";
@@ -39,6 +40,7 @@ public final class Constants {
     public static final String NAME_KEY = "name";
 
     public static final String SAVE_MESSAGES_TO_FOLDER_OPTION = "savemessagestofolder";
+    public static final String GROUP_MESSAGES_BY_EVENT_OPTION = "groupmessagesbyevent";
     public static final String RAW_ID_ORIGIN_BOOKMAKER_ID_OPTION = "rawidoriginbookmakerid";
     public static final String FILL_RAW_OUTCOME_ID_OPTION = "fillrawoutcomeid";
     public static final String FILL_DIRECT_LINK_OPTION = "filldirectlink";

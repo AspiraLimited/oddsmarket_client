@@ -14,6 +14,8 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.GROUP_MESSAGES_BY_EVENT_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.GROUP_MESSAGES_BY_EVENT_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INTERACTIVE_FLAG;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INTERACTIVE_MODE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LOCALES_KEY;
@@ -52,6 +54,9 @@ public class TradingFeedReaderCliParser {
                 ? Paths.get(requireNonEmpty(options.get(SAVE_MESSAGES_TO_FOLDER_OPTION), "saveMessagesToFolder path must not be empty"))
                 : null;
 
+        boolean groupMessagesByEvent = options.containsKey(GROUP_MESSAGES_BY_EVENT_OPTION)
+                && parseBooleanOption(GROUP_MESSAGES_BY_EVENT_KEY, options.get(GROUP_MESSAGES_BY_EVENT_OPTION));
+
         Set<String> locales = options.containsKey(LOCALES_KEY)
                 ? parseStringSet(options.get(LOCALES_KEY))
                 : null;
@@ -74,6 +79,7 @@ public class TradingFeedReaderCliParser {
                 bookmakerId,
                 sportIds,
                 saveMessagesToFolder,
+                groupMessagesByEvent,
                 locales,
                 rawIdOriginBookmakerId,
                 fillRawOutcomeId,
