@@ -9,11 +9,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class InteractiveTradingFeedReaderPrompter {
+    private static final String LIVE_DOMAIN_ALIAS = "live";
+    private static final String PREMATCH_DOMAIN_ALIAS = "prematch";
+    private static final String LIVE_DOMAIN = "api-lv.oddsmarket.org";
+    private static final String PREMATCH_DOMAIN = "api-pr.oddsmarket.org";
 
     public TradingFeedReaderConfiguration prompt() {
         Scanner scanner = new Scanner(System.in);
 
-        String feedDomain = promptRequired(scanner, "Trading feed domain (for example api-pr.oddsmarket.org): ");
+        String feedDomain = normalizeDomain(promptRequired(scanner,
+                "oddsmarket domain (enter 'live' or 'prematch' or enter full domain, like api-pr.oddsmarket.org): "));
         String apiKey = promptRequired(scanner, "API key: ");
         short bookmakerId = Short.parseShort(promptRequired(scanner, "Trading Feed ID: "));
 
@@ -111,5 +116,15 @@ public class InteractiveTradingFeedReaderPrompter {
             return Boolean.parseBoolean(value);
         }
         throw new IllegalArgumentException("Boolean value must be true or false");
+    }
+
+    private String normalizeDomain(String value) {
+        if (LIVE_DOMAIN_ALIAS.equalsIgnoreCase(value)) {
+            return LIVE_DOMAIN;
+        }
+        if (PREMATCH_DOMAIN_ALIAS.equalsIgnoreCase(value)) {
+            return PREMATCH_DOMAIN;
+        }
+        return value;
     }
 }
