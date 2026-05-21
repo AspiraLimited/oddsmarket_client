@@ -83,7 +83,6 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.UPDATED_AT_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.WEBSOCKET_URL_KEY;
 
-// TODO anse - add --help cli command where there would be special section for AI-agent. Also need to describe how to use messagesIndex.jsonl. Or need to create skill file or smth like that
 public class TradingFeedSessionRecorder implements Closeable {
     private static final DateTimeFormatter ISO_INSTANT = DateTimeFormatter.ISO_INSTANT;
 
