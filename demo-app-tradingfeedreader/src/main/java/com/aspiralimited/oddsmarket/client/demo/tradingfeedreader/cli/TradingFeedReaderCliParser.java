@@ -23,6 +23,8 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.POSITIONAL_SPORT_IDS_REGEX;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RAW_ID_ORIGIN_BOOKMAKER_ID_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RAW_ID_ORIGIN_BOOKMAKER_ID_OPTION;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RECORD_ONLY_EVENT_IDS_OPTION;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RECORD_ONLY_RAW_EVENT_IDS_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SAVE_MESSAGES_TO_FOLDER_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SAVE_MESSAGES_TO_FOLDER_OPTION;
 
@@ -73,6 +75,14 @@ public class TradingFeedReaderCliParser {
                 ? parseBooleanOption(FILL_DIRECT_LINK_KEY, options.get(FILL_DIRECT_LINK_OPTION))
                 : null;
 
+        Set<Long> recordOnlyEventIds = options.containsKey(RECORD_ONLY_EVENT_IDS_OPTION)
+                ? parseLongSet(options.get(RECORD_ONLY_EVENT_IDS_OPTION))
+                : null;
+
+        Set<String> recordOnlyRawEventIds = options.containsKey(RECORD_ONLY_RAW_EVENT_IDS_OPTION)
+                ? parseStringSet(options.get(RECORD_ONLY_RAW_EVENT_IDS_OPTION))
+                : null;
+
         return new TradingFeedReaderConfiguration(
                 feedDomain,
                 apiKey,
@@ -83,7 +93,9 @@ public class TradingFeedReaderCliParser {
                 locales,
                 rawIdOriginBookmakerId,
                 fillRawOutcomeId,
-                fillDirectLink
+                fillDirectLink,
+                recordOnlyEventIds,
+                recordOnlyRawEventIds
         );
     }
 
@@ -122,6 +134,17 @@ public class TradingFeedReaderCliParser {
                 .map(String::trim)
                 .filter(part -> !part.isEmpty())
                 .map(Short::parseShort)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private Set<Long> parseLongSet(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return Arrays.stream(value.split(","))
+                .map(String::trim)
+                .filter(part -> !part.isEmpty())
+                .map(Long::parseLong)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

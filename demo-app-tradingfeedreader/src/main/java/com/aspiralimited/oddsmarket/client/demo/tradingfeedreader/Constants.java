@@ -24,6 +24,8 @@ public final class Constants {
     public static final String RAW_ID_ORIGIN_BOOKMAKER_ID_KEY = "rawIdOriginBookmakerId";
     public static final String FILL_RAW_OUTCOME_ID_KEY = "fillRawOutcomeId";
     public static final String FILL_DIRECT_LINK_KEY = "fillDirectLink";
+    public static final String RECORD_ONLY_EVENT_IDS_KEY = "recordOnlyEventIds";
+    public static final String RECORD_ONLY_RAW_EVENT_IDS_KEY = "recordOnlyRawEventIds";
     public static final String ARRIVAL_TIMESTAMP_KEY = "arrivalTimestamp";
     public static final String CONTENT_KEY = "content";
     public static final String UPDATED_AT_KEY = "updatedAt";
@@ -49,6 +51,8 @@ public final class Constants {
     public static final String RAW_ID_ORIGIN_BOOKMAKER_ID_OPTION = "rawidoriginbookmakerid";
     public static final String FILL_RAW_OUTCOME_ID_OPTION = "fillrawoutcomeid";
     public static final String FILL_DIRECT_LINK_OPTION = "filldirectlink";
+    public static final String RECORD_ONLY_EVENT_IDS_OPTION = "recordonlyeventids";
+    public static final String RECORD_ONLY_RAW_EVENT_IDS_OPTION = "recordonlyraweventids";
 
     public static final String SESSION_START_MESSAGE_TYPE = "sessionStart";
     public static final String EVENT_SNAPSHOT_MESSAGE_TYPE = "eventSnapshot";

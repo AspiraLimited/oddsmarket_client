@@ -39,7 +39,7 @@ public class TradingFeedReader {
     private static void printUsage() {
         printToConsole("Required command-line arguments are missing!");
         printToConsole("Usage examples:");
-        printToConsole("tradingfeedreader.sh api-pr.oddsmarket.org YOUR-API-KEY BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...] [--saveMessagesToFolder path] [--groupMessagesByEvent true|false]");
+        printToConsole("tradingfeedreader.sh api-pr.oddsmarket.org YOUR-API-KEY BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...] [--saveMessagesToFolder path] [--groupMessagesByEvent true|false] [--recordOnlyEventIds id1,id2,...] [--recordOnlyRawEventIds raw1,raw2,...]");
         printToConsole("tradingfeedreader.sh --interactive");
     }
 

@@ -25,10 +25,12 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -62,6 +64,8 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.NAME_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.PAYLOAD_NOT_SET_MESSAGE_TYPE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RAW_ID_ORIGIN_BOOKMAKER_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RECORD_ONLY_EVENT_IDS_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.RECORD_ONLY_RAW_EVENT_IDS_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SAVE_MESSAGES_TO_FOLDER_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SEEN_EVENTS_COUNT_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SEEN_EVENTS_KEY;
@@ -79,6 +83,7 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.UPDATED_AT_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.WEBSOCKET_URL_KEY;
 
+// TODO anse - add --help cli command where there would be special section for AI-agent. Also need to describe how to use messagesIndex.jsonl. Or need to create skill file or smth like that
 public class TradingFeedSessionRecorder implements Closeable {
     private static final DateTimeFormatter ISO_INSTANT = DateTimeFormatter.ISO_INSTANT;
 
@@ -97,6 +102,10 @@ public class TradingFeedSessionRecorder implements Closeable {
     private final Map<Long, String> seenEventNames = new TreeMap<>();
     private final Map<Long, String> activeEventNames = new TreeMap<>();
     private final List<ObjectNode> pendingIndexEntries = new ArrayList<>();
+    private final Map<Long, String> rawEventIdByEventId = new HashMap<>();
+    private final Set<Long> recordOnlyEventIds;
+    private final Set<String> recordOnlyRawEventIds;
+    private final boolean filterActive;
 
     private long messagesTotal;
     private long lastProcessedMessageId;
@@ -108,6 +117,10 @@ public class TradingFeedSessionRecorder implements Closeable {
 
     public TradingFeedSessionRecorder(TradingFeedReaderConfiguration configuration) throws IOException {
         this.configuration = configuration;
+        this.recordOnlyEventIds = configuration.getRecordOnlyEventIds();
+        this.recordOnlyRawEventIds = configuration.getRecordOnlyRawEventIds();
+        this.filterActive = (recordOnlyEventIds != null && !recordOnlyEventIds.isEmpty())
+                || (recordOnlyRawEventIds != null && !recordOnlyRawEventIds.isEmpty());
         this.objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         this.compactJsonWriter = this.objectMapper.writer().without(SerializationFeature.INDENT_OUTPUT);
         this.protobufPrinter = JsonFormat.printer()
@@ -132,6 +145,12 @@ public class TradingFeedSessionRecorder implements Closeable {
             InMemoryStateStorage inMemoryStateStorage
     ) throws IOException {
         if (closed) {
+            return;
+        }
+
+        updateRawEventIdCache(serverMessage);
+
+        if (!shouldRecord(serverMessage)) {
             return;
         }
 
@@ -276,7 +295,30 @@ public class TradingFeedSessionRecorder implements Closeable {
             root.putNull(FILL_DIRECT_LINK_KEY);
         }
 
+        if (recordOnlyEventIds != null && !recordOnlyEventIds.isEmpty()) {
+            root.set(RECORD_ONLY_EVENT_IDS_KEY, objectMapper.valueToTree(sortedLongValues(recordOnlyEventIds)));
+        } else {
+            root.putNull(RECORD_ONLY_EVENT_IDS_KEY);
+        }
+        if (recordOnlyRawEventIds != null && !recordOnlyRawEventIds.isEmpty()) {
+            root.set(RECORD_ONLY_RAW_EVENT_IDS_KEY, objectMapper.valueToTree(sortedStringValues(recordOnlyRawEventIds)));
+        } else {
+            root.putNull(RECORD_ONLY_RAW_EVENT_IDS_KEY);
+        }
+
         return root;
+    }
+
+    private List<Long> sortedLongValues(Iterable<Long> values) {
+        if (values == null) {
+            return List.of();
+        }
+        List<Long> result = new ArrayList<>();
+        for (Long value : values) {
+            result.add(value);
+        }
+        result.sort(Comparator.naturalOrder());
+        return result;
     }
 
     private ObjectNode buildSubscriptionStatsNode() {
@@ -323,6 +365,77 @@ public class TradingFeedSessionRecorder implements Closeable {
             return messageId + "_" + eventId + "_" + normalizedType + ".json";
         }
         return messageId + "_" + normalizedType + ".json";
+    }
+
+    private boolean shouldRecord(OddsmarketTradingDto.ServerMessage serverMessage) {
+        if (!filterActive) {
+            return true;
+        }
+        switch (serverMessage.getPayloadCase()) {
+            case EVENTSNAPSHOT: {
+                OddsmarketTradingDto.EventSnapshot snapshot = serverMessage.getEventSnapshot();
+                String rawEventId = snapshot.hasEventMetadata() ? snapshot.getEventMetadata().getRawEventId() : null;
+                return matchesByEventId(snapshot.getEventId()) || matchesByRawEventId(rawEventId);
+            }
+            case EVENTPATCH: {
+                OddsmarketTradingDto.EventPatch patch = serverMessage.getEventPatch();
+                long eventId = patch.getEventId();
+                if (matchesByEventId(eventId)) {
+                    return true;
+                }
+                String rawEventId = patch.hasUpdatedEventMetadata()
+                        ? patch.getUpdatedEventMetadata().getRawEventId()
+                        : rawEventIdByEventId.get(eventId);
+                return matchesByRawEventId(rawEventId);
+            }
+            case EVENTSREMOVED: {
+                for (Long removedEventId : serverMessage.getEventsRemoved().getEventIdsList()) {
+                    if (matchesByEventId(removedEventId)) {
+                        return true;
+                    }
+                    if (matchesByRawEventId(rawEventIdByEventId.get(removedEventId))) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            case SESSIONSTART:
+            case INITIALSYNCCOMPLETE:
+            case HEARTBEAT:
+            case ERRORMESSAGE:
+            case PAYLOAD_NOT_SET:
+            default:
+                return false;
+        }
+    }
+
+    private boolean matchesByEventId(long eventId) {
+        return recordOnlyEventIds != null && recordOnlyEventIds.contains(eventId);
+    }
+
+    private boolean matchesByRawEventId(String rawEventId) {
+        return recordOnlyRawEventIds != null
+                && rawEventId != null
+                && !rawEventId.isEmpty()
+                && recordOnlyRawEventIds.contains(rawEventId);
+    }
+
+    private void updateRawEventIdCache(OddsmarketTradingDto.ServerMessage serverMessage) {
+        if (serverMessage.hasEventSnapshot()) {
+            OddsmarketTradingDto.EventSnapshot snapshot = serverMessage.getEventSnapshot();
+            if (snapshot.hasEventMetadata()) {
+                String rawEventId = snapshot.getEventMetadata().getRawEventId();
+                if (!rawEventId.isEmpty()) {
+                    rawEventIdByEventId.put(snapshot.getEventId(), rawEventId);
+                }
+            }
+        } else if (serverMessage.hasEventPatch() && serverMessage.getEventPatch().hasUpdatedEventMetadata()) {
+            OddsmarketTradingDto.EventPatch patch = serverMessage.getEventPatch();
+            String rawEventId = patch.getUpdatedEventMetadata().getRawEventId();
+            if (!rawEventId.isEmpty()) {
+                rawEventIdByEventId.put(patch.getEventId(), rawEventId);
+            }
+        }
     }
 
     private Long singleEventId(OddsmarketTradingDto.ServerMessage serverMessage) {

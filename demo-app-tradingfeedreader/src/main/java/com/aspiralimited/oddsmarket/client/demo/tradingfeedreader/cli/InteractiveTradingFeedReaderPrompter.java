@@ -26,8 +26,16 @@ public class InteractiveTradingFeedReaderPrompter {
 
         boolean saveMessages = Boolean.parseBoolean(promptBoolean(scanner, "Save all incoming messages to folder? (y/n): "));
         Path saveMessagesToFolder = null;
+        Set<Long> recordOnlyEventIds = null;
+        Set<String> recordOnlyRawEventIds = null;
         if (saveMessages) {
             saveMessagesToFolder = Paths.get(promptRequired(scanner, "Folder path for saveMessagesToFolder: "));
+            recordOnlyEventIds = parseLongSet(
+                    promptOptional(scanner, "Record only specific OddsMarket event IDs (comma-separated, optional, leave empty to record all): ")
+            );
+            recordOnlyRawEventIds = parseStringSet(
+                    promptOptional(scanner, "Record only specific raw bookmaker event IDs (comma-separated, optional, requires rawIdOriginBookmakerId): ")
+            );
         }
         boolean groupMessagesByEvent = Boolean.parseBoolean(promptBoolean(scanner, "Group saved message files by event ID in the filename? (y/n): "));
 
@@ -46,7 +54,9 @@ public class InteractiveTradingFeedReaderPrompter {
                 locales,
                 rawIdOriginBookmakerId,
                 fillRawOutcomeId,
-                fillDirectLink
+                fillDirectLink,
+                recordOnlyEventIds,
+                recordOnlyRawEventIds
         );
     }
 
@@ -88,6 +98,17 @@ public class InteractiveTradingFeedReaderPrompter {
                 .map(String::trim)
                 .filter(part -> !part.isEmpty())
                 .map(Short::parseShort)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private Set<Long> parseLongSet(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return Arrays.stream(value.split(","))
+                .map(String::trim)
+                .filter(part -> !part.isEmpty())
+                .map(Long::parseLong)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

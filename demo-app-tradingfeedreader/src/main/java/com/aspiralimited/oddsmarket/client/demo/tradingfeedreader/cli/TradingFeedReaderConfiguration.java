@@ -19,4 +19,6 @@ public class TradingFeedReaderConfiguration {
     private final Short rawIdOriginBookmakerId;
     private final Boolean fillRawOutcomeId;
     private final Boolean fillDirectLink;
+    private final Set<Long> recordOnlyEventIds;
+    private final Set<String> recordOnlyRawEventIds;
 }
