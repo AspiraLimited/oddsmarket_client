@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Set;
 
 @Getter
@@ -21,4 +22,8 @@ public class TradingFeedReaderConfiguration {
     private final Boolean fillDirectLink;
     private final Set<Long> recordOnlyEventIds;
     private final Set<String> recordOnlyRawEventIds;
+    /** Maximum session duration. If null, runs until Ctrl+C or fatal error. */
+    private final Duration duration;
+    /** Maximum number of messages recorded to disk. If null, unlimited. */
+    private final Long maxMessages;
 }

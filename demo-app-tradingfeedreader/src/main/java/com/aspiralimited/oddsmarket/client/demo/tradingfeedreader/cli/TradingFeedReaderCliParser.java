@@ -2,6 +2,7 @@ package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.cli;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -10,6 +11,8 @@ import java.util.Set;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.API_KEY_FILE_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.API_KEY_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DEFAULT_SAVE_MESSAGES_FOLDER;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DURATION_OPTION;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MAX_MESSAGES_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_KEY;
@@ -86,6 +89,14 @@ public class TradingFeedReaderCliParser {
                 ? CliValueParsers.parseStringSet(options.get(RECORD_ONLY_RAW_EVENT_IDS_OPTION))
                 : null;
 
+        Duration duration = options.containsKey(DURATION_OPTION)
+                ? CliValueParsers.parseDuration(options.get(DURATION_OPTION))
+                : null;
+
+        Long maxMessages = options.containsKey(MAX_MESSAGES_OPTION)
+                ? CliValueParsers.parsePositiveLong(MAX_MESSAGES_OPTION, options.get(MAX_MESSAGES_OPTION))
+                : null;
+
         return TradingFeedReaderConfiguration.builder()
                 .feedDomain(feedDomain)
                 .apiKey(apiKey)
@@ -99,6 +110,8 @@ public class TradingFeedReaderCliParser {
                 .fillDirectLink(fillDirectLink)
                 .recordOnlyEventIds(recordOnlyEventIds)
                 .recordOnlyRawEventIds(recordOnlyRawEventIds)
+                .duration(duration)
+                .maxMessages(maxMessages)
                 .build();
     }
 

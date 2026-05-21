@@ -56,6 +56,8 @@ public final class Constants {
     public static final String RECORD_ONLY_RAW_EVENT_IDS_OPTION = "recordonlyraweventids";
     public static final String API_KEY_OPTION = "apikey";
     public static final String API_KEY_FILE_OPTION = "apikeyfile";
+    public static final String DURATION_OPTION = "duration";
+    public static final String MAX_MESSAGES_OPTION = "maxmessages";
     public static final String DEFAULT_API_KEY_FILE = "api-token.txt";
     public static final String DEFAULT_SAVE_MESSAGES_FOLDER = "data";
     public static final String INTERACTIVE_PASTE_API_KEY_VALUE = "paste";

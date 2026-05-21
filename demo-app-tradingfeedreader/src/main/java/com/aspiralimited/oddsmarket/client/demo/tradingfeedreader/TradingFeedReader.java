@@ -32,9 +32,10 @@ public class TradingFeedReader {
     private static void printUsage() {
         printToConsole("Required command-line arguments are missing!");
         printToConsole("Usage examples:");
-        printToConsole("tradingfeedreader.sh api-pr.oddsmarket.org BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...] [--apiKey VALUE | --apiKeyFile path] [--saveMessagesToFolder path] [--groupMessagesByEvent true|false] [--recordOnlyEventIds id1,id2,...] [--recordOnlyRawEventIds raw1,raw2,...]");
+        printToConsole("tradingfeedreader.sh api-pr.oddsmarket.org BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...] [--apiKey VALUE | --apiKeyFile path] [--saveMessagesToFolder path] [--groupMessagesByEvent true|false] [--recordOnlyEventIds id1,id2,...] [--recordOnlyRawEventIds raw1,raw2,...] [--duration 30s|5m|1h] [--maxMessages N]");
         printToConsole("If neither --apiKey nor --apiKeyFile is given, the API key is read from ./api-token.txt by default.");
         printToConsole("If --saveMessagesToFolder is not specified, messages are written to ./data by default.");
+        printToConsole("If --duration or --maxMessages is set, the process stops gracefully when the limit is reached (same path as Ctrl+C: final summary printed, exit code 0).");
         printToConsole("tradingfeedreader.sh --interactive");
     }
 

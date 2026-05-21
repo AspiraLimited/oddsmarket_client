@@ -16,6 +16,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
 
@@ -34,7 +37,7 @@ public class TradingFeedReaderRunner {
         String feedWebsocketUrl = (configuration.getFeedDomain().startsWith("localhost") ? "ws://" : "wss://")
                 + configuration.getFeedDomain();
 
-        TradingFeedSessionListener tradingFeedListener = new TradingFeedSessionListener(recorder);
+        TradingFeedSessionListener tradingFeedListener = new TradingFeedSessionListener(recorder, configuration.getMaxMessages());
 
         TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig = TradingFeedSubscriptionConfig.builder()
                 .apiKey(configuration.getApiKey())
@@ -72,12 +75,45 @@ public class TradingFeedReaderRunner {
 
         System.out.println("Connecting to " + feedWebsocketUrl + " ...");
         client.connect();
+
+        if (configuration.getDuration() != null) {
+            scheduleDurationStop(configuration.getDuration());
+        }
+
         sleep(1_000_000_000);
+    }
+
+    private void scheduleDurationStop(Duration duration) {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
+            Thread thread = new Thread(runnable, "duration-stop");
+            thread.setDaemon(true);
+            return thread;
+        });
+        scheduler.schedule(() -> {
+            System.out.println();
+            System.out.println("Duration limit (" + formatDuration(duration) + ") reached — stopping gracefully.");
+            System.exit(0);
+        }, duration.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    private static String formatDuration(Duration duration) {
+        long seconds = Math.max(0, duration.getSeconds());
+        long hours = seconds / 3600;
+        long minutes = (seconds % 3600) / 60;
+        long secs = seconds % 60;
+        if (hours > 0) {
+            return String.format(Locale.ROOT, "%dh %dm %ds", hours, minutes, secs);
+        }
+        if (minutes > 0) {
+            return String.format(Locale.ROOT, "%dm %ds", minutes, secs);
+        }
+        return secs + "s";
     }
 
 
     private static class TradingFeedSessionListener extends TradingFeedStateKeepingListener {
         private final TradingFeedSessionRecorder recorder;
+        private final Long maxMessages;
         private final Instant sessionStartedAt = Instant.now();
         private final Map<String, Long> seenMessageTypeCounters = new TreeMap<>();
         private final Set<Long> seenEventIds = new HashSet<>();
@@ -85,8 +121,9 @@ public class TradingFeedReaderRunner {
         private String sessionId;
         private boolean initialSyncSeen;
 
-        private TradingFeedSessionListener(TradingFeedSessionRecorder recorder) {
+        private TradingFeedSessionListener(TradingFeedSessionRecorder recorder, Long maxMessages) {
             this.recorder = recorder;
+            this.maxMessages = maxMessages;
         }
 
         @Override
@@ -103,6 +140,11 @@ public class TradingFeedReaderRunner {
                 }
                 super.onServerMessage(serverMessage);
                 recorder.recordMessage(serverMessage, arrivalTimestamp, inMemoryStateStorage);
+                if (maxMessages != null && recorder.getMessagesRecordedTotal() >= maxMessages) {
+                    System.out.println();
+                    System.out.println("Max messages limit (" + maxMessages + ") reached — stopping gracefully.");
+                    System.exit(0);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -164,7 +206,7 @@ public class TradingFeedReaderRunner {
             sb.append("\n========== Session summary ==========\n");
             sb.append("Started at:              ").append(sessionStartedAt).append("\n");
             sb.append("Ended at:                ").append(endedAt).append("\n");
-            sb.append("Duration:                ").append(formatDuration(duration)).append("\n");
+            sb.append("Duration:                ").append(TradingFeedReaderRunner.formatDuration(duration)).append("\n");
             sb.append("Session ID:              ").append(sessionId != null ? sessionId : "(not received)").append("\n");
             sb.append("Initial sync completed:  ").append(initialSyncSeen).append("\n");
             sb.append("Messages seen total:     ").append(messagesSeenTotal).append("\n");
@@ -200,20 +242,6 @@ public class TradingFeedReaderRunner {
 
             sb.append("=====================================\n");
             System.out.println(sb);
-        }
-
-        private String formatDuration(Duration duration) {
-            long seconds = Math.max(0, duration.getSeconds());
-            long hours = seconds / 3600;
-            long minutes = (seconds % 3600) / 60;
-            long secs = seconds % 60;
-            if (hours > 0) {
-                return String.format(Locale.ROOT, "%dh %dm %ds", hours, minutes, secs);
-            }
-            if (minutes > 0) {
-                return String.format(Locale.ROOT, "%dm %ds", minutes, secs);
-            }
-            return secs + "s";
         }
 
         private String padRight(String value, int width) {

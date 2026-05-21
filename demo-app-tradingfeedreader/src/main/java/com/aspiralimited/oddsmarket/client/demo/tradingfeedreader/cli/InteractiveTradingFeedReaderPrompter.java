@@ -2,6 +2,7 @@ package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.cli;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -45,6 +46,11 @@ public class InteractiveTradingFeedReaderPrompter {
         Boolean fillDirectLink = CliValueParsers.parseOptionalBoolean(promptOptional(scanner,
                 "[optional](default - false) fillDirectLink (true/false): "));
 
+        Duration duration = CliValueParsers.parseDuration(promptOptional(scanner,
+                "[optional](default - run until Ctrl+C) Maximum session duration (e.g. 30s, 5m, 1h): "));
+        Long maxMessages = CliValueParsers.parsePositiveLong("maxMessages", promptOptional(scanner,
+                "[optional](default - unlimited) Maximum messages recorded to disk: "));
+
         return TradingFeedReaderConfiguration.builder()
                 .feedDomain(feedDomain)
                 .apiKey(apiKey)
@@ -58,6 +64,8 @@ public class InteractiveTradingFeedReaderPrompter {
                 .fillDirectLink(fillDirectLink)
                 .recordOnlyEventIds(recordOnlyEventIds)
                 .recordOnlyRawEventIds(recordOnlyRawEventIds)
+                .duration(duration)
+                .maxMessages(maxMessages)
                 .build();
     }
 
