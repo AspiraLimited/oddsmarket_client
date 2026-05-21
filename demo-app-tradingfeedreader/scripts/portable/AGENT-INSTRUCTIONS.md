@@ -30,7 +30,7 @@ TradingFeedReader.exe --feedDomain=<host> --tradingFeedId=<n> [options...]
 
 ### Authentication
 
-Default: read the API key from `api-token.txt` in the current directory.
+Default: read the API key from `api-key.txt` in the current directory.
 
 Other ways (in priority order):
 
@@ -199,7 +199,7 @@ The 10-minute cap is a safety net in case the feed is slow and `maxMessages` is 
 
 ## Notes / pitfalls
 
-- Set the API key once via `api-token.txt`; don't pass it via `--apiKey=` on the
+- Set the API key once via `api-key.txt`; don't pass it via `--apiKey=` on the
   shell (it would end up in shell history).
 - The session folder is **wiped and recreated** at the start of every run. To keep
   prior data, change `--saveMessagesToFolder` to a unique path per run.

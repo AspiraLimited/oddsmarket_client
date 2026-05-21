@@ -34,7 +34,7 @@ the form `[optional](default - X) Question:`; just press Enter to accept the def
 Minimum required answers:
 
 - **`oddsmarket domain`** — `live`, `prematch`, or a full hostname like `api-pr.oddsmarket.org`
-- **`API key`** — leave the file prompt empty to read it from `./api-token.txt`, or type `paste` to enter the key directly
+- **`API key`** — leave the file prompt empty to read it from `./api-key.txt`, or type `paste` to enter the key directly
 - **`Trading Feed ID`** — the numeric ID of the trading feed you have access to
 
 Everything else has a sensible default (data is saved to `./data/tradingFeedSessionData/`).
@@ -65,7 +65,7 @@ bash tradingfeedreader.sh \
   --duration=5m
 ```
 
-By default the API key is read from `./api-token.txt`. Don't have one? Create it (gitignored)
+By default the API key is read from `./api-key.txt`. Don't have one? Create it (gitignored)
 or pass `--apiKey=...` / `--apiKeyFile=...` explicitly.
 
 ## CLI reference
@@ -93,7 +93,7 @@ or pass `--apiKey=...` / `--apiKeyFile=...` explicitly.
 | --- | --- |
 | `--apiKey=<value>` | Literal API key. Highest priority. |
 | `--apiKeyFile=<path>` | Read the key from this file. |
-| _default_ | If neither flag is set, the tool reads `./api-token.txt`. The repository's `.gitignore` already excludes this filename. |
+| _default_ | If neither flag is set, the tool reads `./api-key.txt`. The repository's `.gitignore` already excludes this filename. |
 
 The key is **never** written to `subscriptionInfo.json` or any output file. On startup
 the tool prints which source it used (file path or `--apiKey option`), without revealing the key.

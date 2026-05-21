@@ -63,7 +63,7 @@ public class TradingFeedReader {
         printToConsole("Authentication (in priority order):");
         printToConsole("  --apiKey=<value>             literal API key");
         printToConsole("  --apiKeyFile=<path>          read API key from file");
-        printToConsole("  (default)                    read API key from ./api-token.txt");
+        printToConsole("  (default)                    read API key from ./api-key.txt");
         printToConsole("");
         printToConsole("Recording options:");
         printToConsole("  --saveMessagesToFolder=<path>      default: ./data");

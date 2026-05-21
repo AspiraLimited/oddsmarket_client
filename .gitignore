@@ -22,4 +22,4 @@ bin.tar.gz
 /feeds
 packaging
 data
-api-token.txt
+api-key.txt

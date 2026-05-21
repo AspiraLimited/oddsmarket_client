@@ -3,7 +3,7 @@
 ===============================================
 
 1. CREATE YOUR API KEY FILE
-   Create a plain text file named "api-token.txt" in this folder.
+   Create a plain text file named "api-key.txt" in this folder.
    Put your OddsMarket API key on a single line. Save and close.
    (The tool reads it automatically on startup. The key is never
     written to any output file or log.)
