@@ -19,10 +19,16 @@ import java.util.TreeMap;
 
 import static java.lang.Thread.sleep;
 
-public class DiffPrinter {
+/**
+ * Entry-point orchestrator for a trading feed reader session: connects to the websocket,
+ * forwards every message to the {@link TradingFeedSessionRecorder} for on-disk recording,
+ * tracks aggregate stats, prints a startup banner once the subscription succeeds, and prints
+ * a final summary on shutdown.
+ */
+public class TradingFeedReaderRunner {
 
     @SneakyThrows
-    public void listenFeedAndPrintDiffs(TradingFeedReaderConfiguration configuration) {
+    public void run(TradingFeedReaderConfiguration configuration) {
         TradingFeedSessionRecorder recorder = new TradingFeedSessionRecorder(configuration);
 
         String feedWebsocketUrl = (configuration.getFeedDomain().startsWith("localhost") ? "ws://" : "wss://")

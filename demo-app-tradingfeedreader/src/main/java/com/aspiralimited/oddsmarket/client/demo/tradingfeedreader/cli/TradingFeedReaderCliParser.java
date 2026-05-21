@@ -86,20 +86,20 @@ public class TradingFeedReaderCliParser {
                 ? CliValueParsers.parseStringSet(options.get(RECORD_ONLY_RAW_EVENT_IDS_OPTION))
                 : null;
 
-        return new TradingFeedReaderConfiguration(
-                feedDomain,
-                apiKey,
-                bookmakerId,
-                sportIds,
-                saveMessagesToFolder,
-                groupMessagesByEvent,
-                locales,
-                rawIdOriginBookmakerId,
-                fillRawOutcomeId,
-                fillDirectLink,
-                recordOnlyEventIds,
-                recordOnlyRawEventIds
-        );
+        return TradingFeedReaderConfiguration.builder()
+                .feedDomain(feedDomain)
+                .apiKey(apiKey)
+                .tradingFeedId(bookmakerId)
+                .sportIds(sportIds)
+                .saveMessagesToFolder(saveMessagesToFolder)
+                .groupMessagesByEvent(groupMessagesByEvent)
+                .locales(locales)
+                .rawIdOriginBookmakerId(rawIdOriginBookmakerId)
+                .fillRawOutcomeId(fillRawOutcomeId)
+                .fillDirectLink(fillDirectLink)
+                .recordOnlyEventIds(recordOnlyEventIds)
+                .recordOnlyRawEventIds(recordOnlyRawEventIds)
+                .build();
     }
 
     private Map<String, String> parseOptions(String[] args, int startIndex) {

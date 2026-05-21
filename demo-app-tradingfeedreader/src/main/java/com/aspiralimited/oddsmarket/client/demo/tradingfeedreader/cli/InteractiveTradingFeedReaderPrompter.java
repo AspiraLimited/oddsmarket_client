@@ -45,20 +45,20 @@ public class InteractiveTradingFeedReaderPrompter {
         Boolean fillDirectLink = CliValueParsers.parseOptionalBoolean(promptOptional(scanner,
                 "[optional](default - false) fillDirectLink (true/false): "));
 
-        return new TradingFeedReaderConfiguration(
-                feedDomain,
-                apiKey,
-                bookmakerId,
-                sportIds,
-                saveMessagesToFolder,
-                groupMessagesByEvent,
-                locales,
-                rawIdOriginBookmakerId,
-                fillRawOutcomeId,
-                fillDirectLink,
-                recordOnlyEventIds,
-                recordOnlyRawEventIds
-        );
+        return TradingFeedReaderConfiguration.builder()
+                .feedDomain(feedDomain)
+                .apiKey(apiKey)
+                .tradingFeedId(bookmakerId)
+                .sportIds(sportIds)
+                .saveMessagesToFolder(saveMessagesToFolder)
+                .groupMessagesByEvent(groupMessagesByEvent)
+                .locales(locales)
+                .rawIdOriginBookmakerId(rawIdOriginBookmakerId)
+                .fillRawOutcomeId(fillRawOutcomeId)
+                .fillDirectLink(fillDirectLink)
+                .recordOnlyEventIds(recordOnlyEventIds)
+                .recordOnlyRawEventIds(recordOnlyRawEventIds)
+                .build();
     }
 
     private String promptApiKey(Scanner scanner) {

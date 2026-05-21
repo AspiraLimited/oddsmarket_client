@@ -1,13 +1,13 @@
 package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.cli;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.nio.file.Path;
 import java.util.Set;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class TradingFeedReaderConfiguration {
     private final String feedDomain;
     private final String apiKey;

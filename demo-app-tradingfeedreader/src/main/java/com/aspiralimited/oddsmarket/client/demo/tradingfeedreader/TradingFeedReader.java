@@ -21,8 +21,7 @@ public class TradingFeedReader {
                 configuration = cliParser.parse(args);
             }
 
-            DiffPrinter listener = new DiffPrinter();
-            listener.listenFeedAndPrintDiffs(configuration);
+            new TradingFeedReaderRunner().run(configuration);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
