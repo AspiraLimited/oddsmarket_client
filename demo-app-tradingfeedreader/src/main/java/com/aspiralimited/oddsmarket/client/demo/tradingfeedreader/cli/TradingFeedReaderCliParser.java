@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.API_KEY_FILE_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.API_KEY_OPTION;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DEFAULT_SAVE_MESSAGES_FOLDER;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_OPTION;
@@ -63,7 +64,7 @@ public class TradingFeedReaderCliParser {
 
         Path saveMessagesToFolder = options.containsKey(SAVE_MESSAGES_TO_FOLDER_OPTION)
                 ? Paths.get(requireNonEmpty(options.get(SAVE_MESSAGES_TO_FOLDER_OPTION), "saveMessagesToFolder path must not be empty"))
-                : null;
+                : Paths.get(DEFAULT_SAVE_MESSAGES_FOLDER);
 
         boolean groupMessagesByEvent = options.containsKey(GROUP_MESSAGES_BY_EVENT_OPTION)
                 && parseBooleanOption(GROUP_MESSAGES_BY_EVENT_KEY, options.get(GROUP_MESSAGES_BY_EVENT_OPTION));

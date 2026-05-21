@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DEFAULT_API_KEY_FILE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DEFAULT_SAVE_MESSAGES_FOLDER;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INTERACTIVE_PASTE_API_KEY_VALUE;
 
 public class InteractiveTradingFeedReaderPrompter {
@@ -25,27 +26,27 @@ public class InteractiveTradingFeedReaderPrompter {
         String apiKey = promptApiKey(scanner);
         short bookmakerId = Short.parseShort(promptRequired(scanner, "Trading Feed ID: "));
 
-        Set<Short> sportIds = parseShortSet(promptOptional(scanner, "Sport IDs (comma-separated, optional): "));
+        Set<Short> sportIds = parseShortSet(promptOptional(scanner,
+                "[optional](default - all sports) Sport IDs (comma-separated): "));
 
-        boolean saveMessages = Boolean.parseBoolean(promptBoolean(scanner, "Save all incoming messages to folder? (y/n): "));
-        Path saveMessagesToFolder = null;
-        Set<Long> recordOnlyEventIds = null;
-        Set<String> recordOnlyRawEventIds = null;
-        if (saveMessages) {
-            saveMessagesToFolder = Paths.get(promptRequired(scanner, "Folder path for saveMessagesToFolder: "));
-            recordOnlyEventIds = parseLongSet(
-                    promptOptional(scanner, "Record only specific OddsMarket event IDs (comma-separated, optional, leave empty to record all): ")
-            );
-            recordOnlyRawEventIds = parseStringSet(
-                    promptOptional(scanner, "Record only specific raw bookmaker event IDs (comma-separated, optional, requires rawIdOriginBookmakerId): ")
-            );
-        }
-        boolean groupMessagesByEvent = Boolean.parseBoolean(promptBoolean(scanner, "Group saved message files by event ID in the filename? (y/n): "));
+        Path saveMessagesToFolder = Paths.get(promptOptionalWithDefault(scanner,
+                "[optional](default - './" + DEFAULT_SAVE_MESSAGES_FOLDER + "') Folder path for saveMessagesToFolder: ",
+                DEFAULT_SAVE_MESSAGES_FOLDER));
+        Set<Long> recordOnlyEventIds = parseLongSet(promptOptional(scanner,
+                "[optional](default - record all) Record only specific OddsMarket event IDs (comma-separated): "));
+        Set<String> recordOnlyRawEventIds = parseStringSet(promptOptional(scanner,
+                "[optional](default - record all) Record only specific raw bookmaker event IDs (comma-separated, requires rawIdOriginBookmakerId): "));
+        boolean groupMessagesByEvent = promptBooleanWithDefault(scanner,
+                "[optional](default - no) Group saved message files by event ID in the filename? (y/n): ", false);
 
-        Set<String> locales = parseStringSet(promptOptional(scanner, "Locales (comma-separated ISO codes, optional): "));
-        Short rawIdOriginBookmakerId = parseShort(promptOptional(scanner, "rawIdOriginBookmakerId (optional): "));
-        Boolean fillRawOutcomeId = parseBoolean(promptOptional(scanner, "fillRawOutcomeId (true/false, optional): "));
-        Boolean fillDirectLink = parseBoolean(promptOptional(scanner, "fillDirectLink (true/false, optional): "));
+        Set<String> locales = parseStringSet(promptOptional(scanner,
+                "[optional](default - en locale) Locales (comma-separated ISO codes): "));
+        Short rawIdOriginBookmakerId = parseShort(promptOptional(scanner,
+                "[optional](default - not specified) rawIdOriginBookmakerId: "));
+        Boolean fillRawOutcomeId = parseBoolean(promptOptional(scanner,
+                "[optional](default - false) fillRawOutcomeId (true/false): "));
+        Boolean fillDirectLink = parseBoolean(promptOptional(scanner,
+                "[optional](default - false) fillDirectLink (true/false): "));
 
         return new TradingFeedReaderConfiguration(
                 feedDomain,
@@ -98,15 +99,24 @@ public class InteractiveTradingFeedReaderPrompter {
         return scanner.nextLine().trim();
     }
 
-    private String promptBoolean(Scanner scanner, String prompt) {
+    private String promptOptionalWithDefault(Scanner scanner, String prompt, String defaultValue) {
+        System.out.print(prompt);
+        String value = scanner.nextLine().trim();
+        return value.isEmpty() ? defaultValue : value;
+    }
+
+    private boolean promptBooleanWithDefault(Scanner scanner, String prompt, boolean defaultValue) {
         while (true) {
             System.out.print(prompt);
             String value = scanner.nextLine().trim();
+            if (value.isEmpty()) {
+                return defaultValue;
+            }
             if ("y".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value)) {
-                return "true";
+                return true;
             }
             if ("n".equalsIgnoreCase(value) || "no".equalsIgnoreCase(value)) {
-                return "false";
+                return false;
             }
             System.out.println("Please answer y or n.");
         }
