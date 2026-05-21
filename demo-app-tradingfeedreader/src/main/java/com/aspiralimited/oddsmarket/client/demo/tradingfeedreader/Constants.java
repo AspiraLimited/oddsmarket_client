@@ -4,7 +4,6 @@ public final class Constants {
     public static final String OPTION_PREFIX = "--";
     public static final String INTERACTIVE_FLAG = "--interactive";
     public static final String INTERACTIVE_MODE = "interactive";
-    public static final String POSITIONAL_SPORT_IDS_REGEX = "^\\d+(,\\d+)*$";
 
     public static final String SESSION_FOLDER_NAME = "tradingFeedSessionData";
     public static final String SUBSCRIPTION_INFO_FILENAME = "subscriptionInfo.json";
@@ -46,6 +45,9 @@ public final class Constants {
     public static final String FILE_NAME_KEY = "fileName";
     public static final String SIZE_BYTES_KEY = "sizeBytes";
 
+    public static final String FEED_DOMAIN_OPTION = "feeddomain";
+    public static final String TRADING_FEED_ID_OPTION = "tradingfeedid";
+    public static final String SPORT_IDS_OPTION = "sportids";
     public static final String SAVE_MESSAGES_TO_FOLDER_OPTION = "savemessagestofolder";
     public static final String GROUP_MESSAGES_BY_EVENT_OPTION = "groupmessagesbyevent";
     public static final String LOCALES_OPTION = "locales";

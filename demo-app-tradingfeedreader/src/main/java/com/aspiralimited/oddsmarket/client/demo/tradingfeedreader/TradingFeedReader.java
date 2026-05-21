@@ -13,12 +13,20 @@ public class TradingFeedReader {
             if (cliParser.isInteractiveMode(args)) {
                 configuration = new InteractiveTradingFeedReaderPrompter().prompt();
             } else {
-                if (args.length < 2) {
+                if (args.length == 0) {
                     printUsage();
                     System.exit(1);
                     return;
                 }
-                configuration = cliParser.parse(args);
+                try {
+                    configuration = cliParser.parse(args);
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Error: " + e.getMessage());
+                    System.err.println();
+                    printUsage();
+                    System.exit(1);
+                    return;
+                }
             }
 
             new TradingFeedReaderRunner().run(configuration);
@@ -30,13 +38,40 @@ public class TradingFeedReader {
     }
 
     private static void printUsage() {
-        printToConsole("Required command-line arguments are missing!");
-        printToConsole("Usage examples:");
-        printToConsole("tradingfeedreader.sh api-pr.oddsmarket.org BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...] [--apiKey VALUE | --apiKeyFile path] [--saveMessagesToFolder path] [--groupMessagesByEvent true|false] [--recordOnlyEventIds id1,id2,...] [--recordOnlyRawEventIds raw1,raw2,...] [--duration 30s|5m|1h] [--maxMessages N]");
-        printToConsole("If neither --apiKey nor --apiKeyFile is given, the API key is read from ./api-token.txt by default.");
-        printToConsole("If --saveMessagesToFolder is not specified, messages are written to ./data by default.");
-        printToConsole("If --duration or --maxMessages is set, the process stops gracefully when the limit is reached (same path as Ctrl+C: final summary printed, exit code 0).");
-        printToConsole("tradingfeedreader.sh --interactive");
+        printToConsole("Usage:");
+        printToConsole("  tradingfeedreader.sh --feedDomain=<host> --tradingFeedId=<id> [options...]");
+        printToConsole("  tradingfeedreader.sh --interactive");
+        printToConsole("");
+        printToConsole("Required:");
+        printToConsole("  --feedDomain=<host>          e.g. api-pr.oddsmarket.org or api-lv.oddsmarket.org");
+        printToConsole("  --tradingFeedId=<id>         numeric Trading Feed ID");
+        printToConsole("");
+        printToConsole("Subscription options:");
+        printToConsole("  --sportIds=<id1,id2,...>     filter events by sport (default: all sports)");
+        printToConsole("  --locales=<en,ru,...>        comma-separated locale codes (default: en)");
+        printToConsole("  --rawIdOriginBookmakerId=<n> include rawEventId from this bookmaker in messages");
+        printToConsole("  --fillRawOutcomeId=true|false");
+        printToConsole("  --fillDirectLink=true|false");
+        printToConsole("");
+        printToConsole("Authentication (in priority order):");
+        printToConsole("  --apiKey=<value>             literal API key");
+        printToConsole("  --apiKeyFile=<path>          read API key from file");
+        printToConsole("  (default)                    read API key from ./api-token.txt");
+        printToConsole("");
+        printToConsole("Recording options:");
+        printToConsole("  --saveMessagesToFolder=<path>      default: ./data");
+        printToConsole("  --groupMessagesByEvent=true|false  prefix message filenames with eventId (default: false)");
+        printToConsole("  --recordOnlyEventIds=<id1,...>     strict filter: only record these OddsMarket event IDs");
+        printToConsole("  --recordOnlyRawEventIds=<id1,...>  strict filter by bookmaker IDs (requires --rawIdOriginBookmakerId)");
+        printToConsole("");
+        printToConsole("Run control:");
+        printToConsole("  --duration=<30s|5m|1h>       stop gracefully after this time");
+        printToConsole("  --maxMessages=<n>            stop gracefully after this many messages recorded to disk");
+        printToConsole("");
+        printToConsole("Examples:");
+        printToConsole("  tradingfeedreader.sh --feedDomain=api-lv.oddsmarket.org --tradingFeedId=500 --duration=2m");
+        printToConsole("  tradingfeedreader.sh --feedDomain=api-pr.oddsmarket.org --tradingFeedId=500 --recordOnlyEventIds=12345 --duration=5m");
+        printToConsole("  tradingfeedreader.sh --interactive");
     }
 
     private static void printToConsole(String msg) {
