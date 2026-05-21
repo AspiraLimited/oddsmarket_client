@@ -15,7 +15,7 @@ public class TradingFeedReader {
             } else {
                 if (args.length == 0) {
                     printUsage();
-                    System.exit(1);
+                    System.exit(3);
                     return;
                 }
                 try {
@@ -24,15 +24,16 @@ public class TradingFeedReader {
                     System.err.println("Error: " + e.getMessage());
                     System.err.println();
                     printUsage();
-                    System.exit(1);
+                    System.exit(3);
                     return;
                 }
             }
 
+            // run() blocks forever; final exit code is set by the runner's shutdown hook (Runtime.halt).
             new TradingFeedReaderRunner().run(configuration);
         } catch (Exception e) {
+            // Reached only for exceptions before the shutdown hook is registered (e.g., recorder construction).
             e.printStackTrace();
-        } finally {
             System.exit(1);
         }
     }

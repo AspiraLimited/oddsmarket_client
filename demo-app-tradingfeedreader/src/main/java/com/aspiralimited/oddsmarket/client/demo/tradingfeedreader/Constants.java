@@ -8,6 +8,7 @@ public final class Constants {
     public static final String SESSION_FOLDER_NAME = "tradingFeedSessionData";
     public static final String SUBSCRIPTION_INFO_FILENAME = "subscriptionInfo.json";
     public static final String SUBSCRIPTION_STATS_FILENAME = "subscriptionStats.json";
+    public static final String SUMMARY_FILENAME = "summary.json";
     public static final String MESSAGES_INDEX_FILENAME = "messagesIndex.jsonl";
     public static final String MESSAGES_FOLDER_NAME = "messages";
     public static final String TEMP_FILE_SUFFIX = ".tmp";

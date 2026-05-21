@@ -7,11 +7,22 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedClie
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedSubscriptionConfig;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.TradingFeedStateKeepingListener;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -19,25 +30,43 @@ import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SUMMARY_FILENAME;
 import static java.lang.Thread.sleep;
 
 /**
  * Entry-point orchestrator for a trading feed reader session: connects to the websocket,
  * forwards every message to the {@link TradingFeedSessionRecorder} for on-disk recording,
- * tracks aggregate stats, prints a startup banner once the subscription succeeds, and prints
- * a final summary on shutdown.
+ * tracks aggregate stats, prints a startup banner once the subscription succeeds, and writes
+ * both a human-readable text summary and a machine-readable {@code summary.json} on shutdown.
+ *
+ * <p>Exit codes:
+ * <ul>
+ *     <li>{@code 0} — graceful stop (Ctrl+C, {@code --duration} elapsed, {@code --maxMessages} reached)</li>
+ *     <li>{@code 1} — unexpected error before the shutdown hook was registered</li>
+ *     <li>{@code 2} — fatal subscription error (AUTH_FAILED / SUBSCRIPTION_FAILED / BAD_REQUEST)</li>
+ * </ul>
+ * The exit code is enforced via {@link Runtime#halt(int)} at the end of the shutdown hook,
+ * overriding the JVM default for SIGINT (which would otherwise be 130 on Unix).
  */
 public class TradingFeedReaderRunner {
 
     @SneakyThrows
     public void run(TradingFeedReaderConfiguration configuration) {
         TradingFeedSessionRecorder recorder = new TradingFeedSessionRecorder(configuration);
+        SessionExitState exitState = new SessionExitState();
 
         String feedWebsocketUrl = (configuration.getFeedDomain().startsWith("localhost") ? "ws://" : "wss://")
                 + configuration.getFeedDomain();
 
-        TradingFeedSessionListener tradingFeedListener = new TradingFeedSessionListener(recorder, configuration.getMaxMessages());
+        TradingFeedSessionListener tradingFeedListener = new TradingFeedSessionListener(
+                recorder,
+                configuration.getMaxMessages(),
+                configuration.getDuration(),
+                exitState
+        );
 
         TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig = TradingFeedSubscriptionConfig.builder()
                 .apiKey(configuration.getApiKey())
@@ -67,23 +96,25 @@ public class TradingFeedReaderRunner {
                 e.printStackTrace();
             }
             try {
-                tradingFeedListener.printFinalSummary();
+                tradingFeedListener.finalizeSession();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            Runtime.getRuntime().halt(exitState.exitCode());
         }));
 
         System.out.println("Connecting to " + feedWebsocketUrl + " ...");
         client.connect();
 
         if (configuration.getDuration() != null) {
-            scheduleDurationStop(configuration.getDuration());
+            scheduleDurationStop(configuration.getDuration(), exitState);
         }
 
         sleep(1_000_000_000);
     }
 
-    private void scheduleDurationStop(Duration duration) {
+    private void scheduleDurationStop(Duration duration, SessionExitState exitState) {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread thread = new Thread(runnable, "duration-stop");
             thread.setDaemon(true);
@@ -92,6 +123,7 @@ public class TradingFeedReaderRunner {
         scheduler.schedule(() -> {
             System.out.println();
             System.out.println("Duration limit (" + formatDuration(duration) + ") reached — stopping gracefully.");
+            exitState.markDurationLimit();
             System.exit(0);
         }, duration.toMillis(), TimeUnit.MILLISECONDS);
     }
@@ -110,10 +142,53 @@ public class TradingFeedReaderRunner {
         return secs + "s";
     }
 
+    /**
+     * Mutable state shared between the listener (which knows about fatal/max-messages stops)
+     * and the duration scheduler. Read by the shutdown hook to decide the final exit code
+     * and by {@link TradingFeedSessionListener#finalizeSession()} to populate {@code summary.json}.
+     *
+     * <p>Default values reflect Ctrl+C: nobody set anything, so we exit with code 0 and the reason "ctrl_c".
+     */
+    private static class SessionExitState {
+        private final AtomicInteger exitCode = new AtomicInteger(0);
+        private final AtomicReference<String> reason = new AtomicReference<>("ctrl_c");
+        private volatile String fatalErrorCode;
+
+        void markDurationLimit() {
+            exitCode.set(0);
+            reason.set("duration_limit");
+        }
+
+        void markMaxMessagesLimit() {
+            exitCode.set(0);
+            reason.set("max_messages_limit");
+        }
+
+        void markFatal(TradingFeedConnectionStatusCode code) {
+            exitCode.set(2);
+            reason.set("fatal_error");
+            fatalErrorCode = code.name();
+        }
+
+        int exitCode() {
+            return exitCode.get();
+        }
+
+        String reason() {
+            return reason.get();
+        }
+
+        String fatalErrorCode() {
+            return fatalErrorCode;
+        }
+    }
 
     private static class TradingFeedSessionListener extends TradingFeedStateKeepingListener {
         private final TradingFeedSessionRecorder recorder;
         private final Long maxMessages;
+        private final Duration durationLimit;
+        private final SessionExitState exitState;
+        private final ObjectMapper jsonMapper;
         private final Instant sessionStartedAt = Instant.now();
         private final Map<String, Long> seenMessageTypeCounters = new TreeMap<>();
         private final Set<Long> seenEventIds = new HashSet<>();
@@ -121,9 +196,17 @@ public class TradingFeedReaderRunner {
         private String sessionId;
         private boolean initialSyncSeen;
 
-        private TradingFeedSessionListener(TradingFeedSessionRecorder recorder, Long maxMessages) {
+        private TradingFeedSessionListener(
+                TradingFeedSessionRecorder recorder,
+                Long maxMessages,
+                Duration durationLimit,
+                SessionExitState exitState
+        ) {
             this.recorder = recorder;
             this.maxMessages = maxMessages;
+            this.durationLimit = durationLimit;
+            this.exitState = exitState;
+            this.jsonMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         }
 
         @Override
@@ -143,6 +226,7 @@ public class TradingFeedReaderRunner {
                 if (maxMessages != null && recorder.getMessagesRecordedTotal() >= maxMessages) {
                     System.out.println();
                     System.out.println("Max messages limit (" + maxMessages + ") reached — stopping gracefully.");
+                    exitState.markMaxMessagesLimit();
                     System.exit(0);
                 }
             } catch (Exception e) {
@@ -170,7 +254,8 @@ public class TradingFeedReaderRunner {
             System.err.println("Error during connection: " + tradingFeedConnectionStatusCode);
             if (isFatal(tradingFeedConnectionStatusCode)) {
                 System.err.println("This error is fatal — stopping. Check your API key, Trading Feed ID, and that your account has access to the requested feed.");
-                System.exit(1);
+                exitState.markFatal(tradingFeedConnectionStatusCode);
+                System.exit(2);
             }
         }
 
@@ -198,7 +283,17 @@ public class TradingFeedReaderRunner {
             }
         }
 
-        void printFinalSummary() {
+        void finalizeSession() {
+            printFinalSummary();
+            try {
+                writeSummaryJson();
+            } catch (Exception e) {
+                System.err.println("Failed to write " + SUMMARY_FILENAME);
+                e.printStackTrace();
+            }
+        }
+
+        private void printFinalSummary() {
             Instant endedAt = Instant.now();
             Duration duration = Duration.between(sessionStartedAt, endedAt);
 
@@ -207,6 +302,11 @@ public class TradingFeedReaderRunner {
             sb.append("Started at:              ").append(sessionStartedAt).append("\n");
             sb.append("Ended at:                ").append(endedAt).append("\n");
             sb.append("Duration:                ").append(TradingFeedReaderRunner.formatDuration(duration)).append("\n");
+            sb.append("Exit reason:             ").append(exitState.reason());
+            if (exitState.fatalErrorCode() != null) {
+                sb.append(" (").append(exitState.fatalErrorCode()).append(")");
+            }
+            sb.append("\n");
             sb.append("Session ID:              ").append(sessionId != null ? sessionId : "(not received)").append("\n");
             sb.append("Initial sync completed:  ").append(initialSyncSeen).append("\n");
             sb.append("Messages seen total:     ").append(messagesSeenTotal).append("\n");
@@ -242,6 +342,95 @@ public class TradingFeedReaderRunner {
 
             sb.append("=====================================\n");
             System.out.println(sb);
+        }
+
+        private void writeSummaryJson() throws IOException {
+            Instant endedAt = Instant.now();
+            Duration sessionDuration = Duration.between(sessionStartedAt, endedAt);
+            long recorded = recorder.getMessagesRecordedTotal();
+
+            ObjectNode root = jsonMapper.createObjectNode();
+            root.put("schemaVersion", 1);
+            root.put("startedAt", sessionStartedAt.toString());
+            root.put("endedAt", endedAt.toString());
+            root.put("durationSeconds", sessionDuration.getSeconds());
+
+            ObjectNode exit = root.putObject("exit");
+            exit.put("code", exitState.exitCode());
+            exit.put("reason", exitState.reason());
+            if (exitState.fatalErrorCode() != null) {
+                exit.put("fatalErrorCode", exitState.fatalErrorCode());
+            } else {
+                exit.putNull("fatalErrorCode");
+            }
+
+            if (sessionId != null) {
+                root.put("sessionId", sessionId);
+            } else {
+                root.putNull("sessionId");
+            }
+            root.put("initialSyncCompleted", initialSyncSeen);
+            root.put("sessionFolder", recorder.getSessionFolder().toAbsolutePath().toString());
+
+            ObjectNode messagesSeen = root.putObject("messagesSeen");
+            messagesSeen.put("total", messagesSeenTotal);
+            messagesSeen.set("byType", jsonMapper.valueToTree(seenMessageTypeCounters));
+
+            ObjectNode messagesRecorded = root.putObject("messagesRecorded");
+            messagesRecorded.put("total", recorded);
+            if (messagesSeenTotal == 0) {
+                messagesRecorded.putNull("percentOfSeen");
+            } else {
+                double percent = (recorded * 100.0) / messagesSeenTotal;
+                // Round to 1 decimal for stable, agent-friendly numbers.
+                messagesRecorded.put("percentOfSeen", Math.round(percent * 10.0) / 10.0);
+            }
+            messagesRecorded.set("byType", jsonMapper.valueToTree(recorder.getMessageTypeCountersSnapshot()));
+
+            root.put("activeEventsAtEnd", inMemoryStateStorage.getEventByEventId().size());
+            root.put("distinctEventsSeen", seenEventIds.size());
+
+            ObjectNode filter = root.putObject("filter");
+            filter.put("active", recorder.isFilterActive());
+            filter.set("recordOnlyEventIds", longArray(recorder.getRecordOnlyEventIds()));
+            filter.set("recordOnlyRawEventIds", stringArray(recorder.getRecordOnlyRawEventIds()));
+
+            ObjectNode limits = root.putObject("limits");
+            if (durationLimit != null) {
+                limits.put("durationSeconds", durationLimit.getSeconds());
+            } else {
+                limits.putNull("durationSeconds");
+            }
+            if (maxMessages != null) {
+                limits.put("maxMessages", maxMessages);
+            } else {
+                limits.putNull("maxMessages");
+            }
+
+            Path summaryFile = recorder.getSessionFolder().resolve(SUMMARY_FILENAME);
+            Files.writeString(summaryFile, jsonMapper.writeValueAsString(root), StandardCharsets.UTF_8);
+        }
+
+        private ArrayNode longArray(Collection<Long> values) {
+            ArrayNode array = jsonMapper.createArrayNode();
+            if (values == null) {
+                return array;
+            }
+            List<Long> sorted = new ArrayList<>(values);
+            sorted.sort(Long::compareTo);
+            sorted.forEach(array::add);
+            return array;
+        }
+
+        private ArrayNode stringArray(Collection<String> values) {
+            ArrayNode array = jsonMapper.createArrayNode();
+            if (values == null) {
+                return array;
+            }
+            List<String> sorted = new ArrayList<>(values);
+            sorted.sort(String::compareTo);
+            sorted.forEach(array::add);
+            return array;
         }
 
         private String padRight(String value, int width) {
