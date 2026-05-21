@@ -111,7 +111,7 @@ public class TradingFeedReaderRunner {
             scheduleDurationStop(configuration.getDuration(), exitState);
         }
 
-        sleep(1_000_000_000);
+        sleep(Integer.MAX_VALUE);
     }
 
     private void scheduleDurationStop(Duration duration, SessionExitState exitState) {

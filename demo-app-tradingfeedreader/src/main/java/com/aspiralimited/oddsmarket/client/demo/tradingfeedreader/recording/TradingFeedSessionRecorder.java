@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.util.RawValue;
 import com.google.protobuf.util.JsonFormat;
 
 import java.io.Closeable;
@@ -184,8 +185,7 @@ public class TradingFeedSessionRecorder implements Closeable {
 
         ObjectNode envelope = objectMapper.createObjectNode();
         envelope.put(ARRIVAL_TIMESTAMP_KEY, arrivalTimestampIso);
-        JsonNode contentNode = objectMapper.readTree(protobufPrinter.print(serverMessage));
-        envelope.set(CONTENT_KEY, contentNode);
+        envelope.putRawValue(CONTENT_KEY, new RawValue(protobufPrinter.print(serverMessage)));
 
         String messageFileName = buildMessageFileName(singleEventId, messageId, messageType);
         Path messageFile = messagesFolder.resolve(messageFileName);
@@ -554,7 +554,7 @@ public class TradingFeedSessionRecorder implements Closeable {
     private long writeJsonAtomically(Path targetFile, JsonNode content) throws IOException {
         Files.createDirectories(targetFile.getParent());
         Path tempFile = targetFile.resolveSibling(targetFile.getFileName() + TEMP_FILE_SUFFIX);
-        byte[] bytes = objectMapper.writeValueAsString(content).getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = objectMapper.writeValueAsBytes(content);
         Files.write(tempFile, bytes);
         try {
             Files.move(tempFile, targetFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
