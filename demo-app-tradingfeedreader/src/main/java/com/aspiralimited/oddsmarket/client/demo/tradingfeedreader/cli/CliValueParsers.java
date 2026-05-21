@@ -99,16 +99,6 @@ final class CliValueParsers {
         throw new IllegalArgumentException("Boolean value must be true or false");
     }
 
-    static boolean parseRequiredBoolean(String optionName, String value) {
-        if ("true".equalsIgnoreCase(value)) {
-            return true;
-        }
-        if ("false".equalsIgnoreCase(value)) {
-            return false;
-        }
-        throw new IllegalArgumentException(optionName + " must be either true or false");
-    }
-
     private static boolean isBlank(String value) {
         return value == null || value.isBlank();
     }
