@@ -48,6 +48,7 @@ public final class Constants {
 
     public static final String SAVE_MESSAGES_TO_FOLDER_OPTION = "savemessagestofolder";
     public static final String GROUP_MESSAGES_BY_EVENT_OPTION = "groupmessagesbyevent";
+    public static final String LOCALES_OPTION = "locales";
     public static final String RAW_ID_ORIGIN_BOOKMAKER_ID_OPTION = "rawidoriginbookmakerid";
     public static final String FILL_RAW_OUTCOME_ID_OPTION = "fillrawoutcomeid";
     public static final String FILL_DIRECT_LINK_OPTION = "filldirectlink";

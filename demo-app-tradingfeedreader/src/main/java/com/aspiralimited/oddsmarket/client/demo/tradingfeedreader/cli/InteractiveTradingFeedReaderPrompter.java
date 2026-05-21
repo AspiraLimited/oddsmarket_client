@@ -2,11 +2,8 @@ package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.cli;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DEFAULT_API_KEY_FILE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DEFAULT_SAVE_MESSAGES_FOLDER;
@@ -26,26 +23,26 @@ public class InteractiveTradingFeedReaderPrompter {
         String apiKey = promptApiKey(scanner);
         short bookmakerId = Short.parseShort(promptRequired(scanner, "Trading Feed ID: "));
 
-        Set<Short> sportIds = parseShortSet(promptOptional(scanner,
+        Set<Short> sportIds = CliValueParsers.parseShortSet(promptOptional(scanner,
                 "[optional](default - all sports) Sport IDs (comma-separated): "));
 
         Path saveMessagesToFolder = Paths.get(promptOptionalWithDefault(scanner,
                 "[optional](default - './" + DEFAULT_SAVE_MESSAGES_FOLDER + "') Folder path for saveMessagesToFolder: ",
                 DEFAULT_SAVE_MESSAGES_FOLDER));
-        Set<Long> recordOnlyEventIds = parseLongSet(promptOptional(scanner,
+        Set<Long> recordOnlyEventIds = CliValueParsers.parseLongSet(promptOptional(scanner,
                 "[optional](default - record all) Record only specific OddsMarket event IDs (comma-separated): "));
-        Set<String> recordOnlyRawEventIds = parseStringSet(promptOptional(scanner,
+        Set<String> recordOnlyRawEventIds = CliValueParsers.parseStringSet(promptOptional(scanner,
                 "[optional](default - record all) Record only specific raw bookmaker event IDs (comma-separated, requires rawIdOriginBookmakerId): "));
         boolean groupMessagesByEvent = promptBooleanWithDefault(scanner,
                 "[optional](default - no) Group saved message files by event ID in the filename? (y/n): ", false);
 
-        Set<String> locales = parseStringSet(promptOptional(scanner,
+        Set<String> locales = CliValueParsers.parseStringSet(promptOptional(scanner,
                 "[optional](default - en locale) Locales (comma-separated ISO codes): "));
-        Short rawIdOriginBookmakerId = parseShort(promptOptional(scanner,
+        Short rawIdOriginBookmakerId = CliValueParsers.parseShort(promptOptional(scanner,
                 "[optional](default - not specified) rawIdOriginBookmakerId: "));
-        Boolean fillRawOutcomeId = parseBoolean(promptOptional(scanner,
+        Boolean fillRawOutcomeId = CliValueParsers.parseOptionalBoolean(promptOptional(scanner,
                 "[optional](default - false) fillRawOutcomeId (true/false): "));
-        Boolean fillDirectLink = parseBoolean(promptOptional(scanner,
+        Boolean fillDirectLink = CliValueParsers.parseOptionalBoolean(promptOptional(scanner,
                 "[optional](default - false) fillDirectLink (true/false): "));
 
         return new TradingFeedReaderConfiguration(
@@ -120,55 +117,6 @@ public class InteractiveTradingFeedReaderPrompter {
             }
             System.out.println("Please answer y or n.");
         }
-    }
-
-    private Set<Short> parseShortSet(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        return Arrays.stream(value.split(","))
-                .map(String::trim)
-                .filter(part -> !part.isEmpty())
-                .map(Short::parseShort)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private Set<Long> parseLongSet(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        return Arrays.stream(value.split(","))
-                .map(String::trim)
-                .filter(part -> !part.isEmpty())
-                .map(Long::parseLong)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private Set<String> parseStringSet(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        return Arrays.stream(value.split(","))
-                .map(String::trim)
-                .filter(part -> !part.isEmpty())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private Short parseShort(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        return Short.parseShort(value);
-    }
-
-    private Boolean parseBoolean(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-            return Boolean.parseBoolean(value);
-        }
-        throw new IllegalArgumentException("Boolean value must be true or false");
     }
 
     private String normalizeDomain(String value) {

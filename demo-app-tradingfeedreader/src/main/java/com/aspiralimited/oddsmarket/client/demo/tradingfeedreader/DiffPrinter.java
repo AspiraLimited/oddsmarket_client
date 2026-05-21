@@ -28,7 +28,7 @@ public class DiffPrinter {
         String feedWebsocketUrl = (configuration.getFeedDomain().startsWith("localhost") ? "ws://" : "wss://")
                 + configuration.getFeedDomain();
 
-        TradingFeedSessionListener tradingFeedListener = new TradingFeedSessionListener(recorder, configuration);
+        TradingFeedSessionListener tradingFeedListener = new TradingFeedSessionListener(recorder);
 
         TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig = TradingFeedSubscriptionConfig.builder()
                 .apiKey(configuration.getApiKey())
@@ -72,7 +72,6 @@ public class DiffPrinter {
 
     private static class TradingFeedSessionListener extends TradingFeedStateKeepingListener {
         private final TradingFeedSessionRecorder recorder;
-        private final TradingFeedReaderConfiguration configuration; // TODO anse - review this. Also need to review & refactor code
         private final Instant sessionStartedAt = Instant.now();
         private final Map<String, Long> seenMessageTypeCounters = new TreeMap<>();
         private final Set<Long> seenEventIds = new HashSet<>();
@@ -80,9 +79,8 @@ public class DiffPrinter {
         private String sessionId;
         private boolean initialSyncSeen;
 
-        private TradingFeedSessionListener(TradingFeedSessionRecorder recorder, TradingFeedReaderConfiguration configuration) {
+        private TradingFeedSessionListener(TradingFeedSessionRecorder recorder) {
             this.recorder = recorder;
-            this.configuration = configuration;
         }
 
         @Override
