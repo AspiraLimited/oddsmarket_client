@@ -139,6 +139,30 @@ public class TradingFeedSessionRecorder implements Closeable {
         this.scheduler.scheduleWithFixedDelay(this::flushSafely, 5, 5, TimeUnit.SECONDS);
     }
 
+    public Path getSessionFolder() {
+        return sessionFolder;
+    }
+
+    public synchronized long getMessagesRecordedTotal() {
+        return messagesTotal;
+    }
+
+    public synchronized Map<String, Long> getMessageTypeCountersSnapshot() {
+        return new TreeMap<>(messageTypeCounters);
+    }
+
+    public boolean isFilterActive() {
+        return filterActive;
+    }
+
+    public Set<Long> getRecordOnlyEventIds() {
+        return recordOnlyEventIds;
+    }
+
+    public Set<String> getRecordOnlyRawEventIds() {
+        return recordOnlyRawEventIds;
+    }
+
     public synchronized void recordMessage(
             OddsmarketTradingDto.ServerMessage serverMessage,
             Instant arrivalTimestamp,
@@ -451,7 +475,7 @@ public class TradingFeedSessionRecorder implements Closeable {
         return null;
     }
 
-    private String messageType(OddsmarketTradingDto.ServerMessage serverMessage) {
+    public static String messageType(OddsmarketTradingDto.ServerMessage serverMessage) {
         switch (serverMessage.getPayloadCase()) {
             case SESSIONSTART:
                 return SESSION_START_MESSAGE_TYPE;

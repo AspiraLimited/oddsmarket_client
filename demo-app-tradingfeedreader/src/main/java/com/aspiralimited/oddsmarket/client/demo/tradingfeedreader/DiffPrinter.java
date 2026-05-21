@@ -15,11 +15,15 @@ import lombok.SneakyThrows;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
@@ -40,7 +44,7 @@ public class DiffPrinter {
         String feedWebsocketUrl = (configuration.getFeedDomain().startsWith("localhost") ? "ws://" : "wss://")
                 + configuration.getFeedDomain();
 
-        ConsolePrintingTradingFeedListener tradingFeedListener = new ConsolePrintingTradingFeedListener(recorder);
+        ConsolePrintingTradingFeedListener tradingFeedListener = new ConsolePrintingTradingFeedListener(recorder, configuration);
 
         TradingFeedSubscriptionConfig tradingFeedSubscriptionConfig = TradingFeedSubscriptionConfig.builder()
                 .apiKey(configuration.getApiKey())
@@ -59,13 +63,22 @@ public class DiffPrinter {
                 .build();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            client.disconnect(true);
+            try {
+                client.disconnect(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (recorder != null) {
                 try {
                     recorder.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+            try {
+                tradingFeedListener.printFinalSummary();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }));
 
@@ -124,16 +137,26 @@ public class DiffPrinter {
 
     private class ConsolePrintingTradingFeedListener extends TradingFeedStateKeepingListener {
         private final TradingFeedSessionRecorder recorder;
+        private final TradingFeedReaderConfiguration configuration;
+        private final Instant sessionStartedAt = Instant.now();
+        private final Map<String, Long> seenMessageTypeCounters = new TreeMap<>();
+        private final Set<Long> seenEventIds = new HashSet<>();
+        private long messagesSeenTotal;
+        private String sessionId;
+        private boolean initialSyncSeen;
         private long lastStatsPrintedAt = System.currentTimeMillis();
 
-        private ConsolePrintingTradingFeedListener(TradingFeedSessionRecorder recorder) {
+        private ConsolePrintingTradingFeedListener(TradingFeedSessionRecorder recorder, TradingFeedReaderConfiguration configuration) {
             this.recorder = recorder;
+            this.configuration = configuration;
         }
 
         @Override
         public void onServerMessage(OddsmarketTradingDto.ServerMessage serverMessage) {
             Instant arrivalTimestamp = Instant.now();
             try {
+                trackSummaryState(serverMessage);
+
                 switch (serverMessage.getPayloadCase()) {
                     case SESSIONSTART:
                         super.onServerMessage(serverMessage);
@@ -248,6 +271,95 @@ public class DiffPrinter {
             for (Map.Entry<Long, String> removedEvent : removedEventNames.entrySet()) {
                 printToConsole("[DEL] " + removedEvent.getValue() + " [#" + removedEvent.getKey() + "]");
             }
+        }
+
+        private void trackSummaryState(OddsmarketTradingDto.ServerMessage serverMessage) {
+            messagesSeenTotal++;
+            String type = TradingFeedSessionRecorder.messageType(serverMessage);
+            seenMessageTypeCounters.merge(type, 1L, Long::sum);
+
+            if (serverMessage.hasSessionStart()) {
+                sessionId = serverMessage.getSessionStart().getSessionId();
+            } else if (serverMessage.hasInitialSyncComplete()) {
+                initialSyncSeen = true;
+            } else if (serverMessage.hasEventSnapshot()) {
+                seenEventIds.add(serverMessage.getEventSnapshot().getEventId());
+            } else if (serverMessage.hasEventPatch()) {
+                seenEventIds.add(serverMessage.getEventPatch().getEventId());
+            } else if (serverMessage.hasEventsRemoved()) {
+                seenEventIds.addAll(serverMessage.getEventsRemoved().getEventIdsList());
+            }
+        }
+
+        void printFinalSummary() {
+            Instant endedAt = Instant.now();
+            Duration duration = Duration.between(sessionStartedAt, endedAt);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("\n========== Session summary ==========\n");
+            sb.append("Started at:              ").append(sessionStartedAt).append("\n");
+            sb.append("Ended at:                ").append(endedAt).append("\n");
+            sb.append("Duration:                ").append(formatDuration(duration)).append("\n");
+            sb.append("Session ID:              ").append(sessionId != null ? sessionId : "(not received)").append("\n");
+            sb.append("Initial sync completed:  ").append(initialSyncSeen).append("\n");
+            sb.append("Messages seen total:     ").append(messagesSeenTotal).append("\n");
+            for (Map.Entry<String, Long> entry : seenMessageTypeCounters.entrySet()) {
+                sb.append("  ").append(padRight(entry.getKey() + ":", 22)).append(entry.getValue()).append("\n");
+            }
+            sb.append("Active events at end:    ").append(inMemoryStateStorage.getEventByEventId().size()).append("\n");
+            sb.append("Distinct events seen:    ").append(seenEventIds.size()).append("\n");
+            sb.append("\n");
+
+            if (recorder != null) {
+                long recorded = recorder.getMessagesRecordedTotal();
+                String percent = messagesSeenTotal == 0
+                        ? "n/a"
+                        : String.format(Locale.ROOT, "%.1f%%", (recorded * 100.0) / messagesSeenTotal);
+                sb.append("Recording: enabled\n");
+                sb.append("  Session folder:        ").append(recorder.getSessionFolder().toAbsolutePath()).append("\n");
+                sb.append("  Messages recorded:     ").append(recorded).append(" (").append(percent).append(" of seen)\n");
+                Map<String, Long> recordedByType = recorder.getMessageTypeCountersSnapshot();
+                for (Map.Entry<String, Long> entry : recordedByType.entrySet()) {
+                    sb.append("    ").append(padRight(entry.getKey() + ":", 22)).append(entry.getValue()).append("\n");
+                }
+                if (recorder.isFilterActive()) {
+                    sb.append("  Filter:\n");
+                    sb.append("    recordOnlyEventIds:    ")
+                            .append(recorder.getRecordOnlyEventIds() == null ? "[]" : recorder.getRecordOnlyEventIds())
+                            .append("\n");
+                    sb.append("    recordOnlyRawEventIds: ")
+                            .append(recorder.getRecordOnlyRawEventIds() == null ? "[]" : recorder.getRecordOnlyRawEventIds())
+                            .append("\n");
+                } else {
+                    sb.append("  Filter:                not applied (all messages within subscription scope were recorded)\n");
+                }
+            } else {
+                sb.append("Recording: disabled (--saveMessagesToFolder was not set)\n");
+            }
+
+            sb.append("=====================================\n");
+            System.out.println(sb);
+        }
+
+        private String formatDuration(Duration duration) { // TODO anse - refactor - move to utils this and same code
+            long seconds = Math.max(0, duration.getSeconds());
+            long hours = seconds / 3600;
+            long minutes = (seconds % 3600) / 60;
+            long secs = seconds % 60;
+            if (hours > 0) {
+                return String.format(Locale.ROOT, "%dh %dm %ds", hours, minutes, secs);
+            }
+            if (minutes > 0) {
+                return String.format(Locale.ROOT, "%dm %ds", minutes, secs);
+            }
+            return secs + "s";
+        }
+
+        private String padRight(String value, int width) {
+            if (value.length() >= width) {
+                return value;
+            }
+            return value + " ".repeat(width - value.length());
         }
 
         @Override
