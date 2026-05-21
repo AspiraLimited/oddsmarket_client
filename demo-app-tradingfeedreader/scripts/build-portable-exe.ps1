@@ -25,11 +25,15 @@ jpackage `
   --vendor "Aspira" `
   --description "Portable Trading Feed Reader"
 
-# Bundle a .bat launcher next to the .exe.
-# Users should double-click RUN_ME.bat (not the .exe directly) so that the console window
-# stays open after the tool exits — otherwise Windows closes the window the instant the
-# process ends and the final summary / any error messages are not visible.
-Copy-Item ".\demo-app-tradingfeedreader\scripts\portable\RUN_ME.bat" ".\packaging\dist\$AppName\RUN_ME.bat"
+# Bundle launcher + user docs + agent docs next to the .exe.
+# - RUN_ME.bat wraps the .exe with a `pause` so the console window stays open after exit.
+# - HOW-TO-USE.txt is a short human-facing guide for QA / PM end-users.
+# - AGENT-INSTRUCTIONS.md is a structured reference for AI agents (flags, output schema, recipes).
+$PortableSrc = ".\demo-app-tradingfeedreader\scripts\portable"
+$PortableDst = ".\packaging\dist\$AppName"
+Copy-Item "$PortableSrc\RUN_ME.bat"             "$PortableDst\RUN_ME.bat"
+Copy-Item "$PortableSrc\HOW-TO-USE.txt"         "$PortableDst\HOW-TO-USE.txt"
+Copy-Item "$PortableSrc\AGENT-INSTRUCTIONS.md"  "$PortableDst\AGENT-INSTRUCTIONS.md"
 
 Compress-Archive `
   -Path ".\packaging\dist\$AppName" `
