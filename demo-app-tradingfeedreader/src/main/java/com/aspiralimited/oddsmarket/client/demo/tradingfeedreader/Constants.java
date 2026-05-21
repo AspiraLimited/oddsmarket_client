@@ -53,6 +53,10 @@ public final class Constants {
     public static final String FILL_DIRECT_LINK_OPTION = "filldirectlink";
     public static final String RECORD_ONLY_EVENT_IDS_OPTION = "recordonlyeventids";
     public static final String RECORD_ONLY_RAW_EVENT_IDS_OPTION = "recordonlyraweventids";
+    public static final String API_KEY_OPTION = "apikey";
+    public static final String API_KEY_FILE_OPTION = "apikeyfile";
+    public static final String DEFAULT_API_KEY_FILE = "api-token.txt";
+    public static final String INTERACTIVE_PASTE_API_KEY_VALUE = "paste";
 
     public static final String SESSION_START_MESSAGE_TYPE = "sessionStart";
     public static final String EVENT_SNAPSHOT_MESSAGE_TYPE = "eventSnapshot";

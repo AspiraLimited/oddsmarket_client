@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.API_KEY_FILE_OPTION;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.API_KEY_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_OPTION;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_OPTION;
@@ -35,22 +37,29 @@ public class TradingFeedReaderCliParser {
     }
 
     public TradingFeedReaderConfiguration parse(String[] args) {
-        if (args.length < 3) {
+        if (args.length < 2) {
             throw new IllegalArgumentException("Required command-line arguments are missing");
         }
 
         String feedDomain = requireNonEmpty(args[0], "Feed domain key must be specified as first argument in command-line parameters");
-        String apiKey = requireNonEmpty(args[1], "API key must be specified in command-line parameters");
-        short bookmakerId = Short.parseShort(args[2]);
+        short bookmakerId = Short.parseShort(args[1]);
 
         Set<Short> sportIds = null;
-        int nextIndex = 3;
+        int nextIndex = 2;
         if (args.length > nextIndex && isPositionalSportIds(args[nextIndex])) {
             sportIds = parseShortSet(args[nextIndex]);
             nextIndex++;
         }
 
         Map<String, String> options = parseOptions(args, nextIndex);
+
+        String literalApiKey = options.containsKey(API_KEY_OPTION)
+                ? options.get(API_KEY_OPTION)
+                : null;
+        Path apiKeyFile = options.containsKey(API_KEY_FILE_OPTION)
+                ? Paths.get(requireNonEmpty(options.get(API_KEY_FILE_OPTION), "apiKeyFile path must not be empty"))
+                : null;
+        String apiKey = ApiKeyResolver.resolve(literalApiKey, apiKeyFile);
 
         Path saveMessagesToFolder = options.containsKey(SAVE_MESSAGES_TO_FOLDER_OPTION)
                 ? Paths.get(requireNonEmpty(options.get(SAVE_MESSAGES_TO_FOLDER_OPTION), "saveMessagesToFolder path must not be empty"))

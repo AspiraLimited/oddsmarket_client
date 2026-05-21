@@ -8,6 +8,9 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DEFAULT_API_KEY_FILE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.INTERACTIVE_PASTE_API_KEY_VALUE;
+
 public class InteractiveTradingFeedReaderPrompter {
     private static final String LIVE_DOMAIN_ALIAS = "live";
     private static final String PREMATCH_DOMAIN_ALIAS = "prematch";
@@ -19,7 +22,7 @@ public class InteractiveTradingFeedReaderPrompter {
 
         String feedDomain = normalizeDomain(promptRequired(scanner,
                 "oddsmarket domain (enter 'live' or 'prematch' or enter full domain, like api-pr.oddsmarket.org): "));
-        String apiKey = promptRequired(scanner, "API key: ");
+        String apiKey = promptApiKey(scanner);
         short bookmakerId = Short.parseShort(promptRequired(scanner, "Trading Feed ID: "));
 
         Set<Short> sportIds = parseShortSet(promptOptional(scanner, "Sport IDs (comma-separated, optional): "));
@@ -58,6 +61,25 @@ public class InteractiveTradingFeedReaderPrompter {
                 recordOnlyEventIds,
                 recordOnlyRawEventIds
         );
+    }
+
+    private String promptApiKey(Scanner scanner) {
+        while (true) {
+            String response = promptOptional(scanner,
+                    "API key file path [Enter for default '" + DEFAULT_API_KEY_FILE
+                            + "', or '" + INTERACTIVE_PASTE_API_KEY_VALUE + "' to type the key directly]: ");
+            if (INTERACTIVE_PASTE_API_KEY_VALUE.equalsIgnoreCase(response)) {
+                String literal = promptRequired(scanner, "API key: ");
+                return ApiKeyResolver.resolve(literal, null);
+            }
+            Path apiKeyFile = response.isEmpty() ? null : Paths.get(response);
+            try {
+                return ApiKeyResolver.resolve(null, apiKeyFile);
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+                System.out.println("Please try again.");
+            }
+        }
     }
 
     private String promptRequired(Scanner scanner, String prompt) {

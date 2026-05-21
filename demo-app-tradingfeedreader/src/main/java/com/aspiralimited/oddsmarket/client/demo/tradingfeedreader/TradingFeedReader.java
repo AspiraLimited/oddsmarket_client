@@ -14,7 +14,7 @@ public class TradingFeedReader {
             if (cliParser.isInteractiveMode(args)) {
                 configuration = new InteractiveTradingFeedReaderPrompter().prompt();
             } else {
-                if (args.length < 3) {
+                if (args.length < 2) {
                     printUsage();
                     System.exit(1);
                     return;
@@ -39,7 +39,8 @@ public class TradingFeedReader {
     private static void printUsage() {
         printToConsole("Required command-line arguments are missing!");
         printToConsole("Usage examples:");
-        printToConsole("tradingfeedreader.sh api-pr.oddsmarket.org YOUR-API-KEY BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...] [--saveMessagesToFolder path] [--groupMessagesByEvent true|false] [--recordOnlyEventIds id1,id2,...] [--recordOnlyRawEventIds raw1,raw2,...]");
+        printToConsole("tradingfeedreader.sh api-pr.oddsmarket.org BOOKMAKER-ID [SPORT-ID1,SPORT-ID2,...] [--apiKey VALUE | --apiKeyFile path] [--saveMessagesToFolder path] [--groupMessagesByEvent true|false] [--recordOnlyEventIds id1,id2,...] [--recordOnlyRawEventIds raw1,raw2,...]");
+        printToConsole("If neither --apiKey nor --apiKeyFile is given, the API key is read from ./api-token.txt by default.");
         printToConsole("tradingfeedreader.sh --interactive");
     }
 
