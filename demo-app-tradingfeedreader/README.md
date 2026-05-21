@@ -276,8 +276,10 @@ The script:
 2. Builds the fat jar via the Maven Wrapper.
 3. Runs `jpackage --type app-image` with `--win-console` so the tool keeps its console
    output (banner, summary, errors).
-4. Bundles the resulting `TradingFeedReader/` folder (containing `TradingFeedReader.exe`,
-   `app/`, and `runtime/` — i.e., an embedded JRE) into `./packaging/TradingFeedReader-portable.zip`.
+4. Copies `RUN_ME.bat` (a small launcher) into the packaged folder.
+5. Bundles the resulting `TradingFeedReader/` folder (containing `RUN_ME.bat`,
+   `TradingFeedReader.exe`, `app/`, and `runtime/` — i.e., an embedded JRE) into
+   `./packaging/TradingFeedReader-portable.zip`.
 
 ## Using from an AI agent
 

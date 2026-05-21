@@ -25,6 +25,12 @@ jpackage `
   --vendor "Aspira" `
   --description "Portable Trading Feed Reader"
 
+# Bundle a .bat launcher next to the .exe.
+# Users should double-click RUN_ME.bat (not the .exe directly) so that the console window
+# stays open after the tool exits — otherwise Windows closes the window the instant the
+# process ends and the final summary / any error messages are not visible.
+Copy-Item ".\demo-app-tradingfeedreader\scripts\portable\RUN_ME.bat" ".\packaging\dist\$AppName\RUN_ME.bat"
+
 Compress-Archive `
   -Path ".\packaging\dist\$AppName" `
   -DestinationPath ".\packaging\$AppName-portable.zip" `
