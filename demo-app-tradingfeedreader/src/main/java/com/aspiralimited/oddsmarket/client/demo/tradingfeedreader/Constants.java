@@ -30,6 +30,7 @@ public final class Constants {
     public static final String CONTENT_KEY = "content";
     public static final String UPDATED_AT_KEY = "updatedAt";
     public static final String MESSAGES_TOTAL_KEY = "messagesTotal";
+    public static final String MESSAGES_ACCEPTED_KEY = "messagesAccepted";
     public static final String LAST_PROCESSED_MESSAGE_ID_KEY = "lastProcessedMessageId";
     public static final String LAST_MESSAGE_ARRIVAL_TIMESTAMP_KEY = "lastMessageArrivalTimestamp";
     public static final String SESSION_ID_KEY = "sessionId";

@@ -116,7 +116,7 @@ After a run, look inside `<saveMessagesToFolder>/tradingFeedSessionData/`:
 }
 ```
 
-`exit.reason` is one of `ctrl_c`, `duration_limit`, `max_messages_limit`, `fatal_error`.
+`exit.reason` is one of `ctrl_c`, `duration_limit`, `max_messages_limit`, `fatal_error`, `writer_queue_overflow`.
 
 ### Messages index (Important for quick search)
 
@@ -168,6 +168,7 @@ chronological order.
 | `1`  | Unexpected runtime error before recording started                                        |
 | `2`  | Fatal subscription error (`AUTHENTICATION_FAILED`, `SUBSCRIPTION_FAILED`, `BAD_REQUEST`) |
 | `3`  | Invalid CLI arguments                                                                    |
+| `4`  | Writer queue overflow (disk I/O cannot keep up with the feed)                            |
 
 ## Typical agent recipes
 

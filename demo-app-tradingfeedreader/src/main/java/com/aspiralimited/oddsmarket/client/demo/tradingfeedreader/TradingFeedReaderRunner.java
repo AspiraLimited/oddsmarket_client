@@ -47,6 +47,7 @@ import static java.lang.Thread.sleep;
  *     <li>{@code 0} — graceful stop (Ctrl+C, {@code --duration} elapsed, {@code --maxMessages} reached)</li>
  *     <li>{@code 1} — unexpected error before the shutdown hook was registered</li>
  *     <li>{@code 2} — fatal subscription error (AUTH_FAILED / SUBSCRIPTION_FAILED / BAD_REQUEST)</li>
+ *     <li>{@code 4} — writer queue overflow (disk I/O cannot keep up with incoming messages)</li>
  * </ul>
  * The exit code is enforced via {@link Runtime#halt(int)} at the end of the shutdown hook,
  * overriding the JVM default for SIGINT (which would otherwise be 130 on Unix).
@@ -170,6 +171,11 @@ public class TradingFeedReaderRunner {
             fatalErrorCode = code.name();
         }
 
+        void markWriteQueueOverflow() {
+            exitCode.set(4);
+            reason.set("writer_queue_overflow");
+        }
+
         int exitCode() {
             return exitCode.get();
         }
@@ -223,7 +229,15 @@ public class TradingFeedReaderRunner {
                 }
                 super.onServerMessage(serverMessage);
                 recorder.recordMessage(serverMessage, arrivalTimestamp, inMemoryStateStorage);
-                if (maxMessages != null && recorder.getMessagesRecordedTotal() >= maxMessages) {
+                if (recorder.isWriteQueueOverflowed()) {
+                    System.err.println();
+                    System.err.println("Writer queue overflowed (capacity "
+                            + TradingFeedSessionRecorder.WRITE_QUEUE_CAPACITY
+                            + ") — disk I/O cannot keep up with incoming messages. Stopping to avoid silent data loss.");
+                    exitState.markWriteQueueOverflow();
+                    System.exit(4);
+                }
+                if (maxMessages != null && recorder.getMessagesAcceptedTotal() >= maxMessages) {
                     System.out.println();
                     System.out.println("Max messages limit (" + maxMessages + ") reached — stopping gracefully.");
                     exitState.markMaxMessagesLimit();
@@ -317,7 +331,7 @@ public class TradingFeedReaderRunner {
             sb.append("Distinct events seen:    ").append(seenEventIds.size()).append("\n");
             sb.append("\n");
 
-            long recorded = recorder.getMessagesRecordedTotal();
+            long recorded = recorder.getMessagesWrittenTotal();
             String percent = messagesSeenTotal == 0
                     ? "n/a"
                     : String.format(Locale.ROOT, "%.1f%%", (recorded * 100.0) / messagesSeenTotal);
@@ -347,7 +361,8 @@ public class TradingFeedReaderRunner {
         private void writeSummaryJson() throws IOException {
             Instant endedAt = Instant.now();
             Duration sessionDuration = Duration.between(sessionStartedAt, endedAt);
-            long recorded = recorder.getMessagesRecordedTotal();
+            long recorded = recorder.getMessagesWrittenTotal();
+            long accepted = recorder.getMessagesAcceptedTotal();
 
             ObjectNode root = jsonMapper.createObjectNode();
             root.put("schemaVersion", 1);
@@ -378,6 +393,7 @@ public class TradingFeedReaderRunner {
 
             ObjectNode messagesRecorded = root.putObject("messagesRecorded");
             messagesRecorded.put("total", recorded);
+            messagesRecorded.put("accepted", accepted);
             if (messagesSeenTotal == 0) {
                 messagesRecorded.putNull("percentOfSeen");
             } else {

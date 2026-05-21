@@ -215,7 +215,7 @@ Written once, at shutdown. Machine-readable final outcome of the session:
 }
 ```
 
-`exit.reason` is one of `ctrl_c`, `duration_limit`, `max_messages_limit`, `fatal_error`.
+`exit.reason` is one of `ctrl_c`, `duration_limit`, `max_messages_limit`, `fatal_error`, `writer_queue_overflow`.
 
 ## Exit codes
 
@@ -225,6 +225,7 @@ Written once, at shutdown. Machine-readable final outcome of the session:
 | `1` | Unexpected runtime error before the recording session started |
 | `2` | Fatal subscription error: `AUTHENTICATION_FAILED`, `SUBSCRIPTION_FAILED`, or `BAD_REQUEST` |
 | `3` | Invalid CLI arguments (or no arguments and not in interactive mode) |
+| `4` | Writer queue overflow — disk I/O could not keep up with the incoming feed |
 
 The exit code is enforced via `Runtime.halt()` from the shutdown hook, so it is deterministic
 even for Ctrl+C (would otherwise be 130 on Unix).

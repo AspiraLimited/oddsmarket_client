@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.RawValue;
 import com.google.protobuf.util.JsonFormat;
+import lombok.Getter;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,9 +34,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.ACTIVE_EVENTS_COUNT_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.ACTIVE_EVENTS_KEY;
@@ -57,6 +61,7 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LAST_MESSAGE_ARRIVAL_TIMESTAMP_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LAST_PROCESSED_MESSAGE_ID_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LOCALES_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_ACCEPTED_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_FOLDER_NAME;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_INDEX_FILENAME;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_TOTAL_KEY;
@@ -86,34 +91,51 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 
 public class TradingFeedSessionRecorder implements Closeable {
     private static final DateTimeFormatter ISO_INSTANT = DateTimeFormatter.ISO_INSTANT;
+    public static final int WRITE_QUEUE_CAPACITY = 50_000;
+    private static final long WRITER_SHUTDOWN_TIMEOUT_MS = 10_000L;
+
+    /**
+     * Sentinel value placed on the queue by {@link #close()} to signal the writer thread
+     * to drain remaining entries and exit.
+     */
+    private static final PendingWrite POISON_PILL = new PendingWrite(null, null, null, null, 0L, null);
 
     private final TradingFeedReaderConfiguration configuration;
+    @Getter
     private final Path sessionFolder;
     private final Path messagesFolder;
-    private final Path subscriptionInfoFile;
     private final Path subscriptionStatsFile;
     private final Path messagesIndexFile;
     private final ObjectMapper objectMapper;
     private final ObjectWriter compactJsonWriter;
     private final JsonFormat.Printer protobufPrinter;
-    private final ScheduledExecutorService scheduler;
-
     private final Map<String, Long> messageTypeCounters = new TreeMap<>();
     private final Map<Long, String> seenEventNames = new TreeMap<>();
     private final Map<Long, String> activeEventNames = new TreeMap<>();
     private final List<ObjectNode> pendingIndexEntries = new ArrayList<>();
     private final Map<Long, String> rawEventIdByEventId = new HashMap<>();
+    @Getter
     private final Set<Long> recordOnlyEventIds;
+    @Getter
     private final Set<String> recordOnlyRawEventIds;
+    @Getter
     private final boolean filterActive;
 
-    private long messagesTotal;
-    private long lastProcessedMessageId;
-    private String sessionId;
-    private String lastMessageArrivalTimestamp;
-    private boolean initialSyncComplete;
-    private boolean dirty;
-    private boolean closed;
+    private final ScheduledExecutorService scheduler;
+    private final BlockingQueue<PendingWrite> writeQueue = new ArrayBlockingQueue<>(WRITE_QUEUE_CAPACITY);
+    private final Thread writerThread;
+
+    private final AtomicLong messagesAccepted = new AtomicLong();
+    private final AtomicLong messagesWritten = new AtomicLong();
+    private final AtomicLong lastProcessedMessageId = new AtomicLong();
+
+    private volatile String sessionId;
+    private volatile String lastMessageArrivalTimestamp;
+    private volatile boolean initialSyncComplete;
+    private volatile boolean dirty;
+    private volatile boolean closed;
+    @Getter
+    private volatile boolean writeQueueOverflowed;
 
     public TradingFeedSessionRecorder(TradingFeedReaderConfiguration configuration) throws IOException {
         this.configuration = configuration;
@@ -129,45 +151,36 @@ public class TradingFeedSessionRecorder implements Closeable {
 
         this.sessionFolder = prepareSessionFolder(configuration.getSaveMessagesToFolder());
         this.messagesFolder = Files.createDirectories(sessionFolder.resolve(MESSAGES_FOLDER_NAME));
-        this.subscriptionInfoFile = sessionFolder.resolve(SUBSCRIPTION_INFO_FILENAME);
         this.subscriptionStatsFile = sessionFolder.resolve(SUBSCRIPTION_STATS_FILENAME);
         this.messagesIndexFile = sessionFolder.resolve(MESSAGES_INDEX_FILENAME);
 
-        writeJsonAtomically(subscriptionInfoFile, buildSubscriptionInfoNode());
+        writeJsonAtomically(
+                sessionFolder.resolve(SUBSCRIPTION_INFO_FILENAME),
+                buildSubscriptionInfoNode()
+        );
 
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         this.scheduler.scheduleWithFixedDelay(this::flushSafely, 5, 5, TimeUnit.SECONDS);
+
+        this.writerThread = new Thread(this::writerLoop, "tradingFeedRecorder-writer");
+        this.writerThread.setDaemon(true);
+        this.writerThread.start();
     }
 
-    public Path getSessionFolder() {
-        return sessionFolder;
+    public long getMessagesAcceptedTotal() {
+        return messagesAccepted.get();
     }
 
-    public synchronized long getMessagesRecordedTotal() {
-        return messagesTotal;
+    public long getMessagesWrittenTotal() {
+        return messagesWritten.get();
     }
 
     public synchronized Map<String, Long> getMessageTypeCountersSnapshot() {
         return new TreeMap<>(messageTypeCounters);
     }
 
-    public boolean isFilterActive() {
-        return filterActive;
-    }
-
-    public Set<Long> getRecordOnlyEventIds() {
-        return recordOnlyEventIds;
-    }
-
-    public Set<String> getRecordOnlyRawEventIds() {
-        return recordOnlyRawEventIds;
-    }
-
-    public synchronized void recordMessage(
-            OddsmarketTradingDto.ServerMessage serverMessage,
-            Instant arrivalTimestamp,
-            InMemoryStateStorage inMemoryStateStorage
-    ) throws IOException {
+    public void recordMessage(OddsmarketTradingDto.ServerMessage serverMessage, Instant arrivalTimestamp,
+                              InMemoryStateStorage inMemoryStateStorage) {
         if (closed) {
             return;
         }
@@ -182,41 +195,138 @@ public class TradingFeedSessionRecorder implements Closeable {
         Long singleEventId = singleEventId(serverMessage);
         long messageId = serverMessage.getMessageId();
         String arrivalTimestampIso = ISO_INSTANT.format(arrivalTimestamp);
-
-        ObjectNode envelope = objectMapper.createObjectNode();
-        envelope.put(ARRIVAL_TIMESTAMP_KEY, arrivalTimestampIso);
-        envelope.putRawValue(CONTENT_KEY, new RawValue(protobufPrinter.print(serverMessage)));
-
         String messageFileName = buildMessageFileName(singleEventId, messageId, messageType);
-        Path messageFile = messagesFolder.resolve(messageFileName);
-        long messageFileSizeBytes = writeJsonAtomically(messageFile, envelope);
 
-        pendingIndexEntries.add(buildIndexEntry(messageId, messageType, singleEventId, arrivalTimestampIso, messageFileName, messageFileSizeBytes));
-
-        messagesTotal++;
-        lastProcessedMessageId = messageId;
-        lastMessageArrivalTimestamp = arrivalTimestampIso;
-        messageTypeCounters.merge(messageType, 1L, Long::sum);
-
-        if (serverMessage.hasSessionStart()) {
-            sessionId = serverMessage.getSessionStart().getSessionId();
-        }
-        if (serverMessage.hasInitialSyncComplete()) {
-            initialSyncComplete = true;
+        synchronized (this) {
+            if (closed) {
+                return;
+            }
+            if (serverMessage.hasSessionStart()) {
+                sessionId = serverMessage.getSessionStart().getSessionId();
+            }
+            if (serverMessage.hasInitialSyncComplete()) {
+                initialSyncComplete = true;
+            }
+            refreshEventSummaries(inMemoryStateStorage);
+            dirty = true;
         }
 
-        refreshEventSummaries(inMemoryStateStorage);
-        dirty = true;
+        messagesAccepted.incrementAndGet();
+
+        PendingWrite pending = new PendingWrite(
+                serverMessage,
+                arrivalTimestampIso,
+                messageType,
+                singleEventId,
+                messageId,
+                messageFileName
+        );
+        if (!writeQueue.offer(pending)) {
+            writeQueueOverflowed = true;
+        }
+    }
+
+    private void writerLoop() {
+        while (true) {
+            PendingWrite pending;
+            try {
+                pending = writeQueue.take();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+            if (pending == POISON_PILL) {
+                return;
+            }
+            try {
+                writePending(pending);
+            } catch (Exception e) {
+                System.err.println("Failed to write message file: " + pending.messageFileName);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void writePending(PendingWrite pending) throws IOException {
+        ObjectNode envelope = objectMapper.createObjectNode();
+        envelope.put(ARRIVAL_TIMESTAMP_KEY, pending.arrivalTimestampIso);
+        envelope.putRawValue(CONTENT_KEY, new RawValue(protobufPrinter.print(pending.serverMessage)));
+
+        Path messageFile = messagesFolder.resolve(pending.messageFileName);
+        long sizeBytes = writeJsonAtomically(messageFile, envelope);
+
+        ObjectNode indexEntry = buildIndexEntry(
+                pending.messageId,
+                pending.messageType,
+                pending.singleEventId,
+                pending.arrivalTimestampIso,
+                pending.messageFileName,
+                sizeBytes
+        );
+
+        // Brief lock just to update shared state — no I/O held under the lock.
+        synchronized (this) {
+            messagesWritten.incrementAndGet();
+            lastProcessedMessageId.set(pending.messageId);
+            lastMessageArrivalTimestamp = pending.arrivalTimestampIso;
+            messageTypeCounters.merge(pending.messageType, 1L, Long::sum);
+            pendingIndexEntries.add(indexEntry);
+            dirty = true;
+        }
+    }
+
+    private static final class PendingWrite {
+        final OddsmarketTradingDto.ServerMessage serverMessage;
+        final String arrivalTimestampIso;
+        final String messageType;
+        final Long singleEventId;
+        final long messageId;
+        final String messageFileName;
+
+        PendingWrite(
+                OddsmarketTradingDto.ServerMessage serverMessage,
+                String arrivalTimestampIso,
+                String messageType,
+                Long singleEventId,
+                long messageId,
+                String messageFileName
+        ) {
+            this.serverMessage = serverMessage;
+            this.arrivalTimestampIso = arrivalTimestampIso;
+            this.messageType = messageType;
+            this.singleEventId = singleEventId;
+            this.messageId = messageId;
+            this.messageFileName = messageFileName;
+        }
     }
 
     @Override
-    public synchronized void close() throws IOException {
-        if (closed) {
-            return;
+    public void close() throws IOException {
+        synchronized (this) {
+            if (closed) {
+                return;
+            }
+            closed = true;
         }
-        closed = true;
+
+        // Signal the writer to drain pending entries and exit
+        writeQueue.offer(POISON_PILL);
+        try {
+            writerThread.join(WRITER_SHUTDOWN_TIMEOUT_MS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        if (writerThread.isAlive()) {
+            System.err.println(
+                    "Writer thread did not finish within " + WRITER_SHUTDOWN_TIMEOUT_MS + "ms; "
+                            + writeQueue.size() + " messages still queued and may be lost."
+            );
+        }
+
         scheduler.shutdownNow();
-        flush();
+        synchronized (this) {
+            flush();
+        }
     }
 
     private synchronized void flush() throws IOException {
@@ -347,8 +457,9 @@ public class TradingFeedSessionRecorder implements Closeable {
     private ObjectNode buildSubscriptionStatsNode() {
         ObjectNode root = objectMapper.createObjectNode();
         root.put(UPDATED_AT_KEY, ISO_INSTANT.format(Instant.now()));
-        root.put(MESSAGES_TOTAL_KEY, messagesTotal);
-        root.put(LAST_PROCESSED_MESSAGE_ID_KEY, lastProcessedMessageId);
+        root.put(MESSAGES_TOTAL_KEY, messagesWritten.get());
+        root.put(MESSAGES_ACCEPTED_KEY, messagesAccepted.get());
+        root.put(LAST_PROCESSED_MESSAGE_ID_KEY, lastProcessedMessageId.get());
         if (lastMessageArrivalTimestamp != null) {
             root.put(LAST_MESSAGE_ARRIVAL_TIMESTAMP_KEY, lastMessageArrivalTimestamp);
         } else {
