@@ -2,6 +2,7 @@ package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.cli.TradingFeedReaderConfiguration;
+import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.recording.SessionSummary;
 import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.recording.TradingFeedSessionRecorder;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedClient;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedSubscriptionConfig;
@@ -9,8 +10,6 @@ import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.T
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.model.TradingFeedConnectionStatusCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -21,6 +20,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -364,89 +365,58 @@ public class TradingFeedReaderRunner {
             long recorded = recorder.getMessagesWrittenTotal();
             long accepted = recorder.getMessagesAcceptedTotal();
 
-            ObjectNode root = jsonMapper.createObjectNode();
-            root.put("schemaVersion", 1);
-            root.put("startedAt", sessionStartedAt.toString());
-            root.put("endedAt", endedAt.toString());
-            root.put("durationSeconds", sessionDuration.getSeconds());
+            // Round to 1 decimal for stable, agent-friendly numbers.
+            Double percentOfSeen = messagesSeenTotal == 0
+                    ? null
+                    : Math.round((recorded * 100.0) / messagesSeenTotal * 10.0) / 10.0;
 
-            ObjectNode exit = root.putObject("exit");
-            exit.put("code", exitState.exitCode());
-            exit.put("reason", exitState.reason());
-            if (exitState.fatalErrorCode() != null) {
-                exit.put("fatalErrorCode", exitState.fatalErrorCode());
-            } else {
-                exit.putNull("fatalErrorCode");
-            }
-
-            if (sessionId != null) {
-                root.put("sessionId", sessionId);
-            } else {
-                root.putNull("sessionId");
-            }
-            root.put("initialSyncCompleted", initialSyncSeen);
-            root.put("sessionFolder", recorder.getSessionFolder().toAbsolutePath().toString());
-
-            ObjectNode messagesSeen = root.putObject("messagesSeen");
-            messagesSeen.put("total", messagesSeenTotal);
-            messagesSeen.set("byType", jsonMapper.valueToTree(seenMessageTypeCounters));
-
-            ObjectNode messagesRecorded = root.putObject("messagesRecorded");
-            messagesRecorded.put("total", recorded);
-            messagesRecorded.put("accepted", accepted);
-            if (messagesSeenTotal == 0) {
-                messagesRecorded.putNull("percentOfSeen");
-            } else {
-                double percent = (recorded * 100.0) / messagesSeenTotal;
-                // Round to 1 decimal for stable, agent-friendly numbers.
-                messagesRecorded.put("percentOfSeen", Math.round(percent * 10.0) / 10.0);
-            }
-            messagesRecorded.set("byType", jsonMapper.valueToTree(recorder.getMessageTypeCountersSnapshot()));
-
-            root.put("activeEventsAtEnd", inMemoryStateStorage.getEventByEventId().size());
-            root.put("distinctEventsSeen", seenEventIds.size());
-
-            ObjectNode filter = root.putObject("filter");
-            filter.put("active", recorder.isFilterActive());
-            filter.set("recordOnlyEventIds", longArray(recorder.getRecordOnlyEventIds()));
-            filter.set("recordOnlyRawEventIds", stringArray(recorder.getRecordOnlyRawEventIds()));
-
-            ObjectNode limits = root.putObject("limits");
-            if (durationLimit != null) {
-                limits.put("durationSeconds", durationLimit.getSeconds());
-            } else {
-                limits.putNull("durationSeconds");
-            }
-            if (maxMessages != null) {
-                limits.put("maxMessages", maxMessages);
-            } else {
-                limits.putNull("maxMessages");
-            }
+            SessionSummary summary = SessionSummary.builder()
+                    .schemaVersion(1)
+                    .startedAt(sessionStartedAt.toString())
+                    .endedAt(endedAt.toString())
+                    .durationSeconds(sessionDuration.getSeconds())
+                    .exit(SessionSummary.ExitInfo.builder()
+                            .code(exitState.exitCode())
+                            .reason(exitState.reason())
+                            .fatalErrorCode(exitState.fatalErrorCode())
+                            .build())
+                    .sessionId(sessionId)
+                    .initialSyncCompleted(initialSyncSeen)
+                    .sessionFolder(recorder.getSessionFolder().toAbsolutePath().toString())
+                    .messagesSeen(SessionSummary.MessagesSeen.builder()
+                            .total(messagesSeenTotal)
+                            .byType(seenMessageTypeCounters)
+                            .build())
+                    .messagesRecorded(SessionSummary.MessagesRecorded.builder()
+                            .total(recorded)
+                            .accepted(accepted)
+                            .percentOfSeen(percentOfSeen)
+                            .byType(recorder.getMessageTypeCountersSnapshot())
+                            .build())
+                    .activeEventsAtEnd(inMemoryStateStorage.getEventByEventId().size())
+                    .distinctEventsSeen(seenEventIds.size())
+                    .filter(SessionSummary.FilterSummary.builder()
+                            .active(recorder.isFilterActive())
+                            .recordOnlyEventIds(sortedCopy(recorder.getRecordOnlyEventIds(), Long::compareTo))
+                            .recordOnlyRawEventIds(sortedCopy(recorder.getRecordOnlyRawEventIds(), String::compareTo))
+                            .build())
+                    .limits(SessionSummary.Limits.builder()
+                            .durationSeconds(durationLimit != null ? durationLimit.getSeconds() : null)
+                            .maxMessages(maxMessages)
+                            .build())
+                    .build();
 
             Path summaryFile = recorder.getSessionFolder().resolve(SUMMARY_FILENAME);
-            Files.writeString(summaryFile, jsonMapper.writeValueAsString(root), StandardCharsets.UTF_8);
+            Files.writeString(summaryFile, jsonMapper.writeValueAsString(summary), StandardCharsets.UTF_8);
         }
 
-        private ArrayNode longArray(Collection<Long> values) {
-            ArrayNode array = jsonMapper.createArrayNode();
+        private static <T> List<T> sortedCopy(Collection<T> values, Comparator<? super T> comparator) {
             if (values == null) {
-                return array;
+                return Collections.emptyList();
             }
-            List<Long> sorted = new ArrayList<>(values);
-            sorted.sort(Long::compareTo);
-            sorted.forEach(array::add);
-            return array;
-        }
-
-        private ArrayNode stringArray(Collection<String> values) {
-            ArrayNode array = jsonMapper.createArrayNode();
-            if (values == null) {
-                return array;
-            }
-            List<String> sorted = new ArrayList<>(values);
-            sorted.sort(String::compareTo);
-            sorted.forEach(array::add);
-            return array;
+            List<T> sorted = new ArrayList<>(values);
+            sorted.sort(comparator);
+            return sorted;
         }
 
         private String padRight(String value, int width) {
