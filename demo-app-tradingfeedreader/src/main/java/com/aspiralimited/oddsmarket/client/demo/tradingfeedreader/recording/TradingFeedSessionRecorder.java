@@ -5,6 +5,7 @@ import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.cli.TradingFee
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model.InMemoryStateStorage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.protobuf.util.JsonFormat;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -42,6 +44,7 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.EVENT_PATCH_MESSAGE_TYPE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.EVENT_SNAPSHOT_MESSAGE_TYPE;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FEED_DOMAIN_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILE_NAME_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_DIRECT_LINK_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.FILL_RAW_OUTCOME_ID_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.GROUP_MESSAGES_BY_EVENT_KEY;
@@ -52,7 +55,9 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LAST_PROCESSED_MESSAGE_ID_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.LOCALES_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_FOLDER_NAME;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_INDEX_FILENAME;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGES_TOTAL_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGE_ID_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.MESSAGE_TYPE_COUNTERS_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.NAME_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.PAYLOAD_NOT_SET_MESSAGE_TYPE;
@@ -64,11 +69,13 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SESSION_FOLDER_NAME;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SESSION_ID_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SESSION_START_MESSAGE_TYPE;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SIZE_BYTES_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SPORT_IDS_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SUBSCRIPTION_INFO_FILENAME;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.SUBSCRIPTION_STATS_FILENAME;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.TEMP_FILE_SUFFIX;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.TRADING_FEED_ID_KEY;
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.TYPE_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.UPDATED_AT_KEY;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.WEBSOCKET_URL_KEY;
 
@@ -80,13 +87,16 @@ public class TradingFeedSessionRecorder implements Closeable {
     private final Path messagesFolder;
     private final Path subscriptionInfoFile;
     private final Path subscriptionStatsFile;
+    private final Path messagesIndexFile;
     private final ObjectMapper objectMapper;
+    private final ObjectWriter compactJsonWriter;
     private final JsonFormat.Printer protobufPrinter;
     private final ScheduledExecutorService scheduler;
 
     private final Map<String, Long> messageTypeCounters = new TreeMap<>();
     private final Map<Long, String> seenEventNames = new TreeMap<>();
     private final Map<Long, String> activeEventNames = new TreeMap<>();
+    private final List<ObjectNode> pendingIndexEntries = new ArrayList<>();
 
     private long messagesTotal;
     private long lastProcessedMessageId;
@@ -99,6 +109,7 @@ public class TradingFeedSessionRecorder implements Closeable {
     public TradingFeedSessionRecorder(TradingFeedReaderConfiguration configuration) throws IOException {
         this.configuration = configuration;
         this.objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        this.compactJsonWriter = this.objectMapper.writer().without(SerializationFeature.INDENT_OUTPUT);
         this.protobufPrinter = JsonFormat.printer()
                 .alwaysPrintFieldsWithNoPresence()
                 .preservingProtoFieldNames();
@@ -107,6 +118,7 @@ public class TradingFeedSessionRecorder implements Closeable {
         this.messagesFolder = Files.createDirectories(sessionFolder.resolve(MESSAGES_FOLDER_NAME));
         this.subscriptionInfoFile = sessionFolder.resolve(SUBSCRIPTION_INFO_FILENAME);
         this.subscriptionStatsFile = sessionFolder.resolve(SUBSCRIPTION_STATS_FILENAME);
+        this.messagesIndexFile = sessionFolder.resolve(MESSAGES_INDEX_FILENAME);
 
         writeJsonAtomically(subscriptionInfoFile, buildSubscriptionInfoNode());
 
@@ -133,8 +145,11 @@ public class TradingFeedSessionRecorder implements Closeable {
         JsonNode contentNode = objectMapper.readTree(protobufPrinter.print(serverMessage));
         envelope.set(CONTENT_KEY, contentNode);
 
-        Path messageFile = messagesFolder.resolve(buildMessageFileName(singleEventId, messageId, messageType));
-        writeJsonAtomically(messageFile, envelope);
+        String messageFileName = buildMessageFileName(singleEventId, messageId, messageType);
+        Path messageFile = messagesFolder.resolve(messageFileName);
+        long messageFileSizeBytes = writeJsonAtomically(messageFile, envelope);
+
+        pendingIndexEntries.add(buildIndexEntry(messageId, messageType, singleEventId, arrivalTimestampIso, messageFileName, messageFileSizeBytes));
 
         messagesTotal++;
         lastProcessedMessageId = messageId;
@@ -166,8 +181,49 @@ public class TradingFeedSessionRecorder implements Closeable {
         if (!dirty) {
             return;
         }
+        appendPendingIndexEntries();
         writeJsonAtomically(subscriptionStatsFile, buildSubscriptionStatsNode());
         dirty = false;
+    }
+
+    private void appendPendingIndexEntries() throws IOException {
+        if (pendingIndexEntries.isEmpty()) {
+            return;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (ObjectNode entry : pendingIndexEntries) {
+            builder.append(compactJsonWriter.writeValueAsString(entry)).append('\n');
+        }
+        Files.writeString(
+                messagesIndexFile,
+                builder,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND
+        );
+        pendingIndexEntries.clear();
+    }
+
+    private ObjectNode buildIndexEntry(
+            long messageId,
+            String messageType,
+            Long eventId,
+            String arrivalTimestampIso,
+            String fileName,
+            long sizeBytes
+    ) {
+        ObjectNode entry = objectMapper.createObjectNode();
+        entry.put(MESSAGE_ID_KEY, messageId);
+        entry.put(TYPE_KEY, messageType);
+        if (eventId != null) {
+            entry.put(EVENT_ID_KEY, eventId);
+        } else {
+            entry.putNull(EVENT_ID_KEY);
+        }
+        entry.put(ARRIVAL_TIMESTAMP_KEY, arrivalTimestampIso);
+        entry.put(FILE_NAME_KEY, fileName);
+        entry.put(SIZE_BYTES_KEY, sizeBytes);
+        return entry;
     }
 
     private void flushSafely() {
@@ -359,14 +415,16 @@ public class TradingFeedSessionRecorder implements Closeable {
         });
     }
 
-    private void writeJsonAtomically(Path targetFile, JsonNode content) throws IOException {
+    private long writeJsonAtomically(Path targetFile, JsonNode content) throws IOException {
         Files.createDirectories(targetFile.getParent());
         Path tempFile = targetFile.resolveSibling(targetFile.getFileName() + TEMP_FILE_SUFFIX);
-        Files.writeString(tempFile, objectMapper.writeValueAsString(content), StandardCharsets.UTF_8);
+        byte[] bytes = objectMapper.writeValueAsString(content).getBytes(StandardCharsets.UTF_8);
+        Files.write(tempFile, bytes);
         try {
             Files.move(tempFile, targetFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         } catch (AtomicMoveNotSupportedException e) {
             Files.move(tempFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
         }
+        return bytes.length;
     }
 }

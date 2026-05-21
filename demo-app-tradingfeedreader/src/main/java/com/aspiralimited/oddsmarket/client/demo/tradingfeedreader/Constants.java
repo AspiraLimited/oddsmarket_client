@@ -9,6 +9,7 @@ public final class Constants {
     public static final String SESSION_FOLDER_NAME = "tradingFeedSessionData";
     public static final String SUBSCRIPTION_INFO_FILENAME = "subscriptionInfo.json";
     public static final String SUBSCRIPTION_STATS_FILENAME = "subscriptionStats.json";
+    public static final String MESSAGES_INDEX_FILENAME = "messagesIndex.jsonl";
     public static final String MESSAGES_FOLDER_NAME = "messages";
     public static final String TEMP_FILE_SUFFIX = ".tmp";
 
@@ -38,6 +39,10 @@ public final class Constants {
     public static final String SEEN_EVENTS_KEY = "seenEvents";
     public static final String EVENT_ID_KEY = "eventId";
     public static final String NAME_KEY = "name";
+    public static final String MESSAGE_ID_KEY = "messageId";
+    public static final String TYPE_KEY = "type";
+    public static final String FILE_NAME_KEY = "fileName";
+    public static final String SIZE_BYTES_KEY = "sizeBytes";
 
     public static final String SAVE_MESSAGES_TO_FOLDER_OPTION = "savemessagestofolder";
     public static final String GROUP_MESSAGES_BY_EVENT_OPTION = "groupmessagesbyevent";
