@@ -9,6 +9,11 @@ public class TradingFeedReader {
     public static void main(String[] args) {
         try {
             TradingFeedReaderCliParser cliParser = new TradingFeedReaderCliParser();
+            if (cliParser.isHelpRequested(args)) {
+                printUsage();
+                System.exit(0);
+                return;
+            }
             TradingFeedReaderConfiguration configuration;
             if (cliParser.isInteractiveMode(args)) {
                 configuration = new InteractiveTradingFeedReaderPrompter().prompt();
@@ -42,6 +47,7 @@ public class TradingFeedReader {
         printToConsole("Usage:");
         printToConsole("  tradingfeedreader.sh --feedDomain=<host> --tradingFeedId=<id> [options...]");
         printToConsole("  tradingfeedreader.sh --interactive");
+        printToConsole("  tradingfeedreader.sh --help  (or -h)");
         printToConsole("");
         printToConsole("Required:");
         printToConsole("  --feedDomain=<host>          e.g. api-pr.oddsmarket.org or api-lv.oddsmarket.org");

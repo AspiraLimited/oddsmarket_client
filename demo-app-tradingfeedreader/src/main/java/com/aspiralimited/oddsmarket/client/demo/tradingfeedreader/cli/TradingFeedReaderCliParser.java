@@ -37,6 +37,15 @@ public class TradingFeedReaderCliParser {
         return args.length == 1 && (INTERACTIVE_FLAG.equalsIgnoreCase(args[0]) || INTERACTIVE_MODE.equalsIgnoreCase(args[0]));
     }
 
+    public boolean isHelpRequested(String[] args) {
+        for (String arg : args) {
+            if ("--help".equalsIgnoreCase(arg) || "-h".equalsIgnoreCase(arg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public TradingFeedReaderConfiguration parse(String[] args) {
         Map<String, String> options = parseOptions(args);
 
