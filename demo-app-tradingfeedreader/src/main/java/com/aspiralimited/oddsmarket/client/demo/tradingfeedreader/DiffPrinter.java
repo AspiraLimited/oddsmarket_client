@@ -72,7 +72,7 @@ public class DiffPrinter {
 
     private static class TradingFeedSessionListener extends TradingFeedStateKeepingListener {
         private final TradingFeedSessionRecorder recorder;
-        private final TradingFeedReaderConfiguration configuration;
+        private final TradingFeedReaderConfiguration configuration; // TODO anse - review this. Also need to review & refactor code
         private final Instant sessionStartedAt = Instant.now();
         private final Map<String, Long> seenMessageTypeCounters = new TreeMap<>();
         private final Set<Long> seenEventIds = new HashSet<>();
@@ -122,6 +122,16 @@ public class DiffPrinter {
         public void onConnectError(TradingFeedConnectionStatusCode tradingFeedConnectionStatusCode) {
             super.onConnectError(tradingFeedConnectionStatusCode);
             System.err.println("Error during connection: " + tradingFeedConnectionStatusCode);
+            if (isFatal(tradingFeedConnectionStatusCode)) {
+                System.err.println("This error is fatal — stopping. Check your API key, Trading Feed ID, and that your account has access to the requested feed.");
+                System.exit(1);
+            }
+        }
+
+        private static boolean isFatal(TradingFeedConnectionStatusCode code) {
+            return code == TradingFeedConnectionStatusCode.BAD_REQUEST
+                    || code == TradingFeedConnectionStatusCode.AUTHENTICATION_FAILED
+                    || code == TradingFeedConnectionStatusCode.SUBSCRIPTION_FAILED;
         }
 
         private void trackSummaryState(OddsmarketTradingDto.ServerMessage serverMessage) {
