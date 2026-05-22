@@ -37,6 +37,10 @@ Resolution order (highest priority first):
 3. `ODDSMARKET_API_KEY` environment variable
 4. `./api-key.txt` (default file in the current directory)
 
+**Avoid `--apiKey=<value>` for non-throwaway runs**: the key ends up in the process command
+line (visible via `ps aux` on shared hosts) and in shell history. Prefer `--apiKeyFile`,
+the env var, or the default file.
+
 ### Run control (CRITICAL for agent use)
 
 Without one of these, the tool runs forever (until Ctrl+C). **Always pass one** when

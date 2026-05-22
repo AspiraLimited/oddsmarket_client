@@ -99,6 +99,12 @@ or pass `--apiKey=...` / `--apiKeyFile=...` explicitly.
 The key is **never** written to `subscriptionInfo.json` or any output file. On startup
 the tool prints which source it used (file path, env var name, or `--apiKey option`), without revealing the key.
 
+> ⚠️ **Security note**: `--apiKey=<value>` puts the key in the process's command line,
+> which is visible to other users on the host via `ps aux` (Linux) and the equivalent
+> on macOS. It also lands in shell history. For anything beyond a one-off throwaway
+> run, prefer `--apiKeyFile`, the `ODDSMARKET_API_KEY` env var, or the default
+> `api-key.txt` file.
+
 For developers who prefer the `.env` workflow:
 
 ```bash
