@@ -2,6 +2,7 @@ package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
 import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.cli.TradingFeedReaderConfiguration;
+import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants;
 import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.recording.SessionSummary;
 import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.recording.TradingFeedSessionRecorder;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.TradingFeedClient;
@@ -60,8 +61,7 @@ public class TradingFeedReaderRunner {
         TradingFeedSessionRecorder recorder = new TradingFeedSessionRecorder(configuration);
         SessionExitState exitState = new SessionExitState();
 
-        String feedWebsocketUrl = (configuration.getFeedDomain().startsWith("localhost") ? "ws://" : "wss://")
-                + configuration.getFeedDomain();
+        String feedWebsocketUrl = Constants.toWebsocketUrl(configuration.getFeedDomain());
 
         TradingFeedSessionListener tradingFeedListener = new TradingFeedSessionListener(
                 recorder,

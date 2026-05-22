@@ -29,4 +29,8 @@ public final class Constants {
 
     private Constants() {
     }
+
+    public static String toWebsocketUrl(String feedDomain) {
+        return (feedDomain.startsWith("localhost") ? "ws://" : "wss://") + feedDomain;
+    }
 }

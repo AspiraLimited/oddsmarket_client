@@ -1,9 +1,9 @@
 package com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.recording;
 
 import com.aspiralimited.oddsmarket.api.v4.websocket.trading.dto.OddsmarketTradingDto;
+import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants;
 import com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.cli.TradingFeedReaderConfiguration;
 import com.aspiralimited.oddsmarket.client.tradingfeed.websocket.listener.impl.model.InMemoryStateStorage;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -28,7 +28,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -128,7 +127,11 @@ public class TradingFeedSessionRecorder implements Closeable {
                 buildSubscriptionInfo()
         );
 
-        this.scheduler = Executors.newSingleThreadScheduledExecutor();
+        this.scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
+            Thread thread = new Thread(runnable, "tradingFeedRecorder-flush");
+            thread.setDaemon(true);
+            return thread;
+        });
         this.scheduler.scheduleWithFixedDelay(this::flushSafely, 5, 5, TimeUnit.SECONDS);
 
         this.writerThread = new Thread(this::writerLoop, "tradingFeedRecorder-writer");
@@ -157,6 +160,7 @@ public class TradingFeedSessionRecorder implements Closeable {
         updateRawEventIdCache(serverMessage);
 
         if (!shouldRecord(serverMessage)) {
+            evictRawEventIdsForRemovedEvents(serverMessage);
             return;
         }
 
@@ -180,8 +184,6 @@ public class TradingFeedSessionRecorder implements Closeable {
             dirty = true;
         }
 
-        messagesAccepted.incrementAndGet();
-
         PendingWrite pending = new PendingWrite(
                 serverMessage,
                 arrivalTimestampIso,
@@ -190,8 +192,21 @@ public class TradingFeedSessionRecorder implements Closeable {
                 messageId,
                 messageFileName
         );
-        if (!writeQueue.offer(pending)) {
+        if (writeQueue.offer(pending)) {
+            messagesAccepted.incrementAndGet();
+        } else {
             writeQueueOverflowed = true;
+        }
+
+        evictRawEventIdsForRemovedEvents(serverMessage);
+    }
+
+    private void evictRawEventIdsForRemovedEvents(OddsmarketTradingDto.ServerMessage serverMessage) {
+        if (!serverMessage.hasEventsRemoved()) {
+            return;
+        }
+        for (Long removedEventId : serverMessage.getEventsRemoved().getEventIdsList()) {
+            rawEventIdByEventId.remove(removedEventId);
         }
     }
 
@@ -373,7 +388,7 @@ public class TradingFeedSessionRecorder implements Closeable {
 
         return SubscriptionInfo.builder()
                 .feedDomain(configuration.getFeedDomain())
-                .websocketUrl(toFeedWebsocketUrl(configuration.getFeedDomain()))
+                .websocketUrl(Constants.toWebsocketUrl(configuration.getFeedDomain()))
                 .tradingFeedId(configuration.getTradingFeedId())
                 .saveMessagesToFolder(configuration.getSaveMessagesToFolder().toAbsolutePath().toString())
                 .groupMessagesByEvent(configuration.isGroupMessagesByEvent())
@@ -566,16 +581,13 @@ public class TradingFeedSessionRecorder implements Closeable {
         return result;
     }
 
-    private String toFeedWebsocketUrl(String feedDomain) {
-        return (feedDomain.startsWith("localhost") ? "ws://" : "wss://") + feedDomain;
-    }
-
     private Path prepareSessionFolder(Path baseFolder) throws IOException {
         Path result = baseFolder.toAbsolutePath().normalize().resolve(SESSION_FOLDER_NAME).normalize();
         if (!SESSION_FOLDER_NAME.equals(result.getFileName().toString())) {
             throw new IllegalStateException("Expected session folder to end with " + SESSION_FOLDER_NAME);
         }
         if (Files.exists(result)) {
+            System.out.println("Wiping existing session data at: " + result);
             deleteRecursively(result);
         }
         return Files.createDirectories(result);
@@ -598,7 +610,6 @@ public class TradingFeedSessionRecorder implements Closeable {
     }
 
     private long writeJsonAtomically(Path targetFile, Object content) throws IOException {
-        Files.createDirectories(targetFile.getParent());
         Path tempFile = targetFile.resolveSibling(targetFile.getFileName() + TEMP_FILE_SUFFIX);
         byte[] bytes = objectMapper.writeValueAsBytes(content);
         Files.write(tempFile, bytes);
