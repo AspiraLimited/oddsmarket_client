@@ -28,7 +28,7 @@ public class InMemoryStateStorage {
                 (short) eventMetadata.getSportId(),
                 eventMetadata.getHome().getId(),
                 eventMetadata.getAway().getId(),
-                eventMetadata.getLeague().getId(),
+                eventMetadata.hasLeague() ? eventMetadata.getLeague().getId() : 0L,
                 eventMetadata.getRawEventId(),
                 eventMetadata.getPlannedStartTimestamp(),
                 eventMetadata.getUniformEventId(),
