@@ -174,9 +174,8 @@ public class InMemoryStateStorage {
     }
 
     private void mergeEventPatchToEvent(OddsmarketTradingDto.EventPatch eventPatch, Event event) {
-        Event currentEvent = eventByEventId.get(eventPatch.getEventId());
         if (eventPatch.hasUpdatedEventMetadata()) {
-            applyUpdatedEventMetadata(currentEvent, eventPatch.getUpdatedEventMetadata());
+            applyUpdatedEventMetadata(event, eventPatch.getUpdatedEventMetadata());
         }
         if (eventPatch.hasUpdatedLiveEventInfo()) {
             event.liveEventInfo = protobufLiveEventInfoToLiveEventInfo(eventPatch.getUpdatedLiveEventInfo());
@@ -190,9 +189,9 @@ public class InMemoryStateStorage {
                         (short) protobufMarketKey.getPeriodIdentifier()
                 );
                 if (marketSnapshot.getOutcomesCount() == 0) {
-                    currentEvent.outcomesByMarket.remove(marketKey);
+                    event.outcomesByMarket.remove(marketKey);
                 } else {
-                    currentEvent.outcomesByMarket.put(marketKey, protobufOutcomesToMarkets(marketSnapshot.getOutcomesList()));
+                    event.outcomesByMarket.put(marketKey, protobufOutcomesToMarkets(marketSnapshot.getOutcomesList()));
                 }
             }
         }
