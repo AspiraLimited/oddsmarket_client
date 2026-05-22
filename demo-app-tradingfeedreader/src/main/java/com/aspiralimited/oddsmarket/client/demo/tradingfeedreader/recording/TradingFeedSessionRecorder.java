@@ -157,6 +157,12 @@ public class TradingFeedSessionRecorder implements Closeable {
             return;
         }
 
+        if (serverMessage.getPayloadCase() == OddsmarketTradingDto.ServerMessage.PayloadCase.PAYLOAD_NOT_SET) {
+            System.err.println("Dropping malformed server message with PAYLOAD_NOT_SET (messageId="
+                    + serverMessage.getMessageId() + ")");
+            return;
+        }
+
         updateRawEventIdCache(serverMessage);
 
         if (!shouldRecord(serverMessage)) {
