@@ -93,10 +93,20 @@ or pass `--apiKey=...` / `--apiKeyFile=...` explicitly.
 | --- | --- |
 | `--apiKey=<value>` | Literal API key. Highest priority. |
 | `--apiKeyFile=<path>` | Read the key from this file. |
-| _default_ | If neither flag is set, the tool reads `./api-key.txt`. The repository's `.gitignore` already excludes this filename. |
+| `ODDSMARKET_API_KEY` env var | Read from the environment. Suitable for CI/CD and dotenv workflows — see [`.env.example`](.env.example). |
+| _default_ | If none of the above is set, the tool reads `./api-key.txt`. The repository's `.gitignore` excludes this filename and `.env`. |
 
 The key is **never** written to `subscriptionInfo.json` or any output file. On startup
-the tool prints which source it used (file path or `--apiKey option`), without revealing the key.
+the tool prints which source it used (file path, env var name, or `--apiKey option`), without revealing the key.
+
+For developers who prefer the `.env` workflow:
+
+```bash
+cp demo-app-tradingfeedreader/.env.example demo-app-tradingfeedreader/.env
+# edit .env to set ODDSMARKET_API_KEY=...
+(set -a && source demo-app-tradingfeedreader/.env && ./tradingfeedreader.sh \
+    --feedDomain=api-pr.oddsmarket.org --tradingFeedId=500 --duration=2m)
+```
 
 ### Recording options
 

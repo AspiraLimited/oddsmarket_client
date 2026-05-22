@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.API_KEY_ENV_VAR;
 import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants.DEFAULT_API_KEY_FILE;
 
 /**
@@ -13,8 +14,10 @@ import static com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constan
  * <ol>
  *     <li>Literal value passed via {@code --apiKey} option (or its equivalent in interactive mode).</li>
  *     <li>File path passed via {@code --apiKeyFile} option (or selected interactively).</li>
+ *     <li>Environment variable {@value com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants#API_KEY_ENV_VAR}
+ *         — suitable for CI/CD and dotenv workflows (see {@code .env.example}).</li>
  *     <li>Default file {@value com.aspiralimited.oddsmarket.client.demo.tradingfeedreader.Constants#DEFAULT_API_KEY_FILE}
- *         in the current working directory.</li>
+ *         in the current working directory — convenient for the portable double-click flow.</li>
  * </ol>
  * The file content is trimmed before use, so trailing newlines are tolerated.
  * <p>
@@ -31,13 +34,25 @@ public final class ApiKeyResolver {
             return literalApiKey.trim();
         }
 
-        boolean usingDefault = explicitApiKeyFile == null;
-        Path file = usingDefault ? Paths.get(DEFAULT_API_KEY_FILE) : explicitApiKeyFile;
+        if (explicitApiKeyFile != null) {
+            return readFromFile(explicitApiKeyFile, false);
+        }
 
+        String envValue = System.getenv(API_KEY_ENV_VAR);
+        if (envValue != null && !envValue.isBlank()) {
+            System.out.println("API key source: " + API_KEY_ENV_VAR + " environment variable");
+            return envValue.trim();
+        }
+
+        return readFromFile(Paths.get(DEFAULT_API_KEY_FILE), true);
+    }
+
+    private static String readFromFile(Path file, boolean isDefaultFile) {
         if (!Files.exists(file)) {
-            if (usingDefault) {
+            if (isDefaultFile) {
                 throw new IllegalArgumentException(
-                        "No API key provided. Specify --apiKey=<value>, --apiKeyFile=<path>, or create '"
+                        "No API key provided. Specify --apiKey=<value>, --apiKeyFile=<path>, "
+                                + "set the " + API_KEY_ENV_VAR + " environment variable, or create '"
                                 + DEFAULT_API_KEY_FILE + "' in the working directory ("
                                 + Paths.get("").toAbsolutePath() + ")"
                 );
@@ -56,7 +71,7 @@ public final class ApiKeyResolver {
             throw new IllegalArgumentException("API key file is empty: " + file.toAbsolutePath());
         }
 
-        System.out.println("API key source: " + (usingDefault ? "default file " : "file ") + file.toAbsolutePath());
+        System.out.println("API key source: " + (isDefaultFile ? "default file " : "file ") + file.toAbsolutePath());
         return content;
     }
 }

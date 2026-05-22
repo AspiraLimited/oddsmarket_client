@@ -16,6 +16,7 @@ public final class Constants {
     public static final String DEFAULT_API_KEY_FILE = "api-key.txt";
     public static final String DEFAULT_SAVE_MESSAGES_FOLDER = "data";
     public static final String INTERACTIVE_PASTE_API_KEY_VALUE = "paste";
+    public static final String API_KEY_ENV_VAR = "ODDSMARKET_API_KEY";
 
     public static final String SESSION_START_MESSAGE_TYPE = "sessionStart";
     public static final String EVENT_SNAPSHOT_MESSAGE_TYPE = "eventSnapshot";

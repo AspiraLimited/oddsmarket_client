@@ -80,13 +80,13 @@ public class TradingFeedReaderCommand implements Callable<Integer> {
 
     @Option(
             names = "--apiKey",
-            description = "Literal API key. Highest priority — beats --apiKeyFile and the default api-key.txt."
+            description = "Literal API key. Highest priority — beats --apiKeyFile, ODDSMARKET_API_KEY env var, and the default api-key.txt."
     )
     private String apiKey;
 
     @Option(
             names = "--apiKeyFile",
-            description = "Read the API key from this file. If neither --apiKey nor --apiKeyFile is set, the tool reads ./api-key.txt by default."
+            description = "Read the API key from this file. Resolution order if neither --apiKey nor --apiKeyFile is set: ODDSMARKET_API_KEY env var, then ./api-key.txt."
     )
     private Path apiKeyFile;
 

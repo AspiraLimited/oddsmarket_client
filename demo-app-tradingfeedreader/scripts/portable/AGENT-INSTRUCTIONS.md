@@ -30,12 +30,12 @@ TradingFeedReader.exe --feedDomain=<host> --tradingFeedId=<n> [options...]
 
 ### Authentication
 
-Default: read the API key from `api-key.txt` in the current directory.
+Resolution order (highest priority first):
 
-Other ways (in priority order):
-
-- `--apiKey=<value>` — literal key on the command line
-- `--apiKeyFile=<path>` — read from a custom path
+1. `--apiKey=<value>` — literal key on the command line
+2. `--apiKeyFile=<path>` — read from a custom path
+3. `ODDSMARKET_API_KEY` environment variable
+4. `./api-key.txt` (default file in the current directory)
 
 ### Run control (CRITICAL for agent use)
 
