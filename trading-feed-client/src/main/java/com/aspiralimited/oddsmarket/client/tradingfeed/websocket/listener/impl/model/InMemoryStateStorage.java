@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,9 +28,11 @@ public class InMemoryStateStorage {
                 (short) eventMetadata.getSportId(),
                 eventMetadata.getHome().getId(),
                 eventMetadata.getAway().getId(),
-                eventMetadata.getLeague().getId(),
+                eventMetadata.hasLeague() ? eventMetadata.getLeague().getId() : 0L,
                 eventMetadata.getRawEventId(),
                 eventMetadata.getPlannedStartTimestamp(),
+                eventMetadata.getUniformEventId(),
+                eventMetadata.getEventType(),
                 extractEventName(eventMetadata),
                 extractLeagueName(eventMetadata),
                 protobufMarketsToMarkets(eventSnapshot.getMarketsList()),
@@ -66,8 +69,21 @@ public class InMemoryStateStorage {
         if (protobufLiveEventInfo == null) {
             return null;
         }
-        String mainScore = extractMainScore(protobufLiveEventInfo);
-        return new LiveEventInfo(mainScore);
+        Map<ScoreKey, DetailedScoreData> detailedScores = new LinkedHashMap<>();
+        for (OddsmarketTradingDto.DetailedScore detailedScore : protobufLiveEventInfo.getDetailedScoresList()) {
+            ScoreKey scoreKey = new ScoreKey(
+                    detailedScore.getScoreKey().getScoreType(),
+                    detailedScore.getScoreKey().getPeriodIdentifier()
+            );
+            detailedScores.put(scoreKey, new DetailedScoreData(detailedScore.getHome(), detailedScore.getAway()));
+        }
+        return new LiveEventInfo(
+                protobufLiveEventInfo.hasCurrentPeriodIdentifier() ? protobufLiveEventInfo.getCurrentPeriodIdentifier() : null,
+                protobufLiveEventInfo.hasCurrentSecond() ? protobufLiveEventInfo.getCurrentSecond() : null,
+                protobufLiveEventInfo.getMatchStatus(),
+                detailedScores,
+                extractMainScore(protobufLiveEventInfo)
+        );
     }
 
     private String extractMainScore(OddsmarketTradingDto.LiveEventInfo protobufLiveEventInfo) {
@@ -88,14 +104,19 @@ public class InMemoryStateStorage {
                     protobufMarketKey.getMarketParam(),
                     (short) protobufMarketKey.getPeriodIdentifier()
             );
-            Map<OutcomeKey, OutcomeData> outcomeDataByOutcomeKey = result.computeIfAbsent(marketKey, k -> new HashMap<>());
-            for (OddsmarketTradingDto.OutcomeSnapshot outcomeSnapshot : marketSnapshot.getOutcomesList()) {
-                OutcomeKey outcomeKey = protobufOutcomeKeyToOutcomeKey(outcomeSnapshot.getOutcomeKey());
-                OutcomeData outcomeData = protobufOutcomeDataToOutcomeData(outcomeSnapshot.getOutcomeData());
-                outcomeDataByOutcomeKey.put(outcomeKey, outcomeData);
-            }
+            result.put(marketKey, protobufOutcomesToMarkets(marketSnapshot.getOutcomesList()));
         }
         return result;
+    }
+
+    private Map<OutcomeKey, OutcomeData> protobufOutcomesToMarkets(List<OddsmarketTradingDto.OutcomeSnapshot> outcomeSnapshots) {
+        Map<OutcomeKey, OutcomeData> outcomeDataByOutcomeKey = new HashMap<>();
+        for (OddsmarketTradingDto.OutcomeSnapshot outcomeSnapshot : outcomeSnapshots) {
+            OutcomeKey outcomeKey = protobufOutcomeKeyToOutcomeKey(outcomeSnapshot.getOutcomeKey());
+            OutcomeData outcomeData = protobufOutcomeDataToOutcomeData(outcomeSnapshot.getOutcomeData());
+            outcomeDataByOutcomeKey.put(outcomeKey, outcomeData);
+        }
+        return outcomeDataByOutcomeKey;
     }
 
     private OutcomeKey protobufOutcomeKeyToOutcomeKey(OddsmarketTradingDto.OutcomeKey protobufOutcomeKey) {
@@ -153,17 +174,26 @@ public class InMemoryStateStorage {
     }
 
     private void mergeEventPatchToEvent(OddsmarketTradingDto.EventPatch eventPatch, Event event) {
-        Event currentEvent = eventByEventId.get(eventPatch.getEventId());
+        if (eventPatch.hasUpdatedEventMetadata()) {
+            applyUpdatedEventMetadata(event, eventPatch.getUpdatedEventMetadata());
+        }
         if (eventPatch.hasUpdatedLiveEventInfo()) {
-            OddsmarketTradingDto.LiveEventInfo liveEventInfo = eventPatch.getUpdatedLiveEventInfo();
-            String mainScore = extractMainScore(liveEventInfo);
-            if (mainScore != null) {
-                event.getLiveEventInfo().score = mainScore;
-            }
+            event.liveEventInfo = protobufLiveEventInfoToLiveEventInfo(eventPatch.getUpdatedLiveEventInfo());
         }
         if (eventPatch.getUpdatedMarketsCount() > 0) {
-            Map<MarketKey, Map<OutcomeKey, OutcomeData>> updatedMarkets = protobufMarketsToMarkets(eventPatch.getUpdatedMarketsList());
-            currentEvent.outcomesByMarket.putAll(updatedMarkets);
+            for (OddsmarketTradingDto.MarketSnapshot marketSnapshot : eventPatch.getUpdatedMarketsList()) {
+                OddsmarketTradingDto.MarketKey protobufMarketKey = marketSnapshot.getMarketKey();
+                MarketKey marketKey = new MarketKey(
+                        (short) protobufMarketKey.getMarketId(),
+                        protobufMarketKey.getMarketParam(),
+                        (short) protobufMarketKey.getPeriodIdentifier()
+                );
+                if (marketSnapshot.getOutcomesCount() == 0) {
+                    event.outcomesByMarket.remove(marketKey);
+                } else {
+                    event.outcomesByMarket.put(marketKey, protobufOutcomesToMarkets(marketSnapshot.getOutcomesList()));
+                }
+            }
         }
         for (OddsmarketTradingDto.EventPlayer eventPlayer : eventPatch.getUpdatedPlayersList()) {
             if (eventPlayer.getActive()) {
@@ -174,8 +204,18 @@ public class InMemoryStateStorage {
         }
     }
 
-    public boolean hasEvent(long eventId) {
-        return eventByEventId.containsKey(eventId);
+    private void applyUpdatedEventMetadata(Event event, OddsmarketTradingDto.EventMetadata eventMetadata) {
+        event.sportId = (short) eventMetadata.getSportId();
+        event.homeId = eventMetadata.getHome().getId();
+        event.awayId = eventMetadata.getAway().getId();
+        event.leagueId = eventMetadata.hasLeague() ? eventMetadata.getLeague().getId() : 0L;
+        event.rawEventId = eventMetadata.getRawEventId();
+        event.plannedStartTimestamp = eventMetadata.getPlannedStartTimestamp();
+        event.uniformEventId = eventMetadata.getUniformEventId();
+        event.eventType = eventMetadata.getEventType();
+        event.name = extractEventName(eventMetadata);
+        event.leagueName = extractLeagueName(eventMetadata);
+        event.directLink = eventMetadata.getDirectLink();
     }
 
     public void removeEvent(OddsmarketTradingDto.EventsRemoved eventsRemoved) {
@@ -192,22 +232,24 @@ public class InMemoryStateStorage {
     @AllArgsConstructor
     public static class Event {
         public final long id;
-        public final short sportId;
-        public final long homeId;
-        public final long awayId;
-        public final long leagueId;
-        public final String rawEventId;
+        public short sportId;
+        public long homeId;
+        public long awayId;
+        public long leagueId;
+        public String rawEventId;
         public long plannedStartTimestamp;
+        public long uniformEventId;
+        public OddsmarketTradingDto.EventType eventType;
         public String name;
         public String leagueName;
         public final Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarket;
-        public final LiveEventInfo liveEventInfo;
-        public final String directLink;
+        public LiveEventInfo liveEventInfo;
+        public String directLink;
         public final Map<Integer, EventPlayerData> players;
 
         public Event copy() {
             Map<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarketCopy = new HashMap<>();
-            for (Map.Entry<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarketEntry : outcomesByMarketCopy.entrySet()) {
+            for (Map.Entry<MarketKey, Map<OutcomeKey, OutcomeData>> outcomesByMarketEntry : outcomesByMarket.entrySet()) {
                 Map<OutcomeKey, OutcomeData> outcomesCopy = new HashMap<>();
                 for (Map.Entry<OutcomeKey, OutcomeData> outcomeKeyOutcomeDataEntry : outcomesByMarketEntry.getValue().entrySet()) {
                     OutcomeKey outcomeKey = outcomeKeyOutcomeDataEntry.getKey();
@@ -217,6 +259,10 @@ public class InMemoryStateStorage {
                 MarketKey marketKey = outcomesByMarketEntry.getKey();
                 outcomesByMarketCopy.put(marketKey.copy(), outcomesCopy);
             }
+            Map<Integer, EventPlayerData> playersCopy = new HashMap<>();
+            for (Map.Entry<Integer, EventPlayerData> playerEntry : players.entrySet()) {
+                playersCopy.put(playerEntry.getKey(), playerEntry.getValue().copy());
+            }
             return new Event(
                     id,
                     sportId,
@@ -225,12 +271,14 @@ public class InMemoryStateStorage {
                     leagueId,
                     rawEventId,
                     plannedStartTimestamp,
+                    uniformEventId,
+                    eventType,
                     name,
                     leagueName,
                     outcomesByMarketCopy,
-                    liveEventInfo.copy(),
+                    liveEventInfo == null ? null : liveEventInfo.copy(),
                     directLink,
-                    players
+                    playersCopy
             );
         }
 
@@ -251,18 +299,48 @@ public class InMemoryStateStorage {
     }
 
     @AllArgsConstructor
+    @Data
     public static class LiveEventInfo {
+        public Integer currentPeriodIdentifier;
+        public Integer currentSecond;
+        public OddsmarketTradingDto.LiveMatchStatus matchStatus;
+        public Map<ScoreKey, DetailedScoreData> detailedScores;
         public String score;
 
-        @Override
-        public String toString() {
-            return "score='" + score + '\'';
-        }
-
         public LiveEventInfo copy() {
+            Map<ScoreKey, DetailedScoreData> detailedScoresCopy = new LinkedHashMap<>();
+            for (Map.Entry<ScoreKey, DetailedScoreData> scoreEntry : detailedScores.entrySet()) {
+                detailedScoresCopy.put(scoreEntry.getKey().copy(), scoreEntry.getValue().copy());
+            }
             return new LiveEventInfo(
+                    currentPeriodIdentifier,
+                    currentSecond,
+                    matchStatus,
+                    detailedScoresCopy,
                     score
             );
+        }
+    }
+
+    @EqualsAndHashCode
+    @RequiredArgsConstructor
+    public static class ScoreKey {
+        public final OddsmarketTradingDto.ScoreType scoreType;
+        public final int periodIdentifier;
+
+        public ScoreKey copy() {
+            return new ScoreKey(scoreType, periodIdentifier);
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class DetailedScoreData {
+        public int home;
+        public int away;
+
+        public DetailedScoreData copy() {
+            return new DetailedScoreData(home, away);
         }
     }
 
@@ -335,13 +413,13 @@ public class InMemoryStateStorage {
     }
 
     @AllArgsConstructor
+    @Data
     public static class EventPlayerData {
         public String name;
         public Boolean isHome;
 
-        @Override
-        public String toString() {
-            return "name='" + name + "', isHome= " + isHome;
+        public EventPlayerData copy() {
+            return new EventPlayerData(name, isHome);
         }
     }
 }

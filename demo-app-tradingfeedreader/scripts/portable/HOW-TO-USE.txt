@@ -1,0 +1,38 @@
+===============================================
+ Trading Feed Reader (portable) — how to use
+===============================================
+
+1. CREATE YOUR API KEY FILE
+   Create a plain text file named "api-key.txt" in this folder.
+   Put your OddsMarket API key on a single line. Save and close.
+   (The tool reads it automatically on startup. The key is never
+    written to any output file or log.)
+
+2. RUN
+   Double-click RUN_ME.bat.
+   (Don't double-click TradingFeedReader.exe directly — the console
+    window will close the instant the tool exits and you won't see
+    the final summary or any error message.)
+
+3. ANSWER THE PROMPTS
+   Each prompt shows its default in [optional](default - X) form.
+   Just press Enter to accept the default. Only two answers are
+   required: oddsmarket domain and Trading Feed ID.
+
+4. STOP THE TOOL
+   Press Ctrl+C. A final summary is printed to the console and
+   also written to disk.
+
+WHERE YOUR DATA GOES
+   By default, everything is saved to:
+     .\data\tradingFeedSessionData\
+   The folder contains:
+     - messages\               every server message as pretty JSON
+     - summary.json            machine-readable run outcome
+     - messagesIndex.jsonl     one line per message, easy to grep
+     - subscriptionInfo.json   what config was used (no API key)
+     - subscriptionStats.json  live counters at end of run
+
+
+USING THROUGH AN AI AGENT
+   Open your AI agent and tell that there are agent instructions in the AGENT-INSTRUCTIONS.md in this folder.
