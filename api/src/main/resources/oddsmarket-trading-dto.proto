@@ -761,6 +761,16 @@ enum ScoreType {
     PUNTS = 83;
     /** Downs achieved count. */
     DOWNS = 84;
+    /** Own goals count */
+    OWN_GOAL = 85;
+    /** Headed goals count */
+    HEADED_GOAL = 86;
+    /** Tackles won count */
+    TACKLES_WON = 87;
+    /** Shots that hit the woodwork / goal frame count */
+    WOODWORK = 88;
+    /** Deaths count */
+    DEATHS = 89;
 }
 
 /**
