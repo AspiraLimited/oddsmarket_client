@@ -71,6 +71,9 @@ public class BookmakerEventStateDiffDetector {
         if (!Objects.equals(state.getAwayId(), dto.awayId)) {
             diffList.addDiff(new Diff("awayId", state.getAwayId(), dto.awayId));
         }
+        if (!Objects.equals(state.getTvLink(), dto.tvLink)) {
+            diffList.addDiff(new Diff("tvLink", state.getTvLink(), dto.tvLink));
+        }
         return diffList;
     }
 
