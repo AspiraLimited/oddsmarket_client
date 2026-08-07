@@ -34,6 +34,7 @@ public class BookmakerEventState {
     private volatile Long awayId;
     private volatile String home;
     private volatile String away;
+    private volatile String tvLink;
 
     private List<Player> players = new ArrayList<>();
 
@@ -57,6 +58,7 @@ public class BookmakerEventState {
         homeId = bkEvent.homeId;
         away = bkEvent.away;
         awayId = bkEvent.awayId;
+        tvLink = bkEvent.tvLink;
         players = bkEvent.players.stream().map(Player::of).collect(Collectors.toList());
     }
 

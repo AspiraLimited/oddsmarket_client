@@ -45,6 +45,7 @@ public class BookmakerEventDto {
     public MatchStatus status;
     public EventType eventType;
     public Long uniformEventId;
+    public String tvLink;
 
 
     public BookmakerEventDto(List<Object> values, List<String> fields, List<String> playerFields) {
@@ -166,6 +167,9 @@ public class BookmakerEventDto {
                 case "uniformEventId":
                     this.uniformEventId = asLong(value);
                     break;
+                case "tvLink":
+                    this.tvLink = value.toString();
+                    break;
 
 //                default:
 //                    System.out.println("unknown field: " + field + "[" + value + "]");
@@ -203,6 +207,7 @@ public class BookmakerEventDto {
                 ", status='" + Optional.ofNullable(status).map(MatchStatus::getId).orElse(null) + '\'' +
                 ", eventType=" + eventType.getId() +
                 ", uniformEventId='" + uniformEventId + '\'' +
+                ", tvLink='" + tvLink + '\'' +
                 '}';
     }
 }
