@@ -771,6 +771,30 @@ enum ScoreType {
     WOODWORK = 88;
     /** Deaths count */
     DEATHS = 89;
+    /** Batting appearance flag: 1 if the player batted (AB > 0 OR BB > 0), otherwise 0 */
+    BATTING_GATE = 90;
+    /** Pitching appearance flag: 1 if the player pitched (IP > 0 OR BB > 0 OR SO > 0 OR HA > 0 OR ER > 0 OR HR > 0), otherwise 0 */
+    PITCHING_GATE = 91;
+    /** Pitcher decision: 1 for a win (W), 0 for a loss (L) */
+    PITCHER_DECISION = 92;
+    /** Goals + assists total */
+    GOALS_AND_ASSISTS = 93;
+    /** Double-double achieved (10+ in two statistical categories) */
+    DOUBLE_DOUBLE = 94;
+    /** Triple-double achieved (10+ in three statistical categories) */
+    TRIPLE_DOUBLE = 95;
+    /** Points + assists total */
+    PTS_AND_AST = 96;
+    /** Points + rebounds total */
+    PTS_AND_REB = 97;
+    /** Assists + rebounds total */
+    AST_AND_REB = 98;
+    /** Points + assists + rebounds total */
+    PTS_AND_AST_AND_REB = 99;
+    /** Two goals scored by a player (brace) */
+    DOUBLE = 100;
+    /** Three or more goals scored by a player */
+    HATTRICK = 101;
 }
 
 /**
