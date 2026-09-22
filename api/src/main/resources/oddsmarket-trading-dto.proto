@@ -795,6 +795,12 @@ enum ScoreType {
     DOUBLE = 100;
     /** Three or more goals scored by a player */
     HATTRICK = 101;
+    /** Longest completed pass yards */
+    PASSING_COMPLETION_YARDS_LNG = 102;
+    /** Longest reception yards */
+    RECEPTION_YARDS_LNG = 103;
+    /** Longest rush yards */
+    RUSHING_YARDS_LNG = 104;
 }
 
 /**
